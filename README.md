@@ -11,6 +11,7 @@
 - [Acknowledgements](#acknowledgements)
 - [Initial Stakeholders](#initial-stakeholders)
 - [Team Members](#team-members)
+- [Links](#links)
 
 ## Project Overview
 
@@ -34,3 +35,13 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 | Karena Ho         | [iv23220@bristol.ac.uk](mailto:iv23220@bristol.ac.uk) |
 | Vojtech Martinat  | [os23060@bristol.ac.uk](mailto:os23060@bristol.ac.uk) |  
 | Herman Tsoi       | [ju22521@bristol.ac.uk](mailto:ju22521@bristol.ac.uk) |    
+
+## Links
+Main Kanban
+
+https://github.com/orgs/spe-uob/projects/175
+
+
+Gantt Chart
+
+https://github.com/orgs/spe-uob/projects/215
