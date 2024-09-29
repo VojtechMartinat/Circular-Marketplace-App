@@ -5,6 +5,8 @@
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [Project Goals](#project-goals)
+- [User Stories](#user-stories)
+- [Stakeholders](#Stakeholders)
 - [Documentation](#documentation)
 - [License](#license)
 - [Setup and Deployment](#setup-and-deployment)
@@ -21,12 +23,21 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 
 ## Project Goals
 
+## User Stories
+
+* Item
 
 
+  
+## Stakeholders
 
+* End Users (Buyers) - Buyers are wish to find unique, second-hand items at low prices in a simple, streamlined environment. They need an efficient search experience with detailed listings and personalized recommendations, as well as secure payment options to ensure safe transactions.
+  
+* End Users (Sellers) - Sellers want a user-friendly platform that allows them to easily upload and list items they no longer need, helping them declutter their homes. They are looking for clear communication tools to connect with potential buyers as well as a streamlined process for uploading listings.
 
+* Legislators - Since a successful implementation of the system will require potentially identifying personal data to be stored, it must comply with data privacy regulations, especially GDPR. As a result all user data must be handled in a secure and transparent way.
 
-
+  
 ## Team Members
 
 | Members           | Email                                                 |
