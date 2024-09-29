@@ -25,8 +25,10 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 
 ## User Stories
 
-* Item
-
+* As a buyer, I want to easily and simply upload items I no longer need, so I can declutter my home and contribute to a sustainable lifestyle
+* As a buyer, I want to search for specific items quickly via simple yet powerful search tool, so I can find what I need without searching through irrelevant listings
+* As a seller, I want to interact with a chatbot for assistance, so I can get help with uploading items or navigating the app
+* As a seller, I want photos of my wares to be easy to find by other users, so I have a better chance of selling them 
 
   
 ## Stakeholders
