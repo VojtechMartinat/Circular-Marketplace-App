@@ -1,1 +1,3 @@
-User opens app -> 
+User opens app -> user opens chatbot -> chatbot asks whether the user wants to sell or buy items
+1. user wants to sell an item -> user upload a photo -> user describe the item -> chatbot classify the item type -> chatbot add tags describing the item
+2. user wants to search for an item -> user type the item name -> chatbot provide a list of items with tags -> user filters the list by clicking on tags 
