@@ -1,16 +1,20 @@
 Meeting planning
 
-Ask about any prior attempts or existing systems
-Ask about their compatibility with deadlines
-Identify stakeholders’ needs
-Any similar systems they can think of?
-Contract agree
-Make a flow for what a user experience could look like and show
 Assign one person to write meeting minutes
+
+ADMIN:
 Ask how they would like to be contacted
-Ask what they think the solution should be
+Ask about their compatibility with deadlines
+Contract agree
+
+SYSTEM:
+Ask what they think the solution would look like in general
+Ask about any prior attempts or existing systems, documentation?
+Identify stakeholders and their needs
+Any similar systems they can think of? What they like about them and what we could do differently
+Show flow for user interaction
 Ask the client to explain to us their position (how the project will be used, what domain they operate in)
-show them tech stack
+Show them tech stack
 
 
 
