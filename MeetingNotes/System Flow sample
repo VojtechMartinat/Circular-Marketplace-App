@@ -4,7 +4,7 @@ User opens app -> user opens chatbot -> chatbot asks whether the user wants to s
 
 
 
-System Flow draft:
+## System Flow draft:
 1. User Entry: User is greeted and prompted for buying or selling.
 2. Buyer Flow: Search, view product details, contact seller, purchase.
 3. Seller Flow: List item, manage listings, close sales.
@@ -13,3 +13,12 @@ System Flow draft:
 6. Personalization: Learning from user behavior for recommendations.
 7. Support: FAQs, issue handling, human support if necessary.
 8. Integrations: Database, payment gateway, logistics for a seamless experience.
+
+
+
+1. User Initiates Chat
+•	Trigger: User opens the app and initiates the chatbot via chat icon or prompt.
+•	User Action: User chooses an option (e.g., "Search for items").
+
+
+
