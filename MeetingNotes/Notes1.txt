@@ -10,6 +10,7 @@ Assign one person to write meeting minutes
 Ask how they would like to be contacted
 Ask what they think the solution should be
 Ask the client to explain to us their position (how the project will be used, what domain they operate in)
+show them tech stack
 
 
 
