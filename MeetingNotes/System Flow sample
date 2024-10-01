@@ -1,3 +1,15 @@
 User opens app -> user opens chatbot -> chatbot asks whether the user wants to sell or buy items
 1. user wants to sell an item -> user upload a photo -> user describe the item -> chatbot classify the item type -> chatbot add tags describing the item
 2. user wants to search for an item -> user type the item name -> chatbot provide a list of items with tags -> user filters the list by clicking on tags 
+
+
+
+System Flow draft:
+1. User Entry: User is greeted and prompted for buying or selling.
+2. Buyer Flow: Search, view product details, contact seller, purchase.
+3. Seller Flow: List item, manage listings, close sales.
+4. Negotiations: Chat facilitation for direct interaction between buyers and sellers.
+5. Feedback & Rating: Post-transaction reviews.
+6. Personalization: Learning from user behavior for recommendations.
+7. Support: FAQs, issue handling, human support if necessary.
+8. Integrations: Database, payment gateway, logistics for a seamless experience.
