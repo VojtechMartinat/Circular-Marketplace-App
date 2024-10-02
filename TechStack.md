@@ -1,24 +1,24 @@
 # Tech Stack
 
 ## iOS:
-Swift
-Xcode
-iOS SDK
-SwiftUI
+Swift \
+Xcode \
+iOS SDK \ 
+SwiftUI \
 
 ## Android:
-Kotlin
-Android Studio
-Android SDK
-Jetpack Compose (UI)
+Kotlin \
+Android Studio \
+Android SDK \
+Jetpack Compose (UI) \
 
 ## AI:
-Python
-Amazon Rekognition Image?
+Python \
+Amazon Rekognition Image? \
 
 ## Design Tools:
-Figma
+Figma \
 
 ## Cloud AWS:
-Database - RDS Aurora (MySQL/PostgreSQL) Images - S3
-EC2
+Database - RDS Aurora (MySQL/PostgreSQL) Images - S3 \
+EC2 \
