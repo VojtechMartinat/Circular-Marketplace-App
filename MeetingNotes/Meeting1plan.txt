@@ -4,7 +4,7 @@ Assign one person to write meeting minutes
 
 ADMIN:
 Ask how they would like to be contacted, one day each week
-Ask about their compatibility with deadlines
+Ask about their compatibility with deadlines, to give feedback on system
 Contract agree
 
 SYSTEM:
