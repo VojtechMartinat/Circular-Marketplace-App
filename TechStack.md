@@ -1,6 +1,6 @@
-##Tech Stack
+## Tech Stack
 
-#iOS:
+# iOS:
 Swift
 Xcode
 iOS SDK
@@ -12,13 +12,13 @@ Android Studio
 Android SDK
 Jetpack Compose (UI)
 
-#AI:
+# AI:
 Python
 Amazon Rekognition Image?
 
-#Design Tools:
+# Design Tools:
 Figma
 
-#Cloud AWS:
+# Cloud AWS:
 Database - RDS Aurora (MySQL/PostgreSQL) Images - S3
 EC2
