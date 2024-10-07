@@ -21,7 +21,17 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 
 ## Features
 
+* User login and profile required for buying and adding new articles
+* Articles may be given away for free or at a cost
+* Articles may either be shipped by the seller or collected by the buyer
+* Articles can be managed through the user’s profile (e.g. edited and deleted)
+* (*Publicly available*) iOS and Android App with all implemented functionalities working promptly, reliably and securely on any mobile device.
+* ......
+
 ## Project Goals
+
+* Protect the environment, someone can keep using the good condition items instead of purchasing a new one.
+* As the sellers, they can save up some space and make a small amount of money for their items.
 
 ## User Stories
 
