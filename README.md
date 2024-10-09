@@ -13,7 +13,9 @@
 - [Acknowledgements](#acknowledgements)
 - [Initial Stakeholders](#initial-stakeholders)
 - [Team Members](#team-members)
+- [Project Structure](#project-structure)
 - [Links](#links)
+  
 
 ## Project Overview
 
@@ -59,6 +61,15 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 | Vojtech Martinat  | [os23060@bristol.ac.uk](mailto:os23060@bristol.ac.uk) |  
 | Herman Tsoi       | [ju22521@bristol.ac.uk](mailto:ju22521@bristol.ac.uk) |    
 
+## Project Structure
+Main files and directories in dev branch:
+  * Directories:
+    * Tech Stack (Tech Stack Table, Architecture Chart are included)
+    * UI Design (includes a graph provided by our client)
+    * MeetingNotes
+  * Files:
+    * README.md
+    * LICENSE
 ## Links
 Main Kanban
 
