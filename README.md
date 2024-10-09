@@ -75,7 +75,10 @@ Main Kanban
 
 https://github.com/orgs/spe-uob/projects/175
 
-
 Gantt Chart
 
 https://github.com/orgs/spe-uob/projects/215
+
+
+##Technology Stack Diagram
+![Architecture](Architecture_Diagram.drawio.png)
