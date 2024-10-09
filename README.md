@@ -15,6 +15,7 @@
 - [Team Members](#team-members)
 - [Project Structure](#project-structure)
 - [Links](#links)
+- [Technology Stack Diagram](#technology-stack-diagram)
   
 
 ## Project Overview
@@ -80,5 +81,5 @@ Gantt Chart
 https://github.com/orgs/spe-uob/projects/215
 
 
-##Technology Stack Diagram
+## Technology Stack Diagram
 ![Architecture](Architecture_Diagram.drawio.png)
