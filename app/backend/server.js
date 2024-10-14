@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 
 const { Client } = require('pg')
-require('dotenv').config();
 
 const client = new Client({
     host: 'database-2.cv06umom2foy.eu-west-1.rds.amazonaws.com',
