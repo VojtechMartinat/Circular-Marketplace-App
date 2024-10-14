@@ -28,13 +28,23 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 * Articles may be given away for free or at a cost
 * Articles may either be shipped by the seller or collected by the buyer
 * Articles can be managed through the user’s profile (e.g. edited and deleted)
-* (*Publicly available*) iOS and Android App with all implemented functionalities working promptly, reliably and securely on any mobile device.
-* ......
+* Ability to follow other buyers or sellers
+* Comment section under each article being sold
+* Reviews of each user available on their profile
+* Chatbot to help the user search for articles
+* AI search function that intelligently suggests articles for a buyer (e.g. answering queries such as "What is the the best gift for my athletic 10 year old nephew")
+* Language selection options
+* Full iOS, Android and website release
+* Ability to wishlist articles
+* Login via social media account
+* Full payment implementation
+* User wallet function with credit
 
 ## Project Goals
 
-* Protect the environment, someone can keep using the good condition items instead of purchasing a new one.
-* As the sellers, they can save up some space and make a small amount of money for their items.
+* Protect the environment since items can be reused and renewed.
+* Provide the seller a quick and convenient way to get rid of items they no longer want, for money.
+* Provide the buyer a straightforward way to find the articles they desire.
 
 ## User Stories
 
