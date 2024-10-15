@@ -1,20 +1,9 @@
 const express = require('express');
 const app = express();
+const connection = require('./database/connect')
 
-const { Client } = require('pg')
+connection.sync().then(r => console.log("Success")).catch((error) => {console.log(error)})
 
-const client = new Client({
-    host: 'database-2.cv06umom2foy.eu-west-1.rds.amazonaws.com',
-    port: 5432,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-})
-try {
-    client.connect()
-    console.log("Connected")
-} catch (error){
-    console.log("error")
-}
 
 app.get('/hello', (req, res) => {
     res.send('Circular MarketPlace App');
@@ -28,3 +17,4 @@ app.listen(port, (err) => {
     }
     console.log(`Server is listening on port ${port}...`);
 });
+
