@@ -27,7 +27,7 @@ Order.init(
             allowNull: false,
         },
         totalPrice: {
-            type: DataTypes.MONEY,
+            type: DataTypes.DOUBLE,
         },
         collectionMethod: {
             type: DataTypes.ENUM('delivery', 'colletion')

@@ -24,7 +24,7 @@ User.init(
             allowNull: false,
         },
         wallet: {
-            type: DataTypes.MONEY,
+            type: DataTypes.DOUBLE,
             allowNull: false,
         },
         location: {
@@ -32,7 +32,7 @@ User.init(
             allowNull: true,
         },
         rating: {
-            type: DataTypes.INT,
+            type: DataTypes.INTEGER,
             allowNull: true,
         }
 
