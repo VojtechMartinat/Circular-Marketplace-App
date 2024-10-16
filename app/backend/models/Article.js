@@ -1,48 +1,45 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
-class User extends Model {}
+class Article extends Model {}
 
-User.init(
+Article.init(
     {
-
+        articleID: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         userID: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        username: {
+        articleTitle: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
-        password: {
+        description: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
-        email: {
+        tagID: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
-        wallet: {
+        price: {
             type: DataTypes.DOUBLE,
             allowNull: false,
         },
-        location: {
-            type: DataTypes.STRING,
-            allowNull: true,
+        dateAdded: {
+            type: DataTypes.DATE,
+            allowNull: false,
         },
-        rating: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        }
-
-
+        state: {
+            type: DataTypes.ENUM('uploaded','sold','archived','collected')
+        },
     },
     {
         // Other model options go here
         sequelize, // We need to pass the connection instance
-        modelName: 'User', // We need to choose the model name
+        modelName: 'Article', // We need to choose the model name
     },
 );
 
 // the defined model is the class itself
-console.log(User === sequelize.models.User); // true
+console.log(Article === sequelize.models.Article); // true
