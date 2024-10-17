@@ -1,11 +1,11 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
 
-class Wishlist extends Model {}
+class Photo extends Model {}
 
-Wishlist.init(
+Photo.init(
     {
-        userID: {
+        photoID: {
             type: DataTypes.STRING,
             allowNull: false,
         },
@@ -13,14 +13,11 @@ Wishlist.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        totalPrice: {
-            type: DataTypes.DOUBLE,
-        },
     },
     {
         sequelize,
-        modelName: 'Wishlist',
+        modelName: 'Photo',
     },
 );
 
-console.log(Wishlist === sequelize.models.Wishlist);
+console.log(Photo === sequelize.models.Photo);

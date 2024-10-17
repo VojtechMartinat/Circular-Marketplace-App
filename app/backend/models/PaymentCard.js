@@ -27,11 +27,9 @@ PaymentCard.init(
 
     },
     {
-        // Other model options go here
-        sequelize, // We need to pass the connection instance
-        modelName: 'PaymentCard', // We need to choose the model name
+        sequelize,
+        modelName: 'PaymentCard',
     },
 );
 
-// the defined model is the class itself
-console.log(PaymentCard === sequelize.models.PaymentCard); // true
+console.log(PaymentCard === sequelize.models.PaymentCard);

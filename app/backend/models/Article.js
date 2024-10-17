@@ -35,11 +35,9 @@ Article.init(
         },
     },
     {
-        // Other model options go here
-        sequelize, // We need to pass the connection instance
-        modelName: 'Article', // We need to choose the model name
+        sequelize,
+        modelName: 'Article',
     },
 );
 
-// the defined model is the class itself
-console.log(Article === sequelize.models.Article); // true
+console.log(Article === sequelize.models.Article);

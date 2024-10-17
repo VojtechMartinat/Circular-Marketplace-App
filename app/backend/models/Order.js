@@ -39,11 +39,9 @@ Order.init(
 
     },
     {
-        // Other model options go here
-        sequelize, // We need to pass the connection instance
-        modelName: 'Order', // We need to choose the model name
+        sequelize,
+        modelName: 'Order',
     },
 );
 
-// the defined model is the class itself
-console.log(Order === sequelize.models.Order); // true
+console.log(Order === sequelize.models.Order);
