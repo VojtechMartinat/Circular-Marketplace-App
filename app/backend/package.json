@@ -5,13 +5,16 @@
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "express": "^4.21.1",
+    "pg": "^8.13.0",
+    "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.4"
   },
   "devDependencies": {
