@@ -9,6 +9,8 @@ User.init(
         userID: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
+            primaryKey: true,
         },
         username: {
             type: DataTypes.STRING,
@@ -43,4 +45,6 @@ User.init(
     },
 );
 
-console.log(User === sequelize.models.User);
+//console.log(User === sequelize.models.User);
+
+module.exports = User;

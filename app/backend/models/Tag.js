@@ -8,6 +8,7 @@ Tag.init(
        tagID: {
            type: DataTypes.STRING,
            allowNull: false,
+           primaryKey: true,
        },
        tagTitle: {
            type: DataTypes.STRING,
@@ -20,4 +21,6 @@ Tag.init(
     },
 );
 
-console.log(Tag === sequelize.models.Tag);
+//console.log(Tag === sequelize.models.Tag);
+
+module.exports = Tag;

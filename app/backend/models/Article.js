@@ -1,4 +1,6 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
+const User = require('./User');
+const Tag = require('./Tag');
 const sequelize = new Sequelize('sqlite::memory:');
 
 class Article extends Model {}
@@ -8,10 +10,15 @@ Article.init(
         articleID: {
             type: DataTypes.STRING,
             allowNull: false,
+            primaryKey: true,
         },
         userID: {
             type: DataTypes.STRING,
             allowNull: false,
+            references: {
+                model: User,
+                key: 'userID',
+            },
         },
         articleTitle: {
             type: DataTypes.STRING,
@@ -21,6 +28,10 @@ Article.init(
         },
         tagID: {
             type: DataTypes.STRING,
+            references: {
+                model: Tag,
+                key: 'tagID',
+            }
         },
         price: {
             type: DataTypes.DOUBLE,
@@ -40,4 +51,11 @@ Article.init(
     },
 );
 
-console.log(Article === sequelize.models.Article);
+//console.log(Article === sequelize.models.Article);
+Article.hasMany(Tag, { foreignKey: 'tagID' });
+Tag.belongsTo(Article);
+
+User.hasMany(Article);
+Article.belongsTo(User, { foreignKey: 'userID' });
+
+module.exports = Article;

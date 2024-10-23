@@ -1,16 +1,22 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
+const User = require('./User');
 const sequelize = new Sequelize('sqlite::memory:');
 
 class PaymentCard extends Model {}
 
 PaymentCard.init(
     {
-        paymentMethod: {
+        paymentMethodID: {
             type: DataTypes.STRING,
+            primaryKey: true,
         },
         userID: {
             type: DataTypes.STRING,
             allowNull: false,
+            references: {
+                model: User,
+                key: 'userID',
+            },
         },
         cardHolder: {
             type: DataTypes.STRING,
@@ -32,4 +38,10 @@ PaymentCard.init(
     },
 );
 
-console.log(PaymentCard === sequelize.models.PaymentCard);
+User.hasMany(PaymentCard);
+PaymentCard.belongsTo(User, { foreignKey: 'userID' });
+
+
+//console.log(PaymentCard === sequelize.models.PaymentCard);
+
+module.exports = PaymentCard;
