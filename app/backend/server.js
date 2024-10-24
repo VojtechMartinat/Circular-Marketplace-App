@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const connection = require('./database/connect')
-const articles = require('/routes/Articles')
+const articles = require('./routes/Articles')
 
 connection.sync().then(r => console.log("Success")).catch((error) => {console.log(error)})
 
