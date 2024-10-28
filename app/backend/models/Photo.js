@@ -1,19 +1,19 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const Article = require('./Article');
-const sequelize = new Sequelize('sqlite::memory:');
+const sequelize = require('../database/connect')
 
 class Photo extends Model {}
 
 Photo.init(
     {
         photoID: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             allowNull: false,
             unique: true,
             primaryKey: true,
         },
         articleID: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             allowNull: false,
             references: {
                 model: Article,
@@ -27,7 +27,6 @@ Photo.init(
     },
 );
 
-//console.log(Photo === sequelize.models.Photo);
 
 Article.hasMany(Photo);
 Photo.belongsTo(Article, { foreignKey: 'articleID' });

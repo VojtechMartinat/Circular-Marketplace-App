@@ -2,7 +2,7 @@ const { Sequelize, DataTypes, Model } = require('sequelize');
 const User = require('./User');
 const PaymentCard = require('./PaymentCard');
 const Article = require('./Article');
-const sequelize = new Sequelize('sqlite::memory:');
+const sequelize = require('../database/connect')
 
 class Order extends Model {}
 
@@ -10,29 +10,22 @@ Order.init(
     {
         // Model attributes are defined here
         orderID: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             allowNull: false,
             unique: true,
             primaryKey: true,
         },
         userID: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             allowNull: false,
             references: {
                 model: User,
                 key: 'userID',
             },
         },
-        articleID: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            references: {
-                model: Article,
-                key: 'articleID',
-            },
-        },
+
         paymentMethodID: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             allowNull: false,
             references: {
                 model: PaymentCard,
@@ -47,13 +40,11 @@ Order.init(
             type: DataTypes.DOUBLE,
         },
         collectionMethod: {
-            type: DataTypes.ENUM('delivery', 'colletion')
+            type: DataTypes.ENUM('delivery', 'collection')
         },
         orderStatus: {
             type: DataTypes.ENUM('purchased', 'shipped', 'collected'),
         },
-
-
     },
     {
         sequelize,
@@ -61,10 +52,9 @@ Order.init(
     },
 );
 
-//console.log(Order === sequelize.models.Order);
 
-Order.hasMany(Article, { foreignKey: 'articleID' });
-Article.belongsTo(Order);
+Order.hasMany(Article);
+Article.belongsTo(Order, { foreignKey: 'orderID' });
 
 User.hasMany(Order);
 Order.belongsTo(User, { foreignKey: 'userID' });

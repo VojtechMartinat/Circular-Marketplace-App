@@ -1,23 +1,23 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
-const User = require('./User');
+const Tag = require('./Tag');
 const Article = require('./Article');
 const sequelize = require('../database/connect')
 
-class Wishlist extends Model {}
+class Article_Tag extends Model {}
 
-Wishlist.init(
+Article_Tag.init(
     {
-        userID: {
+        tagID: {
             type: DataTypes.BIGINT,
             allowNull: false,
             references: {
-                model: User,
-                key: 'userID',
+                model: Tag,
+                key: 'tagID',
             },
         },
         articleID: {
             type: DataTypes.BIGINT,
-            allowNull: true,
+            allowNull: false,
             references: {
                 model: Article,
                 key: 'articleID',
@@ -29,9 +29,9 @@ Wishlist.init(
     },
     {
         sequelize,
-        modelName: 'Wishlist',
+        modelName: 'Article_Tag',
     },
 );
 
 
-module.exports = Wishlist;
+module.exports = Article_Tag;

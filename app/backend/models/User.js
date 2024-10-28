@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
+const sequelize = require('../database/connect')
 
 class User extends Model {}
 
@@ -7,7 +7,7 @@ User.init(
     {
 
         userID: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             allowNull: false,
             unique: true,
             primaryKey: true,
@@ -33,7 +33,7 @@ User.init(
             allowNull: true,
         },
         rating: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.DOUBLE,
             allowNull: true,
         }
 
@@ -45,6 +45,5 @@ User.init(
     },
 );
 
-//console.log(User === sequelize.models.User);
 
 module.exports = User;

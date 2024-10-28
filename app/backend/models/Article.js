@@ -1,37 +1,39 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
+const sequelize = require('../database/connect')
 const User = require('./User');
 const Tag = require('./Tag');
-const sequelize = new Sequelize('sqlite::memory:');
+const Order = require("./Order");
 
 class Article extends Model {}
 
 Article.init(
     {
         articleID: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             allowNull: false,
             primaryKey: true,
         },
         userID: {
-            type: DataTypes.STRING,
+            type: DataTypes.BIGINT,
             allowNull: false,
             references: {
                 model: User,
                 key: 'userID',
             },
         },
+        orderID: {
+            type: DataTypes.BIGINT,
+            allowNull: true,
+            references: {
+                model: Order,
+                key: 'orderID',
+            }
+        },
         articleTitle: {
             type: DataTypes.STRING,
         },
         description: {
             type: DataTypes.STRING,
-        },
-        tagID: {
-            type: DataTypes.STRING,
-            references: {
-                model: Tag,
-                key: 'tagID',
-            }
         },
         price: {
             type: DataTypes.DOUBLE,
@@ -52,8 +54,8 @@ Article.init(
 );
 
 //console.log(Article === sequelize.models.Article);
-Article.hasMany(Tag, { foreignKey: 'tagID' });
-Tag.belongsTo(Article);
+Order.hasMany(Article);
+Article.belongsTo(Order, { foreignKey: 'orderID' });
 
 User.hasMany(Article);
 Article.belongsTo(User, { foreignKey: 'userID' });

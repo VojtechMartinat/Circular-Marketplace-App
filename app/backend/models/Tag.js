@@ -1,12 +1,12 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
+const sequelize = require('../database/connect')
 
 class Tag extends Model {}
 
 Tag.init(
     {
        tagID: {
-           type: DataTypes.STRING,
+           type: DataTypes.BIGINT,
            allowNull: false,
            primaryKey: true,
        },
@@ -21,6 +21,5 @@ Tag.init(
     },
 );
 
-//console.log(Tag === sequelize.models.Tag);
 
 module.exports = Tag;
