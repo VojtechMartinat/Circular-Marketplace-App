@@ -13,7 +13,6 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
@@ -23,16 +22,16 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: root/app/backend/package-lock.json
+        cache-dependency-path: app/backend/package-lock.json  # Adjusted path
 
     - name: Install dependencies
       run: npm ci
-      working-directory: root/app/backend
+      working-directory: app/backend
       
     - name: Build the app
       run: npm run build --if-present
-      working-directory: root/app/backend
+      working-directory: app/backend
 
     - name: Run tests
       run: npm test
-      working-directory: root/app/backend
+      working-directory: app/backend
