@@ -1,18 +1,18 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const Tag = require('./Tag');
+const { Sequelize, DataTypes, Model} = require('sequelize');
 const Article = require('./Article');
-const sequelize = require('../database/connect')
+const Photo = require('./Photo');
+const sequelize = require('../database/connect');
 
-class Article_Tag extends Model {}
+class Article_Photo extends Model {}
 
-Article_Tag.init(
+Article_Photo.init(
     {
-        tagID: {
+        photoID: {
             type: DataTypes.BIGINT,
             allowNull: false,
             references: {
-                model: Tag,
-                key: 'tagID',
+                model: Photo,
+                key: 'photoID',
             },
         },
         articleID: {
@@ -26,9 +26,8 @@ Article_Tag.init(
     },
     {
         sequelize,
-        modelName: 'Article_Tag',
-    },
+        modelName: 'Article_Photo',
+    }
 );
 
-
-module.exports = Article_Tag;
+module.exports = Article_Photo;

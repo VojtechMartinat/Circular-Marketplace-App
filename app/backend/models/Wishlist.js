@@ -23,9 +23,6 @@ Wishlist.init(
                 key: 'articleID',
             },
         },
-        totalPrice: {
-            type: DataTypes.DOUBLE,
-        },
     },
     {
         sequelize,

@@ -12,14 +12,10 @@ Photo.init(
             unique: true,
             primaryKey: true,
         },
-        articleID: {
-            type: DataTypes.BIGINT,
+        image: {
+            type: DataTypes.BLOB,
             allowNull: false,
-            references: {
-                model: Article,
-                key: 'articleID',
-            }
-        },
+        }
     },
     {
         sequelize,
@@ -27,8 +23,5 @@ Photo.init(
     },
 );
 
-
-Article.hasMany(Photo);
-Photo.belongsTo(Article, { foreignKey: 'articleID' });
 
 module.exports = Photo;
