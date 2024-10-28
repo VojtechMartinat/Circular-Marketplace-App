@@ -27,7 +27,7 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
-      working-directory: root/app/backend
+      working-directory: 2024-CircularMarketplaces/app/backend
       
     - name: Build the app
       run: npm run build --if-present
