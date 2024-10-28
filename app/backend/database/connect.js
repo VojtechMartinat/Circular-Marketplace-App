@@ -2,7 +2,7 @@
 
 const { Sequelize} = require('sequelize')
 
-const sequelize = new Sequelize('devdb',process.env.DB_USER,process.env.DB_PASSgit,{
+const sequelize = new Sequelize('devdb',process.env.DB_USER,process.env.DB_PASS,{
     host: 'database-2.cv06umom2foy.eu-west-1.rds.amazonaws.com',
     dialect: "postgres"
 })
