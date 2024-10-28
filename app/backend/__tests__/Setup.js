@@ -1,11 +1,11 @@
 const { Sequelize } = require('sequelize');
-const defineUserModel = require('../models/User');
-const defineArticleModel = require('../models/Article');
-const defineOrderModel = require('../models/order');
-const defineCardModel = require('../models/PaymentCard');
-const definePhotoModel = require('../models/Photo');
-const defineTagModel = require('../models/Tag');
-const defineWishlistModel = require('../models/Wishlist');
+const defineUserModel = require('../models/User.js');
+const defineArticleModel = require('../models/Article.js');
+const defineOrderModel = require('../models/Order.js');
+const defineCardModel = require('../models/PaymentCard.js');
+const definePhotoModel = require('../models/Photo.js');
+const defineTagModel = require('../models/Tag.js');
+const defineWishlistModel = require('../models/Wishlist.js');
 
 
 // Initialize Sequelize with in-memory SQLite
