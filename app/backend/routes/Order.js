@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const {getAllOrders, createOrders, getOrder, updateOrder, deleteOrder} = require('../controllers/Order');
+const {getAllOrders, createOrders, getOrder, updateOrder, deleteOrder} = require('../controllers/orders');
 
 router.route('/').get(getAllOrders).post(createOrders);
 router.route('/:id').get(getOrder).patch(updateOrder).delete(deleteOrder);
