@@ -53,11 +53,5 @@ Article.init(
     },
 );
 
-//console.log(Article === sequelize.models.Article);
-Order.hasMany(Article);
-Article.belongsTo(Order, { foreignKey: 'orderID' });
-
-User.hasMany(Article);
-Article.belongsTo(User, { foreignKey: 'userID' });
 
 module.exports = Article;

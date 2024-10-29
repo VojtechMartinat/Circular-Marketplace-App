@@ -1,6 +1,6 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const Card = require('../models/Card')
+const Card = require('../models/PaymentCard')
 
 
 /**

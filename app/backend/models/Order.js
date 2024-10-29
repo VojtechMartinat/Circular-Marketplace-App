@@ -53,11 +53,5 @@ Order.init(
 );
 
 
-Order.hasMany(Article);
-Article.belongsTo(Order, { foreignKey: 'orderID' });
 
-User.hasMany(Order);
-Order.belongsTo(User, { foreignKey: 'userID' });
-
-Order.belongsTo(PaymentCard, { foreignKey: 'paymentMethodID' });
 module.exports = Order;

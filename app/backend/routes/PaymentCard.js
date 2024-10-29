@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const {getAllPaymentCards, createPaymentCards, getPaymentCard, updatePaymentCard, deletePaymentCard} = require('../controllers/paymentCards');
+const {getAllCards, createCard, getCard, updateCard, deleteCard} = require('../controllers/paymentCards');
 
-router.route('/').get(getAllPaymentCards).post(createPaymentCards);
-router.route('/:id').get(getPaymentCard).patch(updatePaymentCard).delete(deletePaymentCard);
+router.route('/').get(getAllCards).post(createCard);
+router.route('/:id').get(getCard).patch(updateCard).delete(deleteCard);
 
 module.exports = router;
