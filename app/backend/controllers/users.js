@@ -21,7 +21,6 @@ const getAllUsers = asyncErrorWrapper(async (req,res) =>{
  * @param res Response sent to the client containing new user data
 * */
 const createUser = asyncErrorWrapper(async (req,res) =>{
-    console.log(req.body)
     const user = await User.create(req.body)
     res.status(201).json({user})
 })
