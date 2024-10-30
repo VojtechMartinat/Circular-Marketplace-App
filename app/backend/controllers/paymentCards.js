@@ -9,7 +9,7 @@ const Card = require('../models/PaymentCard')
  * @param res Response sent to the client containing data about all cards
  * */
 const getAllCards = asyncErrorWrapper(async (req,res) =>{
-    const card = Card.findAll()
+    const card = await Card.findAll()
     res.status(200).json({card})
 })
 
@@ -20,7 +20,7 @@ const getAllCards = asyncErrorWrapper(async (req,res) =>{
  * @param res Response sent to the client containing new card data
  * */
 const createCard= asyncErrorWrapper(async (req,res) =>{
-    const card = Card.create(req.body)
+    const card = await Card.create(req.body)
     res.status(201).json({card: card})
 })
 
@@ -32,7 +32,7 @@ const createCard= asyncErrorWrapper(async (req,res) =>{
  * */
 const getCard = asyncErrorWrapper(async (req,res,next) =>{
     const {id:cardID} = req.params
-    const card = Card.findOne({
+    const card = await Card.findOne({
         where:{
             cardID: cardID
         }
@@ -51,7 +51,7 @@ const getCard = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const updateCard = asyncErrorWrapper(async (req,res,next) =>{
     const {id:cardID} = req.params
-    const card = Card.update(req.body,{
+    const card = await Card.update(req.body,{
         where: {
             cardID: cardID
         }
@@ -71,7 +71,7 @@ const updateCard = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const deleteCard = asyncErrorWrapper(async (req,res,next) =>{
     const {id:cardID} = req.params
-    const card = Card.delete({
+    const card = await Card.destroy({
         where:{
             cardID:cardID
         }

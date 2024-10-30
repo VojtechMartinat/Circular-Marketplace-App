@@ -9,7 +9,7 @@ const Tag = require('../models/Tag')
  * @param res Response sent to the client containing data about all tags
  * */
 const getAllTags = asyncErrorWrapper(async (req,res) =>{
-    const tag = Tag.findAll()
+    const tag = await Tag.findAll()
     res.status(200).json({tag})
 })
 
@@ -20,7 +20,7 @@ const getAllTags = asyncErrorWrapper(async (req,res) =>{
  * @param res Response sent to the client containing new tag data
  * */
 const createTag= asyncErrorWrapper(async (req,res) =>{
-    const tag = Tag.create(req.body)
+    const tag = await Tag.create(req.body)
     res.status(201).json({tag: tag})
 })
 
@@ -32,7 +32,7 @@ const createTag= asyncErrorWrapper(async (req,res) =>{
  * */
 const getTag = asyncErrorWrapper(async (req,res,next) =>{
     const {id:tagID} = req.params
-    const tag = Tag.findOne({
+    const tag = await Tag.findOne({
         where:{
             tagID: tagID
         }
@@ -51,7 +51,7 @@ const getTag = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const updateTag = asyncErrorWrapper(async (req,res,next) =>{
     const {id:tagID} = req.params
-    const tag = Tag.update(req.body,{
+    const tag = await Tag.update(req.body,{
         where: {
             tagID: tagID
         }
@@ -71,7 +71,7 @@ const updateTag = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const deleteTag = asyncErrorWrapper(async (req,res,next) =>{
     const {id:tagID} = req.params
-    const tag = Tag.delete({
+    const tag = await Tag.destroy({
         where:{
             tagID:tagID
         }

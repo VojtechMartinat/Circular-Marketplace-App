@@ -9,8 +9,9 @@ const User = require('../models/User')
  * @param res Response sent to the client containing data about all users
  * */
 const getAllUsers = asyncErrorWrapper(async (req,res) =>{
-    const users = User.findAll()
+    const users =  await User.findAll()
     res.status(200).json({users})
+
 })
 
 
@@ -20,7 +21,8 @@ const getAllUsers = asyncErrorWrapper(async (req,res) =>{
  * @param res Response sent to the client containing new user data
 * */
 const createUser = asyncErrorWrapper(async (req,res) =>{
-    const user = User.create(req.body)
+    console.log(req.body)
+    const user = await User.create(req.body)
     res.status(201).json({user})
 })
 
@@ -32,7 +34,7 @@ const createUser = asyncErrorWrapper(async (req,res) =>{
  * */
 const getUser = asyncErrorWrapper(async (req,res,next) =>{
     const {id:userID} = req.params
-    const user = User.findOne({
+    const user = await User.findOne({
         where:{
             userID: userID
         }
@@ -51,7 +53,7 @@ const getUser = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const updateUser = asyncErrorWrapper(async (req,res,next) =>{
     const {id:userID} = req.params
-    const user = User.update(req.body,{
+    const user = await User.update(req.body,{
         where: {
             userID: userID
         }
@@ -71,7 +73,7 @@ const updateUser = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const deleteUser = asyncErrorWrapper(async (req,res,next) =>{
     const {id:userID} = req.params
-    const user = User.delete({
+    const user = await User.destroy({
         where:{
             userID:userID
         }
