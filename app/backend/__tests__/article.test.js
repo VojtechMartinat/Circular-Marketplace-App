@@ -1,5 +1,4 @@
 const request = require('supertest');
-const { createArticle, getAllArticles, getArticle, updateArticle, deleteArticle } = require('../controllers/articles');
 const { sequelize, Article } = require('./Setup.js');
 const app = require('../server');
 

@@ -1,5 +1,4 @@
 const { sequelize, Order } = require('./Setup');
-const { createOrder, getAllOrders, getOrder, updateOrder, deleteOrder } = require('../controllers/orders');
 const request = require('supertest');
 const app = require('../server');
 
