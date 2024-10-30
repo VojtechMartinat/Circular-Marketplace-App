@@ -9,6 +9,7 @@ Tag.init(
            type: DataTypes.BIGINT,
            allowNull: false,
            primaryKey: true,
+           autoIncrement: true,
        },
        tagTitle: {
            type: DataTypes.STRING,

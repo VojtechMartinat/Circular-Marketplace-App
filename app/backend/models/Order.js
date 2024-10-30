@@ -14,6 +14,7 @@ Order.init(
             allowNull: false,
             unique: true,
             primaryKey: true,
+            autoIncrement: true,
         },
         userID: {
             type: DataTypes.BIGINT,

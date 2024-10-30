@@ -9,6 +9,7 @@ PaymentCard.init(
         paymentMethodID: {
             type: DataTypes.BIGINT,
             primaryKey: true,
+            autoIncrement: true,
         },
         userID: {
             type: DataTypes.BIGINT,
@@ -38,8 +39,7 @@ PaymentCard.init(
     },
 );
 
-User.hasMany(PaymentCard);
-PaymentCard.belongsTo(User, { foreignKey: 'userID' });
+
 
 
 module.exports = PaymentCard;
