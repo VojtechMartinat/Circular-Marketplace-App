@@ -11,11 +11,20 @@ Photo.init(
             allowNull: false,
             unique: true,
             primaryKey: true,
+            autoIncrement: true,
         },
         image: {
             type: DataTypes.BLOB,
             allowNull: false,
-        }
+        },
+        articleID: {
+            type: DataTypes.BIGINT,
+            allowNull: false,
+            references: {
+                model: Article,
+                key: 'articleID',
+            }
+        },
     },
     {
         sequelize,
