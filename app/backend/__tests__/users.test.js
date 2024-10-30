@@ -2,7 +2,6 @@ const request = require('supertest');
 const { sequelize, User } = require('./Setup.js');
 const app = require('../server');
 
-
 beforeAll(async () => {
     await sequelize.sync();
 });
@@ -15,7 +14,7 @@ beforeEach(async () => {
     await User.destroy({ where: {} });
 });
 
-describe('User Controller Tests with Sequelize', () => {
+describe('User Controller Tests', () => {
 
     test('GET /api/v1/users - Should return all users as JSON', async () => {
         await User.bulkCreate([
@@ -24,7 +23,6 @@ describe('User Controller Tests with Sequelize', () => {
         ]);
 
         const res = await request(app).get('/api/v1/users');
-
         expect(res.statusCode).toBe(200);
         expect(res.body.users.length).toBe(2);
         expect(res.body.users[0].username).toBe('john_doe');
@@ -32,10 +30,7 @@ describe('User Controller Tests with Sequelize', () => {
     });
 
     test('GET /api/v1/users - Should return an empty array if no users exist', async () => {
-        await User.destroy({ where: {} });
-
         const res = await request(app).get('/api/v1/users');
-
         expect(res.statusCode).toBe(200);
         expect(res.body.users).toEqual([]);
     });
@@ -54,8 +49,8 @@ describe('User Controller Tests with Sequelize', () => {
             .send(newUser);
 
         expect(res.statusCode).toBe(201);
-        expect(res.body.username).toBe('mike_doe');
-        expect(res.body.email).toBe('mike@example.com');
+        expect(res.body.user.username).toBe('mike_doe');
+        expect(res.body.user.email).toBe('mike@example.com');
     });
 
     test('GET /api/v1/users/:id - Should return 404 if user is not found', async () => {
@@ -65,7 +60,6 @@ describe('User Controller Tests with Sequelize', () => {
     });
 
     test('DELETE /api/v1/users/:id - Should delete the user if they exist', async () => {
-
         const user = await User.create({
             userID: '4',
             username: 'delete_me',
@@ -74,16 +68,12 @@ describe('User Controller Tests with Sequelize', () => {
             wallet: 50.0,
         });
 
-
-        const res = await request(app).delete(`/api/v1/users/4`);
-
-
-        expect(res.statusCode).toBe(200); // Expect successful deletion
+        const res = await request(app).delete(`/api/v1/users/${user.userID}`);
+        expect(res.statusCode).toBe(200);
         expect(res.body.message).toBe('User deleted successfully');
     });
 
     test('PUT /api/v1/users/:id - Should update user information', async () => {
-
         const user = await User.create({
             userID: '5',
             username: 'update_me',
@@ -91,7 +81,6 @@ describe('User Controller Tests with Sequelize', () => {
             email: 'update@example.com',
             wallet: 75.0,
         });
-
 
         const updatedData = {
             email: 'updated@example.com',
@@ -101,10 +90,8 @@ describe('User Controller Tests with Sequelize', () => {
             .put(`/api/v1/users/${user.userID}`)
             .send(updatedData);
 
-
         expect(res.statusCode).toBe(200);
-        expect(res.body.email).toBe('updated@example.com'); // Ensure email is updated
+        expect(res.body.user.email).toBe('updated@example.com');
     });
-
 
 });
