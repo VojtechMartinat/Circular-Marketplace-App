@@ -51,7 +51,7 @@ const getPhoto = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const updatePhoto = asyncErrorWrapper(async (req,res,next) =>{
     const {id:photoID} = req.params
-    const photo = Photo.update(req.body,{
+    const photo = await Photo.update(req.body,{
         where: {
             photoID: photoID
         }
@@ -71,7 +71,7 @@ const updatePhoto = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const deletePhoto = asyncErrorWrapper(async (req,res,next) =>{
     const {id:photoID} = req.params
-    const photo = Photo.delete({
+    const photo = await Photo.destroy({
         where:{
             photoID:photoID
         }

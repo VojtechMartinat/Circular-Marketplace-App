@@ -9,7 +9,7 @@ const Article = require('../models/Article')
  * @param res Response sent to the client containing data about all articles
  * */
 const getAllArticles = asyncErrorWrapper(async (req,res) =>{
-    const article = Article.findAll()
+    const article = await Article.findAll()
     res.status(200).json({article})
 })
 
@@ -20,7 +20,7 @@ const getAllArticles = asyncErrorWrapper(async (req,res) =>{
  * @param res Response sent to the client containing new article data
  * */
 const createArticle= asyncErrorWrapper(async (req,res) =>{
-    const article = Article.create(req.body)
+    const article = await Article.create(req.body)
     res.status(201).json({article: article})
 })
 
@@ -32,7 +32,7 @@ const createArticle= asyncErrorWrapper(async (req,res) =>{
  * */
 const getArticle = asyncErrorWrapper(async (req,res,next) =>{
     const {id:articleID} = req.params
-    const article = Article.findOne({
+    const article = await Article.findOne({
         where:{
             articleID: articleID
         }
@@ -51,7 +51,7 @@ const getArticle = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const updateArticle = asyncErrorWrapper(async (req,res,next) =>{
     const {id:articleID} = req.params
-    const article = Article.update(req.body,{
+    const article = await Article.update(req.body,{
         where: {
             articleID: articleID
         }
@@ -71,7 +71,7 @@ const updateArticle = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const deleteArticle = asyncErrorWrapper(async (req,res,next) =>{
     const {id:articleID} = req.params
-    const article = Article.delete({
+    const article = await Article.destroy({
         where:{
             articleID:articleID
         }

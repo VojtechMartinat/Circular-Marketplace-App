@@ -9,7 +9,7 @@ const Wishlist = require('../models/Wishlist')
  * @param res Response sent to the client containing data about all wishlists
  * */
 const getAllWishlists = asyncErrorWrapper(async (req,res) =>{
-    const wishlist = Wishlist.findAll()
+    const wishlist = await Wishlist.findAll()
     res.status(200).json({wishlist})
 })
 
@@ -20,7 +20,7 @@ const getAllWishlists = asyncErrorWrapper(async (req,res) =>{
  * @param res Response sent to the client containing new wishlist data
  * */
 const createWishlist= asyncErrorWrapper(async (req,res) =>{
-    const wishlist = Wishlist.create(req.body)
+    const wishlist = await Wishlist.create(req.body)
     res.status(201).json({wishlist: wishlist})
 })
 
@@ -32,7 +32,7 @@ const createWishlist= asyncErrorWrapper(async (req,res) =>{
  * */
 const getWishlist = asyncErrorWrapper(async (req,res,next) =>{
     const {id:wishlistID} = req.params
-    const wishlist = Wishlist.findOne({
+    const wishlist = await Wishlist.findOne({
         where:{
             wishlistID: wishlistID
         }
@@ -51,7 +51,7 @@ const getWishlist = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const updateWishlist = asyncErrorWrapper(async (req,res,next) =>{
     const {id:wishlistID} = req.params
-    const wishlist = Wishlist.update(req.body,{
+    const wishlist = await Wishlist.update(req.body,{
         where: {
             wishlistID: wishlistID
         }
@@ -71,7 +71,7 @@ const updateWishlist = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const deleteWishlist = asyncErrorWrapper(async (req,res,next) =>{
     const {id:wishlistID} = req.params
-    const wishlist = Wishlist.delete({
+    const wishlist = await Wishlist.destroy({
         where:{
             wishlistID:wishlistID
         }

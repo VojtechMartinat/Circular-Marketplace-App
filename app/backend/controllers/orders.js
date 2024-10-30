@@ -20,7 +20,7 @@ const getAllOrders = asyncErrorWrapper(async (req,res) =>{
  * @param res Response sent to the client containing new order data
  * */
 const createOrder= asyncErrorWrapper(async (req,res) =>{
-    const order = Order.create(req.body)
+    const order = await Order.create(req.body)
     res.status(201).json({order: order})
 })
 
@@ -32,7 +32,7 @@ const createOrder= asyncErrorWrapper(async (req,res) =>{
  * */
 const getOrder = asyncErrorWrapper(async (req,res,next) =>{
     const {id:orderID} = req.params
-    const order = Order.findOne({
+    const order = await Order.findOne({
         where:{
             orderID: orderID
         }
@@ -51,7 +51,7 @@ const getOrder = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const updateOrder = asyncErrorWrapper(async (req,res,next) =>{
     const {id:orderID} = req.params
-    const order = Order.update(req.body,{
+    const order = await Order.update(req.body,{
         where: {
             orderID: orderID
         }
@@ -71,7 +71,7 @@ const updateOrder = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const deleteOrder = asyncErrorWrapper(async (req,res,next) =>{
     const {id:orderID} = req.params
-    const order = Order.delete({
+    const order = await Order.destroy({
         where:{
             orderID:orderID
         }
