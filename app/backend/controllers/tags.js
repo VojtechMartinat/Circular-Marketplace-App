@@ -27,7 +27,7 @@ const createTag= asyncErrorWrapper(async (req,res) =>{
 
 /**
  * * Get a single tag from the database
- * @param req Request from the client (req.body should contain a valid tagID)
+ * @param req Request from the client (req.params should contain a valid tagID)
  * @param res Response sent to the client containing tag data
  * */
 const getTag = asyncErrorWrapper(async (req,res,next) =>{
@@ -46,7 +46,7 @@ const getTag = asyncErrorWrapper(async (req,res,next) =>{
 
 /**
  * * Update tag in a database
- * @param req Request from the client (req.body should contain a valid tagID and new tag data)
+ * @param req Request from the client (req.params should contain a valid tagID and req.body should contain new tag data)
  * @param res Response sent to the client containing tag data
  * */
 const updateTag = asyncErrorWrapper(async (req,res,next) =>{
@@ -66,7 +66,7 @@ const updateTag = asyncErrorWrapper(async (req,res,next) =>{
 /**
  * * Delete a tag from a database
  * ! Warning! This will actually delete a tag from a database
- * @param req Request from the client (req.body should contain a valid tagID)
+ * @param req Request from the client (req.params should contain a valid tagID)
  * @param res Response sent to the client containing tag data
  * */
 const deleteTag = asyncErrorWrapper(async (req,res,next) =>{

@@ -27,7 +27,7 @@ const createWishlist= asyncErrorWrapper(async (req,res) =>{
 
 /**
  * * Get a single wishlist from the database
- * @param req Request from the client (req.body should contain a valid wishlistID)
+ * @param req Request from the client (req.params should contain a valid wishlistID)
  * @param res Response sent to the client containing wishlist data
  * */
 const getWishlist = asyncErrorWrapper(async (req,res,next) =>{
@@ -46,7 +46,7 @@ const getWishlist = asyncErrorWrapper(async (req,res,next) =>{
 
 /**
  * * Update wishlist in a database
- * @param req Request from the client (req.body should contain a valid wishlistID and new wishlist data)
+ * @param req Request from the client (req.params should contain a valid wishlistID and req.body should contain new wishlist data)
  * @param res Response sent to the client containing wishlist data
  * */
 const updateWishlist = asyncErrorWrapper(async (req,res,next) =>{
@@ -66,7 +66,7 @@ const updateWishlist = asyncErrorWrapper(async (req,res,next) =>{
 /**
  * * Delete a wishlist from a database
  * ! Warning! This will actually delete a wishlist from a database
- * @param req Request from the client (req.body should contain a valid wishlistID)
+ * @param req Request from the client (req.params should contain a valid wishlistID)
  * @param res Response sent to the client containing wishlist data
  * */
 const deleteWishlist = asyncErrorWrapper(async (req,res,next) =>{

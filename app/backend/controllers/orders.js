@@ -27,7 +27,7 @@ const createOrder= asyncErrorWrapper(async (req,res) =>{
 
 /**
  * * Get a single order from the database
- * @param req Request from the client (req.body should contain a valid orderID)
+ * @param req Request from the client (req.params should contain a valid orderID)
  * @param res Response sent to the client containing order data
  * */
 const getOrder = asyncErrorWrapper(async (req,res,next) =>{
@@ -46,7 +46,7 @@ const getOrder = asyncErrorWrapper(async (req,res,next) =>{
 
 /**
  * * Update order in a database
- * @param req Request from the client (req.body should contain a valid orderID and new order data)
+ * @param req Request from the client (req.params should contain a valid orderID and req.body should contain new order data)
  * @param res Response sent to the client containing order data
  * */
 const updateOrder = asyncErrorWrapper(async (req,res,next) =>{
@@ -66,7 +66,7 @@ const updateOrder = asyncErrorWrapper(async (req,res,next) =>{
 /**
  * * Delete a order from a database
  * ! Warning! This will actually delete a order from a database
- * @param req Request from the client (req.body should contain a valid orderID)
+ * @param req Request from the client (req.params should contain a valid orderID)
  * @param res Response sent to the client containing order data
  * */
 const deleteOrder = asyncErrorWrapper(async (req,res,next) =>{
