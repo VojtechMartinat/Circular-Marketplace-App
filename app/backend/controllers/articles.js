@@ -1,6 +1,7 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
 const Article = require('../models/Article')
+const Photo = require("../models/Photo");
 
 
 /**
@@ -82,6 +83,21 @@ const deleteArticle = asyncErrorWrapper(async (req,res,next) =>{
     res.status(200).json({article})
 })
 
+
+const articlePhotos = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:articleID} = req.params
+    const photos = await Photo.findAll({
+        where: {
+            articleID:articleID
+        }
+    });
+    if (!photos){
+        next(new APIError(`No photos with article id : ${articleID}`),404)
+    }
+    res.status(200).json({photos})
+
+})
+
 module.exports = {
-    getAllArticles,createArticle,getArticle,updateArticle,deleteArticle
+    getAllArticles,createArticle,getArticle,updateArticle,deleteArticle, articlePhotos
 }
