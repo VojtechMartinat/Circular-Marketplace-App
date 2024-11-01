@@ -8,7 +8,7 @@ class Wishlist extends Model {}
 Wishlist.init(
     {
         userID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             allowNull: false,
             references: {
                 model: User,
@@ -16,7 +16,7 @@ Wishlist.init(
             },
         },
         articleID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             allowNull: true,
             references: {
                 model: Article,
