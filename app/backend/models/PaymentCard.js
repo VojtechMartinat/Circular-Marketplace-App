@@ -1,45 +1,42 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const User = require('./User');
-const sequelize = require('../database/connect')
+const { DataTypes, Model } = require('sequelize');
 
-class PaymentCard extends Model {}
+// Export a function that takes the sequelize instance and returns the model
+module.exports = (sequelize) => {
+    class PaymentCard extends Model {}
 
-PaymentCard.init(
-    {
-        paymentMethodID: {
-            type: DataTypes.BIGINT,
-            primaryKey: true,
-            autoIncrement: true,
-        },
-        userID: {
-            type: DataTypes.BIGINT,
-            allowNull: false,
-            references: {
-                model: User,
-                key: 'userID',
+    PaymentCard.init(
+        {
+            paymentMethodID: {
+                type: DataTypes.BIGINT,
+                primaryKey: true,
+                autoIncrement: true,
+            },
+            userID: {
+                type: DataTypes.BIGINT,
+                allowNull: false,
+                references: {
+                    model: 'Users', // Use the name of the model as defined in the User model
+                    key: 'userID',
+                },
+            },
+            cardHolder: {
+                type: DataTypes.STRING,
+            },
+            sortCode: {
+                type: DataTypes.INTEGER,
+            },
+            cardNumber: {
+                type: DataTypes.STRING, // Change to STRING for card numbers to accommodate leading zeros
+            },
+            expiryDate: {
+                type: DataTypes.DATE,
             },
         },
-        cardHolder: {
-            type: DataTypes.STRING,
-        },
-        sortCode: {
-            type: DataTypes.INTEGER,
-        },
-        cardNumber: {
-            type: DataTypes.INTEGER,
-        },
-        ExpiryDate: {
-            type: DataTypes.DATE,
-        },
+        {
+            sequelize,
+            modelName: 'PaymentCard',
+        }
+    );
 
-    },
-    {
-        sequelize,
-        modelName: 'PaymentCard',
-    },
-);
-
-
-
-
-module.exports = PaymentCard;
+    return PaymentCard; // Return the defined model
+};

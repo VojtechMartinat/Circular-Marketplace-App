@@ -1,26 +1,27 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = require('../database/connect')
+// models/Tag.js
+const { DataTypes, Model } = require('sequelize');
 
-class Tag extends Model {}
+module.exports = (sequelize) => {
+    class Tag extends Model {}
 
-Tag.init(
-    {
-       tagID: {
-           type: DataTypes.BIGINT,
-           allowNull: false,
-           primaryKey: true,
-           autoIncrement: true,
-       },
-       tagTitle: {
-           type: DataTypes.STRING,
-           allowNull: false,
-       },
-    },
-    {
-        sequelize,
-        modelName: 'Tag',
-    },
-);
+    Tag.init(
+        {
+            tagID: {
+                type: DataTypes.BIGINT,
+                allowNull: false,
+                primaryKey: true,
+                autoIncrement: true,
+            },
+            tagTitle: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+        },
+        {
+            sequelize,
+            modelName: 'Tag',
+        }
+    );
 
-
-module.exports = Tag;
+    return Tag; // Return the defined model
+};
