@@ -4,35 +4,38 @@ const sequelize = require('../database/connect'); // Make sure this is the corre
 const User = require('./User'); // Import User model
 const Article = require('./Article'); // Import Article model
 
-class Wishlist extends Model {}
+module.exports = (sequelize) => {
+    class Wishlist extends Model {
+    }
 
-Wishlist.init(
-    {
-        userID: {
-            type: DataTypes.BIGINT,
-            allowNull: false,
-            references: {
-                model: User,
-                key: 'userID',
+    Wishlist.init(
+        {
+            userID: {
+                type: DataTypes.BIGINT,
+                allowNull: false,
+                references: {
+                    model: User,
+                    key: 'userID',
+                },
+            },
+            articleID: {
+                type: DataTypes.BIGINT,
+                allowNull: true,
+                references: {
+                    model: Article,
+                    key: 'articleID',
+                },
+            },
+            totalPrice: {
+                type: DataTypes.DOUBLE,
+                allowNull: true,
             },
         },
-        articleID: {
-            type: DataTypes.BIGINT,
-            allowNull: true,
-            references: {
-                model: Article,
-                key: 'articleID',
-            },
+        {
+            sequelize,
+            modelName: 'Wishlist',
         },
-        totalPrice: {
-            type: DataTypes.DOUBLE,
-            allowNull: true,
-        },
-    },
-    {
-        sequelize,
-        modelName: 'Wishlist',
-    },
-);
+    );
 
-module.exports = Wishlist; // Ensure the model is exported
+    return Wishlist; // Ensure the model is exported
+};
