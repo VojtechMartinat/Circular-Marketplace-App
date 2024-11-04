@@ -27,7 +27,7 @@ const createCard= asyncErrorWrapper(async (req,res) =>{
 
 /**
  * * Get a single card from the database
- * @param req Request from the client (req.body should contain a valid cardID)
+ * @param req Request from the client (req.params should contain a valid cardID)
  * @param res Response sent to the client containing card data
  * */
 const getCard = asyncErrorWrapper(async (req,res,next) =>{
@@ -46,7 +46,7 @@ const getCard = asyncErrorWrapper(async (req,res,next) =>{
 
 /**
  * * Update card in a database
- * @param req Request from the client (req.body should contain a valid cardID and new card data)
+ * @param req Request from the client (req.params should contain a valid cardID and req.body should contain new card data)
  * @param res Response sent to the client containing card data
  * */
 const updateCard = asyncErrorWrapper(async (req,res,next) =>{
@@ -66,7 +66,7 @@ const updateCard = asyncErrorWrapper(async (req,res,next) =>{
 /**
  * * Delete a card from a database
  * ! Warning! This will actually delete a card from a database
- * @param req Request from the client (req.body should contain a valid cardID)
+ * @param req Request from the client (req.params should contain a valid cardID)
  * @param res Response sent to the client containing card data
  * */
 const deleteCard = asyncErrorWrapper(async (req,res,next) =>{
