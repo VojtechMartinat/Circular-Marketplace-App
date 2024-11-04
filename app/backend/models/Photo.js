@@ -7,18 +7,18 @@ class Photo extends Model {}
 Photo.init(
     {
         photoID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             allowNull: false,
             unique: true,
             primaryKey: true,
-            autoIncrement: true,
+            defaultValue : DataTypes.UUIDV4
         },
         image: {
             type: DataTypes.BLOB,
             allowNull: false,
         },
         articleID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             allowNull: false,
             references: {
                 model: Article,

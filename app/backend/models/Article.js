@@ -9,13 +9,13 @@ class Article extends Model {}
 Article.init(
     {
         articleID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             allowNull: false,
             primaryKey: true,
-            autoIncrement: true,
+            defaultValue : DataTypes.UUIDV4
         },
         userID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             allowNull: false,
             references: {
                 model: User,
@@ -23,7 +23,7 @@ Article.init(
             },
         },
         orderID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             allowNull: true,
             references: {
                 model: Order,

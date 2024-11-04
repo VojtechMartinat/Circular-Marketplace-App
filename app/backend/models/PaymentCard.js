@@ -7,12 +7,12 @@ class PaymentCard extends Model {}
 PaymentCard.init(
     {
         paymentMethodID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             primaryKey: true,
-            autoIncrement: true,
+            defaultValue : DataTypes.UUIDV4
         },
         userID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             allowNull: false,
             references: {
                 model: User,

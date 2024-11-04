@@ -8,7 +8,7 @@ class Article_Tag extends Model {}
 Article_Tag.init(
     {
         tagID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             allowNull: false,
             references: {
                 model: Tag,
@@ -16,7 +16,7 @@ Article_Tag.init(
             },
         },
         articleID: {
-            type: DataTypes.BIGINT,
+            type: DataTypes.UUID,
             allowNull: false,
             references: {
                 model: Article,
