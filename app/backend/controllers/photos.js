@@ -2,7 +2,6 @@ const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
 const Photo = require('../models/Photo')
 const Tags = require('../models/Tag')
-const {Tag} = require("../__tests__/Setup");
 const {where} = require("sequelize");
 
 
