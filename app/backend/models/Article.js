@@ -1,17 +1,16 @@
-// models/Order.js
+
 const { DataTypes, Model } = require('sequelize');
 const User = require('./User');
-const PaymentCard = require('./PaymentCard');
+const Order = require('./Order');
 
 module.exports = (sequelize) => {
-    class Order extends Model {}
+    class Article extends Model {}
 
-    Order.init(
+    Article.init(
         {
-            orderID: {
+            articleID: {
                 type: DataTypes.BIGINT,
                 allowNull: false,
-                unique: true,
                 primaryKey: true,
                 autoIncrement: true,
             },
@@ -21,35 +20,40 @@ module.exports = (sequelize) => {
                 references: {
                     model: User,
                     key: 'userID',
+                }
                 },
-            },
-            paymentMethodID: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
-                references: {
-                    model: PaymentCard,
-                    key: 'paymentMethodID',
+                orderID: {
+                    type: DataTypes.BIGINT,
+                    allowNull: true,
+                    references: {
+                        model: Order,
+                        key: 'orderID',
+                    }
                 },
-            },
-            dateOfPurchase: {
-                type: DataTypes.DATE,
-                allowNull: false,
-            },
-            totalPrice: {
-                type: DataTypes.DOUBLE,
-            },
-            collectionMethod: {
-                type: DataTypes.ENUM('delivery', 'collection'),
-            },
-            orderStatus: {
-                type: DataTypes.ENUM('purchased', 'shipped', 'collected'),
-            },
-        },
-        {
-            sequelize,
-            modelName: 'Order',
-        }
-    );
+                articleTitle: {
+                    type: DataTypes.STRING,
+                },
+                description: {
+                    type: DataTypes.STRING,
+                },
+                price: {
+                    type: DataTypes.DOUBLE,
+                    allowNull: false,
+                },
+                dateAdded: {
+                    type: DataTypes.DATE,
+                    allowNull: false,
+                },
+                state: {
+                    type: DataTypes.ENUM('uploaded', 'sold', 'archived', 'collected')
+                },
 
-    return Order; // Return the defined model
+            },
+        {
+                sequelize,
+                modelName: 'Article',
+            }
+);
+
+    return Article; // Return the defined model
 };
