@@ -1,37 +1,40 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const User = require('./User');
-const Article = require('./Article');
-const sequelize = require('../database/connect')
+// models/Wishlist.js
+const { DataTypes, Model } = require('sequelize');
+const sequelize = require('../database/connect'); // Make sure this is the correct path
+const User = require('./User'); // Import User model
+const Article = require('./Article'); // Import Article model
 
-class Wishlist extends Model {}
+module.exports = (sequelize) => {
+    class Wishlist extends Model {
+    }
 
-Wishlist.init(
-    {
-        userID: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: User,
-                key: 'userID',
+    Wishlist.init(
+        {
+            userID: {
+                type: DataTypes.UUID,
+                allowNull: false,
+                references: {
+                    model: User,
+                    key: 'userID',
+                },
+            },
+            articleID: {
+                type: DataTypes.UUID,
+                allowNull: true,
+                references: {
+                    model: Article,
+                    key: 'articleID',
+                },
+            },
+            totalPrice: {
+                type: DataTypes.DOUBLE,
             },
         },
-        articleID: {
-            type: DataTypes.UUID,
-            allowNull: true,
-            references: {
-                model: Article,
-                key: 'articleID',
-            },
+        {
+            sequelize,
+            modelName: 'Wishlist',
         },
-        totalPrice: {
-            type: DataTypes.DOUBLE,
-        }
-    },
-    {
-        sequelize,
-        modelName: 'Wishlist',
-    },
-);
+    );
 
-
-module.exports = Wishlist;
+    return Wishlist; // Ensure the model is exported
+};
