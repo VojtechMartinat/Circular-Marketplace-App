@@ -1,0 +1,35 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - dev  # Trigger the workflow only on pushes to the dev branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: dev  # Checkout the dev branch
+
+      - name: Install SSH Key
+        # Set up SSH key for deployment
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Deploy to EC2
+        env:
+          HOST: 34.251.202.114
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@$HOST << 'EOF'
+            cd /home/ec2-user/  # Navigate to your app's directory on the EC2 instance
+            git fetch origin dev  # Fetch the latest changes on the dev branch
+            git reset --hard origin/dev  # Reset to the latest commit on dev branch
+            cd app/backend
+            npm install  # Install dependencies
+            pm2 stop server.js || true  # Stop the server if it’s running, ignoring errors if it’s not
+            pm2 start server.js  # Start the server from app/backend/server.js
+          EOF
