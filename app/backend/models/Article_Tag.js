@@ -8,7 +8,7 @@ module.exports = (sequelize) => {
     Article_Tag.init(
         {
             tagID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: Tag,
@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
                 },
             },
             articleID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: Article,

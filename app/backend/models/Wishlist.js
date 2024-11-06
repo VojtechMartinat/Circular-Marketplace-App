@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
     Wishlist.init(
         {
             userID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: User,
@@ -19,7 +19,7 @@ module.exports = (sequelize) => {
                 },
             },
             articleID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: true,
                 references: {
                     model: Article,
@@ -28,7 +28,6 @@ module.exports = (sequelize) => {
             },
             totalPrice: {
                 type: DataTypes.DOUBLE,
-                allowNull: true,
             },
         },
         {

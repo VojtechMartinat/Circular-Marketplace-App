@@ -7,10 +7,10 @@ module.exports = (sequelize) => {
     Tag.init(
         {
             tagID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: false,
                 primaryKey: true,
-                autoIncrement: true,
+                defaultValue: DataTypes.UUIDV4,
             },
             tagTitle: {
                 type: DataTypes.STRING,

@@ -8,14 +8,14 @@ module.exports = (sequelize) => {
     Order.init(
         {
             orderID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: false,
                 unique: true,
                 primaryKey: true,
-                autoIncrement: true,
+                defaultValue : DataTypes.UUIDV4,
             },
             userID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: User,
@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
                 },
             },
             paymentMethodID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: PaymentCard,

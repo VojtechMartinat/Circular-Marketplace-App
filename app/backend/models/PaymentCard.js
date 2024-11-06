@@ -1,4 +1,5 @@
 const { DataTypes, Model } = require('sequelize');
+const User = require('./User');
 
 // Export a function that takes the sequelize instance and returns the model
 module.exports = (sequelize) => {
@@ -7,15 +8,15 @@ module.exports = (sequelize) => {
     PaymentCard.init(
         {
             paymentMethodID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 primaryKey: true,
-                autoIncrement: true,
+                defaultValue: DataTypes.UUIDV4,
             },
             userID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
-                    model: 'Users', // Use the name of the model as defined in the User model
+                    model: User,
                     key: 'userID',
                 },
             },
@@ -26,7 +27,7 @@ module.exports = (sequelize) => {
                 type: DataTypes.INTEGER,
             },
             cardNumber: {
-                type: DataTypes.STRING, // Change to STRING for card numbers to accommodate leading zeros
+                type: DataTypes.INTEGER,
             },
             expiryDate: {
                 type: DataTypes.DATE,

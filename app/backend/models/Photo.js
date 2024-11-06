@@ -1,4 +1,5 @@
 const { DataTypes, Model } = require('sequelize');
+const Article = require('./Article');
 
 module.exports = (sequelize) => {
     class Photo extends Model {}
@@ -6,22 +7,21 @@ module.exports = (sequelize) => {
     Photo.init(
         {
             photoID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: false,
                 unique: true,
                 primaryKey: true,
-                autoIncrement: true,
+                defaultValue : DataTypes.UUIDV4,
             },
             image: {
                 type: DataTypes.BLOB,
                 allowNull: false,
             },
             articleID: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
-                    // Reference the Article model later
-                    model: 'Articles', // Use the model name as a string
+                    model: Article,
                     key: 'articleID',
                 }
             },
