@@ -36,23 +36,19 @@ async function getArticle(articleID) {
         headers: {
             'Content-Type': 'application/json',
         },
-    };
-
+    }
     try {
         const response = await fetch(`${userAPI}articles/${articleID}`, requestOptions);
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
         return await response.json();
     } catch (error) {
         console.error('Error:', error);
         throw error;
     }
 }
-
-
 module.exports = {createArticle,getArticle}
 
 

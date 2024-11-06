@@ -67,6 +67,5 @@ async function getUserOrders(userID){
     }
 }
 
-x = getUserOrders("7c8f5afa-a0c6-45b1-9ec0-644e8a8ccfc1").then(x => console.log(x))
 
 module.exports = {createUser,getUserArticles,}
