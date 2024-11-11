@@ -9,7 +9,7 @@ const photos = require('./routes/Photo')
 const tags = require('./routes/Tag')
 const wishlists = require('./routes/Wishlist')
 const setupAssociations = require('./models/associations');
-
+const cors = require('cors');
 connection.sync().then(r => console.log("Success")).catch((error) => {console.log(error)})
 setupAssociations();
 
@@ -19,7 +19,7 @@ app.use(express.json())
 app.get('/hello', (req, res) => {
     res.send('Circular MarketPlace App');
 });
-
+app.use(cors());
 app.use('/api/v1/articles', articles);
 app.use('/api/v1/users', users);
 app.use('/api/v1/orders', orders);
