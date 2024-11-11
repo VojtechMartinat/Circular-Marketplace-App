@@ -27,28 +27,20 @@ async function createArticle(articleData) {
     }
 }
 
-async function getArticle(articleID) {
-    if (articleID == null){
-        throw new Error("Article data missing!")
-    }
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    }
+async function getArticle() {
+    const userAPI = 'http://34.251.202.114:8080/api/v1/';
     try {
-        const response = await fetch(`${userAPI}articles/${articleID}`, requestOptions);
+        const response = await fetch(`${userAPI}articles`);
+        const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+        if (!data) {
+            throw new Error("No articles found or data missing!");
         }
-        return await response.json();
+
+        return data;  // Return articles here
     } catch (error) {
-        console.error('Error:', error);
-        throw error;
+        console.error('Error fetching articles:', error);
+        throw error;  // Re-throw the error to handle it in the calling function
     }
 }
-module.exports = {createArticle,getArticle}
-
-
+module.exports = {createArticle, getArticle}
