@@ -1,7 +1,6 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const Article = require('../models/Article')
-const Photo = require("../models/Photo");
+const {Article, Photo} = require('../models/initialise')
 
 
 /**

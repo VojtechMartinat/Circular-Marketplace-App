@@ -44,4 +44,3 @@ async function getArticle() {
     }
 }
 module.exports = {createArticle, getArticle}
-

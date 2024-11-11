@@ -1,8 +1,16 @@
-const User = require('./User');
-const Order = require('./Order');
-const Article = require('./Article');
-const Photo = require('./Photo');
-const PaymentCard = require('./PaymentCard');
+const sequelize = require('../database/connect'); // Ensure this points to your database connection
+const defineUserModel = require('./User');
+const defineOrderModel = require('./Order');
+const defineArticleModel = require('./Article');
+const definePhotoModel = require('./Photo');
+const definePaymentCardModel = require('./PaymentCard');
+
+// Instantiate each model with sequelize
+const User = defineUserModel(sequelize);
+const Order = defineOrderModel(sequelize);
+const Article = defineArticleModel(sequelize);
+const Photo = definePhotoModel(sequelize);
+const PaymentCard = definePaymentCardModel(sequelize);
 
 // Define associations here
 Order.hasMany(Article, { foreignKey: 'orderID' });

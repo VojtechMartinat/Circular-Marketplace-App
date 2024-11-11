@@ -1,10 +1,10 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = require('../database/connect')
-const User = require('./User');
-const Tag = require('./Tag');
-const Order = require("./Order");
 
-class Article extends Model {}
+const { DataTypes, Model } = require('sequelize');
+const User = require('./User');
+const Order = require('./Order');
+
+module.exports = (sequelize) => {
+    class Article extends Model {}
 
 Article.init(
     {
@@ -54,5 +54,5 @@ Article.init(
     },
 );
 
-
-module.exports = Article;
+    return Article; // Return the defined model
+};

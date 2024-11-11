@@ -1,7 +1,7 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const User = require('../models/User')
-const {Order, Article} = require("../__tests__/Setup");
+const {User} = require('../models/initialise')
+
 
 
 /**
