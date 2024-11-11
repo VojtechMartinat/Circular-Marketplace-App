@@ -1,7 +1,6 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const Order = require('../models/Order')
-const Article = require('../models/Article')
+const {Order, Article} = require('../models/initialise')
 
 
 /**

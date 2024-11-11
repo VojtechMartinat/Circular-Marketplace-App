@@ -1,8 +1,6 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const Photo = require('../models/Photo')
-const Tags = require('../models/Tag')
-const {where} = require("sequelize");
+const {Photo, Tag} = require('../models/initialise')
 
 
 /**
@@ -93,7 +91,7 @@ const deletePhoto = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const photosTags =  asyncErrorWrapper(async (req,res,next) =>{
     const {id:photoID} = req.params
-    const tags = await Tags.findAll({
+    const tags = await Tag.findAll({
         where:{
             photoID: photoID
         }
