@@ -1,20 +1,28 @@
-import React, {useEffect, useState} from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createArticle } from '../services/articleService';
+import { useAuth } from '../Contexts/AuthContext';
 import Axios from "axios";
+
 const CreateArticlePage = () => {
     const { id } = useParams();
     const [articleTitle, setArticleTitle] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
+
     const [image, setImage] = useState(null);
+
     const navigate = useNavigate();
 
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setImage(file);
+    const { isLoggedIn, user } = useAuth();
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate('/login'); // Redirect to login page
         }
-    };
+
+    }, [isLoggedIn, navigate]);
     const [articleID, setArticleID] = useState("")
     const handleSubmit = (e) => {
         e.preventDefault()
