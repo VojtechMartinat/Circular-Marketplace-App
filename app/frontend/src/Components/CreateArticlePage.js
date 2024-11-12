@@ -37,7 +37,7 @@ const CreateArticlePage = () => {
         articleData.append('price', parseFloat(price));
         articleData.append('dateAdded', "02/03/2004");
         articleData.append('state','uploaded')
-        Axios.post('http://localhost:8080/api/v1/articles', articleData, {
+        Axios.post('http://34.251.202.114:8080/api/v1/articles', articleData, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -53,7 +53,7 @@ const CreateArticlePage = () => {
             photoData.append('articleID', res.data.article.articleID);
             photoData.append('image', image);
 
-            Axios.post('http://localhost:8080/api/v1/photos', photoData, {
+            Axios.post('http://34.251.202.114:8080/api/v1/photos', photoData, {
                 headers: {
                     'Content-Header': 'value',
                 },
