@@ -10,18 +10,10 @@ module.exports = (sequelize) => {
             tagID: {
                 type: DataTypes.UUID,
                 allowNull: false,
-                references: {
-                    model: Tag,
-                    key: 'tagID',
-                },
             },
             articleID: {
                 type: DataTypes.UUID,
                 allowNull: false,
-                references: {
-                    model: Article,
-                    key: 'articleID',
-                },
             },
         },
         {

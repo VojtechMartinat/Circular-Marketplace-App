@@ -15,10 +15,6 @@ module.exports = (sequelize) => {
             userID: {
                 type: DataTypes.UUID,
                 allowNull: false,
-                references: {
-                    model: User,
-                    key: 'userID',
-                },
             },
             cardHolder: {
                 type: DataTypes.STRING,
