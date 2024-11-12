@@ -12,7 +12,6 @@ const CreateArticlePage = () => {
     const { isLoggedIn, user } = useAuth();
 
     useEffect(() => {
-        // If not logged in, redirect to login page with a notification
         if (!isLoggedIn) {
             navigate('/login'); // Redirect to login page
         }
@@ -31,10 +30,10 @@ const CreateArticlePage = () => {
             const articleData = {
                 articleTitle,
                 description,
-                userID: user.userID,  // Make sure userID is available
-                price: parseFloat(price),  // Ensure price is a valid number
-                dateAdded: new Date(),  // Ensure dateAdded is set to a valid date
-                state: 'uploaded',  // Assuming the state is 'uploaded' when creating
+                userID: user.userID,
+                price: parseFloat(price),
+                dateAdded: new Date(),
+                state: 'uploaded',
             };
 
             // Check the article data before sending it to the backend

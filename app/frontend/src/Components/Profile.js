@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from "react-router-dom";
 import { getUserArticles, getUserOrders } from "../services/userService";
+import {deleteArticle } from "../services/articleService";
 
 const Profile = () => {
     const { id } = useParams();
@@ -28,6 +29,17 @@ const Profile = () => {
             }
         });
     }, [id]);
+
+    const handleDeleteArticle = async (articleID) => {
+        try {
+            await deleteArticle(articleID); // Call the service function to delete the article
+            setArticles(prevArticles => prevArticles.filter(article => article.articleID !== articleID)); // Update state
+            alert("Article deleted successfully.");
+        } catch (error) {
+            console.error("Error deleting article:", error);
+            alert("Failed to delete article.");
+        }
+    };
 
     return (
         <div>
@@ -58,6 +70,7 @@ const Profile = () => {
                         </Link>
                         <p>Price: ${article.price}</p>
                         <p>Status: {article.state}</p>
+                        <button onClick={() => handleDeleteArticle(article.articleID)}>Delete Article</button> {/* Delete button */}
                     </div>
                 ))
             ) : (

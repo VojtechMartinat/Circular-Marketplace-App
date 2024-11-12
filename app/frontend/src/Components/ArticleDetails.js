@@ -21,13 +21,12 @@ const ArticleDetails = () => {
             if (response && response.photos && response.photos[0]) {
                 const photoData = response.photos[0].image.data;
 
-                // Convert the Buffer data to a base64 string using FileReader
                 const uint8Array = new Uint8Array(photoData);
                 const blob = new Blob([uint8Array], { type: 'image/png' }); // assuming image is PNG
                 const reader = new FileReader();
 
                 reader.onloadend = () => {
-                    setImageUrl(reader.result); // Base64 URL
+                    setImageUrl(reader.result);
                 };
 
                 reader.readAsDataURL(blob); // This will trigger the onloadend function
@@ -35,7 +34,6 @@ const ArticleDetails = () => {
         });
     }, [id]);
 
-    // If article or imageUrl is not available, show loading
     if (!article) return <div>Loading...</div>;
 
     return (

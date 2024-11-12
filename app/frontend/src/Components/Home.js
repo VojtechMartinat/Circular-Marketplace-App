@@ -11,7 +11,7 @@ const Home = () => {
             .then(response => {
                 console.log('Fetched articles:', response);
                 if (response && response.article) {
-                    setArticles(response.article); // Update with correct structure
+                    setArticles(response.article);
                 } else {
                     console.error('No articles data found');
                 }
@@ -25,7 +25,6 @@ const Home = () => {
         setInputValue(event.target.value);
     };
 
-    // Filter articles based on the search input
     const filteredArticles = articles.filter(article =>
         article.articleTitle.toLowerCase().includes(inputValue.toLowerCase())
     );

@@ -15,7 +15,7 @@ const LoginPage = () => {
 
         try {
             const userData = await loginUser(username, password); // Fetch user data from server
-            login(userData); // Set user in AuthContext
+            login(userData);
 
             navigate('/'); // Redirect to Home page
         } catch (error) {
