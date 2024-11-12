@@ -32,20 +32,20 @@ const Profile = () => {
     return (
         <div>
             <h1>Your Profile</h1>
-            <p>Orders</p>
+            <h2>Orders</h2>
             {orders ? orders.map(order => (
                 <div key={order.orderID}>
-                    <h2>{order.orderID}</h2>
+                    <p>{order.orderID}</p>
                     <p>{order.totalPrice}</p>
                     <p>{order.collectionMethod}</p>
                     <p>{order.orderStatus}</p>
                 </div>
             )) : <p>No orders found</p>}
-            <p>Articles</p>
+            <h2>Articles</h2>
             {articles ? articles.map(article => (
                 <div key={article.articleID}>
                     <Link to={`/articles/${article.articleID}`}>
-                        <h2>{article.articleTitle}</h2>
+                        <p>{article.articleTitle}</p>
                     </Link>
                     <p>Price: ${article.price}</p>
                 </div>
