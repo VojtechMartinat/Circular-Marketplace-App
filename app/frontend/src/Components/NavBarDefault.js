@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext.js';
 
 const NavBarDefault = () => {
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, user } = useAuth();
 
     return (
         <nav>
@@ -11,7 +11,7 @@ const NavBarDefault = () => {
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/create-article">Add Item</Link></li>
                 <li>
-                    <Link to={isLoggedIn ? "/account" : "/login"}>
+                    <Link to={isLoggedIn ? `/profile/${user.userID}` : "/login"}>
                         {isLoggedIn ? "Account" : "Login"}
                     </Link>
                 </li>

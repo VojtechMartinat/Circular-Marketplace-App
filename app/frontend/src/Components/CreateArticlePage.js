@@ -1,27 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createArticle } from '../services/articleService';
-import { uploadPhoto } from '../services/photoService'; // Import the uploadPhoto service
+import { useAuth } from '../Contexts/AuthContext';
 
 const CreateArticlePage = () => {
     const [articleTitle, setArticleTitle] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
-    const [image, setImage] = useState(null); // State for the uploaded image
     const navigate = useNavigate();
 
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setImage(file);
+    const { isLoggedIn, user } = useAuth();
+
+    useEffect(() => {
+        // If not logged in, redirect to login page with a notification
+        if (!isLoggedIn) {
+            alert("You must be logged in to create an article.");
+            navigate('/login'); // Redirect to login page
         }
-    };
+    }, [isLoggedIn, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!articleTitle || !description || !price || !image) {
-            alert("Please fill in all fields and upload an image.");
+        if (!articleTitle || !description || !price || !user?.userID) {
+            alert("Please fill in all fields and make sure you are logged in.");
             return;
         }
 
@@ -30,27 +32,26 @@ const CreateArticlePage = () => {
             const articleData = {
                 articleTitle,
                 description,
-                price: parseFloat(price),
-                dateAdded: new Date(),
-                state: 'uploaded',
+                userID: user.userID,  // Make sure userID is available
+                price: parseFloat(price),  // Ensure price is a valid number
+                dateAdded: new Date(),  // Ensure dateAdded is set to a valid date
+                state: 'uploaded',  // Assuming the state is 'uploaded' when creating
             };
+
+            // Check the article data before sending it to the backend
+            console.log("Article data being sent:", articleData);
 
             const articleResponse = await createArticle(articleData); // Create the article in the DB
 
-            // Upload the photo
-            const photoData = new FormData();
-            photoData.append('image', image);
-            photoData.append('articleID', articleResponse.articleID); // Attach the article ID
-
-            await uploadPhoto(photoData); // Upload the photo and associate with the article
-
-            // Redirect to home or another page
+            alert('Successfully posted article');
+            // Redirect to home or another page after success
             navigate('/');
         } catch (error) {
-            console.error('Error creating article and uploading photo:', error);
-            alert('Failed to create article or upload photo');
+            console.error('Error creating article:', error);
+            alert('Failed to create article');
         }
     };
+
 
     return (
         <div>
