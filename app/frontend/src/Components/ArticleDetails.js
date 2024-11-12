@@ -36,16 +36,19 @@ const ArticleDetails = () => {
     }, [id]);
 
     // If article or imageUrl is not available, show loading
-    if (!article || !imageUrl) return <div>Loading...</div>;
+    if (!article) return <div>Loading...</div>;
 
     return (
         <div>
             <h1>{article.articleTitle}</h1>
-            <img
-                src={imageUrl}
-                alt="Article"
-                onLoad={() => console.log('Image loaded successfully!')}
-            />
+            {imageUrl ?
+                <img
+                    src={imageUrl}
+                    alt="Article"
+                    onLoad={() => console.log('Image loaded successfully!')}
+                />
+                : <p> No photo found</p>
+            }
             <p>{article.description}</p>
             <p>Price: ${article.price}</p>
             <p>Status: {article.state}</p>
