@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getArticle } from '../services/articleService'; // Adjust path as necessary
+import { getArticles } from '../services/articleService'; // Adjust path as necessary
 
 const Home = () => {
     const [articles, setArticles] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
     useEffect(() => {
-        getArticle()
+        getArticles()
             .then(response => {
                 console.log('Fetched articles:', response);
                 if (response && response.article) {
