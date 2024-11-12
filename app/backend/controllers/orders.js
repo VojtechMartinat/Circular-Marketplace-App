@@ -58,7 +58,7 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
 
     for (const articles of req.body.articles) {
         await Article.update(
-            { orderID: order.orderID },
+            { orderID: order.orderID, state:"purchased" },
             {
                 where: {
                     articleID: articles.articleID

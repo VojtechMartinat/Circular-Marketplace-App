@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getArticle, getArticlePhotos } from '../services/articleService'; // Adjust the path as needed
+import { getArticle, getArticlePhotos } from '../services/articleService';
 
 const ArticleDetails = () => {
     const { id } = useParams();
@@ -19,34 +19,29 @@ const ArticleDetails = () => {
         getArticlePhotos(id).then(response => {
             console.log("Article photos response:", response);
             if (response && response.photos && response.photos[0]) {
-                const photoData = response.photos[0].image.data;
-
-                const uint8Array = new Uint8Array(photoData);
-                const blob = new Blob([uint8Array], { type: 'image/png' }); // assuming image is PNG
-                const reader = new FileReader();
-
-                reader.onloadend = () => {
-                    setImageUrl(reader.result);
-                };
-
-                reader.readAsDataURL(blob); // This will trigger the onloadend function
+                const imageData = response.photos[0].image.data; // Assuming this is an array of bytes
+                const base64data = arrayBufferToBase64(imageData);
+                console.log(base64data);
+                setImageUrl(base64data);
             }
         });
     }, [id]);
 
+    const arrayBufferToBase64 = (array) => {
+        let binary = '';
+        for (let i = 0; i < array.length; i++) {
+            binary += String.fromCharCode(array[i]);
+        }
+        return 'data:image/png;base64,' + window.btoa(binary);
+    };
+
+    // If article or imageUrl is not available, show loading
     if (!article) return <div>Loading...</div>;
 
     return (
         <div>
             <h1>{article.articleTitle}</h1>
-            {imageUrl ?
-                <img
-                    src={imageUrl}
-                    alt="Article"
-                    onLoad={() => console.log('Image loaded successfully!')}
-                />
-                : <p> No photo found</p>
-            }
+            <img src={imageUrl} alt={"cat"} />
             <p>{article.description}</p>
             <p>Price: ${article.price}</p>
             <p>Status: {article.state}</p>

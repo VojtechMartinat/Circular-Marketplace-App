@@ -39,7 +39,6 @@ const Home = () => {
                 onChange={handleInputChange}
                 placeholder="Search articles..."
             />
-
             {filteredArticles.length > 0 ? (
                 filteredArticles.map(article => (
                     <div key={article.articleID}>
@@ -52,6 +51,17 @@ const Home = () => {
             ) : (
                 <p>No articles found matching "{inputValue}"</p>
             )}
+            <p>You entered: {inputValue}</p>
+
+            {articles.filter(article => article.state === "uploaded").map(article => (
+                <div key={article.articleID}>
+                    <Link to={`/articles/${article.articleID}`}>
+                        <h2>{article.articleTitle}</h2>
+                    </Link>
+                    <p></p>
+                    <p>Price: ${article.price}</p>
+                </div>
+            ))}
         </div>
     );
 };

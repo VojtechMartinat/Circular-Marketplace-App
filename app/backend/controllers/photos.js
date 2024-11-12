@@ -1,6 +1,7 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
 const {Photo, Tag} = require('../models/initialise')
+const fs = require("fs").promises;
 
 
 /**
@@ -25,8 +26,8 @@ const createPhoto = asyncErrorWrapper(async (req, res) => {
         return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const { articleID } = req.body; // Assuming articleID is part of req.body
-    const image = req.file.path; // `multer` stores the file in `req.file.path`
+    const articleID = req.body.articleID;
+    const image = await fs.readFile(req.file.path);
 
     const photo = await Photo.create({
         image: image,
