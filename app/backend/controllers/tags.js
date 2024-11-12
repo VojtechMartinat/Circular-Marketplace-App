@@ -39,7 +39,7 @@ const getTag = asyncErrorWrapper(async (req,res,next) =>{
         }
     })
     if (!tag){
-        next(new APIError(`No tag with id : ${tagID}`),404)
+        return next(new APIError(`No tag with id : ${tagID}`), 404);
     }
     res.status(200).json({tag})
 })
@@ -50,18 +50,28 @@ const getTag = asyncErrorWrapper(async (req,res,next) =>{
  * @param req Request from the client (req.params should contain a valid tagID and req.body should contain new tag data)
  * @param res Response sent to the client containing tag data
  * */
-const updateTag = asyncErrorWrapper(async (req,res,next) =>{
-    const {id:tagID} = req.params
-    const tag = await Tag.update(req.body,{
+const updateTag = asyncErrorWrapper(async (req, res, next) => {
+    const { id: tagID } = req.params;
+    const [affectedRows] = await Tag.update(req.body, {
         where: {
-            tagID: tagID
-        }
-    })
-    if (!tag){
-        next(new APIError(`No tag with id : ${tagID}`),404)
+            tagID: tagID,
+        },
+    });
+
+    if (affectedRows === 0) {
+        // If no rows were affected, the tag doesn't exist
+        return next(new APIError(`No tag with id : ${tagID}`, 404));
     }
-    res.status(200).json({tag})
-})
+
+    // Retrieve the updated tag from the database
+    const updatedTag = await Tag.findOne({
+        where: {
+            tagID: tagID,
+        },
+    });
+
+    res.status(200).json({ tag: updatedTag });
+});
 
 
 /**
@@ -83,6 +93,7 @@ const deleteTag = asyncErrorWrapper(async (req,res,next) =>{
     res.status(200).json({tag})
 })
 
+
 module.exports = {
-    getAllTags,createTag,getTag,updateTag,deleteTag
+    getAllTags,createTag,getTag,updateTag,deleteTag,
 }

@@ -8,6 +8,7 @@ const paymentcards = require('./routes/PaymentCard')
 const photos = require('./routes/Photo')
 const tags = require('./routes/Tag')
 const wishlists = require('./routes/Wishlist')
+const errorHandler = require('../backend/middleware/errorHandler');  // Import error handler
 const setupAssociations = require('./models/associations');
 const cors = require('cors');
 connection.sync().then(r => console.log("Success")).catch((error) => {console.log(error)})
@@ -27,6 +28,7 @@ app.use('/api/v1/paymentcards', paymentcards);
 app.use('/api/v1/photos', photos);
 app.use('/api/v1/tags', tags);
 app.use('/api/v1/wishlists', wishlists);
+app.use(errorHandler);
 
 const port = 8080;
 app.listen(port, (err) => {
