@@ -1,10 +1,29 @@
 const userAPI = 'http://34.251.202.114:8080/api/v1/'
 
+// services/userService.js
+async function loginUser(username, password) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+    };
+
+    const response = await fetch(`${userAPI}login`, requestOptions);
+
+    if (!response.ok) {
+        throw new Error('Login failed');
+    }
+
+    return await response.json(); // Assuming it returns user data
+}
+
+
 async function createUser(userData) {
-    var data = userData
+    const data = userData;
     if (userData == null){
         throw new Error("Article data missing!")
     }
+
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -68,4 +87,4 @@ async function getUserOrders(userID){
 }
 
 
-module.exports = {createUser,getUserArticles,getUserOrders}
+module.exports = {createUser,getUserArticles,getUserOrders, loginUser}
