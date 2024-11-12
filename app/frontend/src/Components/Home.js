@@ -25,6 +25,11 @@ const Home = () => {
         setInputValue(event.target.value);
     };
 
+    // Filter articles based on the search input
+    const filteredArticles = articles.filter(article =>
+        article.articleTitle.toLowerCase().includes(inputValue.toLowerCase())
+    );
+
     return (
         <div>
             <h1>Welcome to Circular MarketPlace App</h1>
@@ -33,19 +38,21 @@ const Home = () => {
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
-                placeholder="Enter something..."
+                placeholder="Search articles..."
             />
-            <p>You entered: {inputValue}</p>
 
-            {articles.map(article => (
-                <div key={article.articleID}>
-                    <Link to={`/articles/${article.articleID}`}>
-                        <h2>{article.articleTitle}</h2>
-                    </Link>
-                    <p></p>
-                    <p>Price: ${article.price}</p>
-                </div>
-            ))}
+            {filteredArticles.length > 0 ? (
+                filteredArticles.map(article => (
+                    <div key={article.articleID}>
+                        <Link to={`/articles/${article.articleID}`}>
+                            <h2>{article.articleTitle}</h2>
+                        </Link>
+                        <p>Price: ${article.price}</p>
+                    </div>
+                ))
+            ) : (
+                <p>No articles found matching "{inputValue}"</p>
+            )}
         </div>
     );
 };

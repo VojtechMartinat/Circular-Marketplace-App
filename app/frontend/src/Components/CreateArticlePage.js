@@ -14,7 +14,6 @@ const CreateArticlePage = () => {
     useEffect(() => {
         // If not logged in, redirect to login page with a notification
         if (!isLoggedIn) {
-            alert("You must be logged in to create an article.");
             navigate('/login'); // Redirect to login page
         }
     }, [isLoggedIn, navigate]);
