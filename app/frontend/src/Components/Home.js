@@ -37,7 +37,7 @@ const Home = () => {
             />
             <p>You entered: {inputValue}</p>
 
-            {articles.map(article => (
+            {articles.filter(article => article.state === "uploaded").map(article => (
                 <div key={article.articleID}>
                     <Link to={`/articles/${article.articleID}`}>
                         <h2>{article.articleTitle}</h2>

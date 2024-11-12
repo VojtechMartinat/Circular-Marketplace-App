@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
 const connection = require('./database/connect')
 const articles = require('./routes/Articles')
@@ -15,6 +16,8 @@ connection.sync().then(r => console.log("Success")).catch((error) => {console.lo
 //middleware
 app.use(express.json())
 
+app.use(bodyParser.json({limit: "10000mb"}));
+app.use(bodyParser.urlencoded({limit: "10000mb", extended: true, parameterLimit:50000}));
 app.get('/hello', (req, res) => {
     res.send('Circular MarketPlace App');
 });

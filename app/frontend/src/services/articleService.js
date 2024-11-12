@@ -14,13 +14,10 @@ async function createArticle(articleData) {
     };
 
     try {
-        const response = await fetch(`${userAPI}articles`, requestOptions);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        return await response.json();
+        await fetch(`${userAPI}articles`, requestOptions).then((res) => res.json())
+            .then((data) => {
+                return data
+            });
     } catch (error) {
         console.error('Error:', error);
         throw error;
