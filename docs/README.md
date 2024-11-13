@@ -70,17 +70,39 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 | Lukasz Krepa      | [zr23182@bristol.ac.uk](mailto:zr23182@bristol.ac.uk) |
 | Karena Ho         | [iv23220@bristol.ac.uk](mailto:iv23220@bristol.ac.uk) |
 | Vojtech Martinat  | [os23060@bristol.ac.uk](mailto:os23060@bristol.ac.uk) |  
-| Herman Tsoi       | [ju22521@bristol.ac.uk](mailto:ju22521@bristol.ac.uk) |    
+| Herman Tsoi       | [ju22521@bristol.ac.uk](mailto:ju22521@bristol.ac.uk) | 
+| Jagannath Sankar  | [yi23615@bristol.ac.uk](mailto:yi23615@bristol.ac.uk) | 
 
 ## Project Structure
-Main files and directories in dev branch:
-  * Directories:
-    * Tech Stack (Tech Stack Table, Architecture Chart are included)
-    * UI Design (includes a graph provided by our client)
-    * MeetingNotes
-  * Files:
-    * README.md
-    * LICENSE
+.
+└── app
+    ├── backend
+    │   ├── config
+    │   ├── controllers
+    │   ├── database
+    │   ├── errors
+    │   ├── middleware
+    │   ├── models
+    │   ├── routes
+    │   ├── tests
+    │   ├── package-lock.json
+    │   ├── package.json
+    │   └── server.js
+    └── frontend
+        ├── public
+        ├── src
+        │   ├── Components
+        │   ├── Contexts
+        │   ├── services
+        │   ├── App.js
+        │   ├── App.test.js
+        │   ├── index.css
+        │   ├── index.js
+        │   ├── logo.svg
+        │   ├── reportWebVitals.js
+        │   └── setupTests.js
+        ├── package-lock.json
+        └── package.json
 ## Links
 Main Kanban
 
