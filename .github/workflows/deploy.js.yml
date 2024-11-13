@@ -3,8 +3,8 @@ name: Deploy to AWS EC2
 on:
   push:
     branches:
-      - dev  # Trigger the workflow only on pushes to the dev branch
-    workflow_dispatch:
+      - dev  # Existing trigger for dev branch
+      - test  # Add other branches here for testing
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,14 +18,14 @@ jobs:
         # Set up SSH key for deployment
         run: |
           mkdir -p ~/.ssh  # Ensure the .ssh directory exists
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa.pem
+          chmod 600 ~/.ssh/id_rsa.pem
 
       - name: Deploy to EC2
         env:
           HOST: 34.251.202.114
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@$HOST << 'EOF'
+          ssh -i ~/.ssh/id_rsa.pem ec2-user@$HOST << 'EOF'
             cd /home/ec2-user/  # Navigate to your app's directory on the EC2 instance
             git fetch origin dev  # Fetch the latest changes on the dev branch
             git reset --hard origin/dev  # Reset to the latest commit on dev branch
