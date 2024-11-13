@@ -6,10 +6,12 @@ import { useAuth } from '../Contexts/AuthContext';
 import Axios from "axios";
 
 const CreateArticlePage = () => {
-    const { id } = useParams();
     const [articleTitle, setArticleTitle] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
+    const { isLoggedIn, user } = useAuth(); // Access logged-in user data
+
+
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -20,7 +22,6 @@ const CreateArticlePage = () => {
 
     const navigate = useNavigate();
 
-    const { isLoggedIn, user } = useAuth();
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -29,6 +30,7 @@ const CreateArticlePage = () => {
 
     }, [isLoggedIn, navigate]);
     const [articleID, setArticleID] = useState("")
+
     const handleSubmit = (e) => {
         e.preventDefault()
         if (!articleTitle || !description || !price || !image) {
@@ -36,7 +38,7 @@ const CreateArticlePage = () => {
             return;
         }
         const articleData = new FormData();
-        articleData.append('userID', id);
+        articleData.append('userID', user.userID);
         articleData.append('articleTitle', articleTitle);
         articleData.append('description', description);
         articleData.append('price', parseFloat(price));
