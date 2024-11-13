@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import { createArticle } from '../services/articleService';
 import { useAuth } from '../Contexts/AuthContext';
 import Axios from "axios";
@@ -10,7 +10,12 @@ const CreateArticlePage = () => {
     const [articleTitle, setArticleTitle] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
-
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setImage(file);
+        }
+    };
     const [image, setImage] = useState(null);
 
     const navigate = useNavigate();
