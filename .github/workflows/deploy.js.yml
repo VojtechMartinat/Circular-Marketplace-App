@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - dev  # Existing trigger for dev branch
-      - test  # Add other branches here for testing
+      - CDTest  # Add other branches here for testing
 jobs:
   deploy:
     runs-on: ubuntu-latest
