@@ -39,4 +39,3 @@ jobs:
             sudo npm install -g pm2  # Install pm2 globally if it's not already installed
             pm2 stop server.js || true  # Stop the server if it’s running, ignoring errors if it’s not
             pm2 start server.js  # Start the server from app/backend/server.js
-          EOF
