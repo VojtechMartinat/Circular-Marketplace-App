@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getArticle, getArticlePhotos } from '../services/articleService'; // Adjust the path as needed
+import { useParams, useNavigate } from 'react-router-dom';
+import { getArticle, getArticlePhotos } from '../services/articleService'; // Adjust the path as neededimport "./article.css";
+import './article.css'
 
-const ArticleDetails = () => {
+
+function App() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [article, setArticle] = useState(null);
     const [imageUrl, setImageUrl] = useState(null); // State to store image URL
-
+    
+    console.log(article)
     useEffect(() => {
         getArticle(id).then(response => {
             if (response) {
@@ -38,22 +42,58 @@ const ArticleDetails = () => {
     // If article or imageUrl is not available, show loading
     if (!article) return <div>Loading...</div>;
 
+
     return (
-        <div>
-            <h1>{article.articleTitle}</h1>
-            {imageUrl ?
-                <img
-                    src={imageUrl}
-                    alt="Article"
-                    onLoad={() => console.log('Image loaded successfully!')}
-                />
-                : <p> No photo found</p>
-            }
-            <p>{article.description}</p>
-            <p>Price: ${article.price}</p>
-            <p>Status: {article.state}</p>
+        <div className="app">
+        {/* Header section */}
+        <div className="header">
+            <button className="back-button" onClick={() => navigate('/')}>←</button>            
+            <div className="icons">
+            <button className="icon-button">❤</button>
+            <button className="icon-button">⇧</button>
+            <button className="icon-button">⋮</button>
+            </div>
+        </div>
+
+        {/* Image placeholder */}
+        <div className="image-placeholder">
+            <img src={imageUrl} alt = "Article" />
+        </div>
+
+        {/* Title and description */}
+        <div className="details">
+            <h2 className="title">{article.articleTitle}</h2>
+            <p className="description">
+                {article.description}
+            </p>
+        </div>
+
+        {/* Seller section */}
+        <div className="seller-info">
+            <div className="seller-avatar">👤</div>
+            <div className="seller-details">
+                <p className="seller-name">Name of Seller(placeholder)  </p>
+                <p className="seller-rating">★★★★★ (4)</p>
+            </div>
+            <div className="seller-location">📍 Bristol</div>
+        </div>
+
+        {/* Shipping and Collection */}
+        <div className="purchase-options">
+            <div className="option shipping">
+            <p>Shipping</p>
+            </div>
+            <div className="option collection">
+            <p>Collection</p>
+            </div>
+        </div>
+
+        {/* Purchase Button */}
+        <div className="purchase-button">
+            <button>Buy for £10 including money-back guarantee</button>
+        </div>
         </div>
     );
-};
+    }
 
-export default ArticleDetails;
+    export default App;
