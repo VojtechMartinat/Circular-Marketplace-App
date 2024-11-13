@@ -18,7 +18,7 @@ jobs:
         # Set up SSH key for deployment
         run: |
           mkdir -p ~/.ssh  # Ensure the .ssh directory exists
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa.pem
+          printf "%s" "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa.pem
           chmod 600 ~/.ssh/id_rsa.pem
 
       - name: Deploy to EC2
