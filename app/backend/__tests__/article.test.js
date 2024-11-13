@@ -1,7 +1,6 @@
 const request = require('supertest');
 const { sequelize, Article } = require('./Setup.js');
 const app = require('../server');
-const setupAssociations = require('../models/associations');
 
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, test, expect, describe} = require('@jest/globals');

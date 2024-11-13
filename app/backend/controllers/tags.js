@@ -52,13 +52,13 @@ const getTag = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const updateTag = asyncErrorWrapper(async (req, res, next) => {
     const { id: tagID } = req.params;
-    const [affectedRows] = await Tag.update(req.body, {
+    const [tags] = await Tag.update(req.body, {
         where: {
             tagID: tagID,
         },
     });
 
-    if (affectedRows === 0) {
+    if (tags === 0) {
         // If no rows were affected, the tag doesn't exist
         return next(new APIError(`No tag with id : ${tagID}`, 404));
     }

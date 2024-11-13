@@ -6,7 +6,6 @@ const defineCardModel = require('../models/PaymentCard');
 const definePhotoModel = require('../models/Photo');
 const defineTagModel = require('../models/Tag');
 const defineWishlistModel = require('../models/Wishlist');
-const setupAssociations = require('../models/associations');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, describe} = require('@jest/globals');
 
@@ -32,7 +31,6 @@ const Wishlist = defineWishlistModel(sequelize);
 beforeAll(async () => {
     await sequelize.authenticate(); // Connect to the in-memory DB
     await sequelize.sync(); // Synchronize all models with the database
-    await setupAssociations(); // Make sure associations are set up
 });
 
 afterAll(async () => {
@@ -44,28 +42,6 @@ beforeEach(async () => {
     await User.destroy({ where: {} }); // Clear all users
 });
 
-User.hasMany(Wishlist, {foreignKey: 'userID'});
-Wishlist.belongsTo(User, {foreignKey: 'userID'});
-
-Article.hasMany(Wishlist, {foreignKey: 'articleID'});
-Wishlist.belongsTo(Article, {foreignKey: 'articleID'});
-
-Order.hasMany(Article, { foreignKey: 'orderID' });
-Article.belongsTo(Order, { foreignKey: 'orderID' });
-
-User.hasMany(Order, { foreignKey: 'userID' });
-Order.belongsTo(User, { foreignKey: 'userID' });
-
-Order.belongsTo(PaymentCard, { foreignKey: 'paymentMethodID' });
-
-User.hasMany(Article, { foreignKey: 'userID' });
-Article.belongsTo(User, { foreignKey: 'userID' });
-
-Article.hasMany(Photo, {foreignKey: 'articleID' });
-Photo.belongsTo(Article, { foreignKey: 'articleID' });
-
-User.hasMany(PaymentCard, { foreignKey: 'userID' });
-PaymentCard.belongsTo(User, { foreignKey: 'userID' });
 
 
 // Export both sequelize and User model

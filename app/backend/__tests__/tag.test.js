@@ -1,7 +1,8 @@
 const request = require('supertest');
 const { sequelize, Tag } = require('./Setup.js');
 const app = require('../server');
-const setupAssociations = require('../models/associations');
+const relations = require('../models/initialise');
+
 
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, afterEach, test, expect, describe } = require('@jest/globals');
@@ -11,7 +12,6 @@ describe('Tag Controller Tests', () => {
     beforeAll(async () => {
         // Sync models with in-memory database before running tests
         await sequelize.sync({ force: true }); // Drops existing tables and recreates them
-        await setupAssociations();
     });
 
     afterAll(async () => {
@@ -126,7 +126,7 @@ describe('Tag Controller Tests', () => {
         const updatedData = { tagTitle: 'Fashion' }; // Data to update the tag
 
         const res2 = await request(app)
-            .put(`/api/v1/tags/${res.body.tag.tagID}`)
+            .patch(`/api/v1/tags/${res.body.tag.tagID}`)
             .send(updatedData);
 
         expect(res2.statusCode).toBe(200);

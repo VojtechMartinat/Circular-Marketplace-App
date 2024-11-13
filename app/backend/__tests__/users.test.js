@@ -1,8 +1,7 @@
 const request = require('supertest');
 const { sequelize, User } = require('./Setup.js');
 const app = require('../server');
-const setupAssociations = require('../models/associations');
-
+const relations = require('../models/initialise');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, afterEach, test, expect, describe } = require('@jest/globals');
 const { Tag } = require("./Setup");
@@ -12,7 +11,7 @@ describe('User Controller Tests', () => {
     beforeAll(async () => {
         // Sync models with in-memory database before running tests
         await sequelize.sync({ force: true }); // Drops existing tables and recreates them
-        await setupAssociations();
+
     });
 
     afterAll(async () => {
@@ -119,7 +118,7 @@ describe('User Controller Tests', () => {
         };
 
         const res = await request(app)
-            .put(`/api/v1/users/${user.userID}`)
+            .patch(`/api/v1/users/${user.userID}`)
             .send(updatedData);
 
         expect(res.statusCode).toBe(200);

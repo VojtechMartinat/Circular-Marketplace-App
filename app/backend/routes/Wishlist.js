@@ -5,6 +5,6 @@ const {getAllWishlists, createWishlist, getWishlist, updateWishlist, deleteWishl
 const {updateUser} = require("../controllers/users");
 
 router.route('/').get(getAllWishlists).post(createWishlist);
-router.route('/:id').get(getWishlist).put(updateUser).patch(updateWishlist).delete(deleteWishlist);
+router.route('/:id').get(getWishlist).patch(updateWishlist).delete(deleteWishlist);
 
 module.exports = router;
