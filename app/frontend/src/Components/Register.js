@@ -8,7 +8,7 @@ const RegisterPage = () => {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [location, setLocation] = useState('');
-    const [wallet, setWallet] = useState(0); // New wallet state
+    const wallet = 0; // New wallet state
     const navigate = useNavigate();
 
     const handleRegister = async (e) => {
@@ -71,15 +71,6 @@ const RegisterPage = () => {
                         type="text"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Wallet:</label>
-                    <input
-                        type="number"
-                        value={wallet}
-                        onChange={(e) => setWallet(parseFloat(e.target.value))}
                         required
                     />
                 </div>
