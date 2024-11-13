@@ -27,7 +27,6 @@ const CreateArticlePage = () => {
         if (!isLoggedIn) {
             navigate('/login'); // Redirect to login page
         }
-
     }, [isLoggedIn, navigate]);
     const [articleID, setArticleID] = useState("")
 

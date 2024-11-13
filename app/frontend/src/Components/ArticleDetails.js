@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams } from 'react-router-dom';
 import { getArticle, getArticlePhotos } from '../services/articleService';
 import {createOrder} from "../services/orderService";
+import Axios from "axios";
+import {useAuth} from "../Contexts/AuthContext";
 
 const ArticleDetails = () => {
     const { id } = useParams();
     const [article, setArticle] = useState(null);
     const [imageUrl, setImageUrl] = useState(null); // State to store image URL
-
+    const { isLoggedIn, user } = useAuth(); // Access logged-in user data
+    const navigate = useNavigate();
     useEffect(() => {
         getArticle(id).then(response => {
             if (response) {
@@ -15,6 +18,7 @@ const ArticleDetails = () => {
             }
         });
     }, [id]);
+
 
     useEffect(() => {
         getArticlePhotos(id).then(response => {
@@ -37,18 +41,34 @@ const ArticleDetails = () => {
     };
 
     const handleBuy = async () => {
+        if (!isLoggedIn){
+            alert("Please log in to buy an article");
+            return;
+        }
         try {
             const orderData = {
-                userID: id,
+                userID: user.userID,
                 paymentMethodID : "4d530d77-217e-4a89-952e-f4cee8e3fe5c",
-                dateOfPurchase : Date.now(),
+                dateOfPurchase : new Date().toISOString(),
                 collectionMethod : "collection",
-                articles:{
-                    articleID: article.articleID,
-                }
+                articles:[
+                    { articleID: id }
+                ]
             };
-            const response = await createOrder(orderData);
-            alert('Order created successfully!');
+            Axios.post('http://34.251.202.114:8080/api/v1/orders', orderData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then((res) => {
+                console.log('Response: ',res)
+                console.log('Order ID:', res.data.order.orderID);
+                alert('Order created successfully');
+            }).catch((error) => {
+                console.error('Error creating order:', error);
+                alert('Failed to create order')
+            })
+
+
         } catch (error) {
             console.error('Error creating order:', error);
             alert('Failed to create order');

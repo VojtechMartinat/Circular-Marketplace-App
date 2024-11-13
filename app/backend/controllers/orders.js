@@ -20,8 +20,8 @@ const getAllOrders = asyncErrorWrapper(async (req,res) =>{
  * @param res Response sent to the client containing new order data
  * */
 const createOrder= asyncErrorWrapper(async (req,res,next) =>{
-    const { orderID, userID, paymentMethodID, dateOfPurchase, collectionMethod} = req.body;
-
+    const {userID, paymentMethodID, dateOfPurchase, collectionMethod} = req.body;
+    console.log(req.body)
     let sum = 0
     for (const x of req.body.articles){
         const article = await Article.findOne({
@@ -44,9 +44,13 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
         }
         sum += price
     }
+    console.log(userID)
+    console.log(paymentMethodID)
+    console.log(dateOfPurchase)
+    console.log(collectionMethod)
+    console.log(sum)
     const order = await Order.create(
         {
-            orderID : orderID,
             userID : userID,
             paymentMethodID : paymentMethodID,
             dateOfPurchase : dateOfPurchase,
@@ -57,8 +61,10 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
     )
 
     for (const articles of req.body.articles) {
+        console.log(articles)
+        console.log(order.orderID)
         await Article.update(
-            { orderID: order.orderID, state:"purchased" },
+            { orderID: order.orderID, state:"sold" },
             {
                 where: {
                     articleID: articles.articleID
