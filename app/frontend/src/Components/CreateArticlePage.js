@@ -38,11 +38,12 @@ const CreateArticlePage = () => {
             return;
         }
         const articleData = new FormData();
+        const currentDate = new Date().toISOString();
         articleData.append('userID', user.userID);
         articleData.append('articleTitle', articleTitle);
         articleData.append('description', description);
         articleData.append('price', parseFloat(price));
-        articleData.append('dateAdded', "02/03/2004");
+        articleData.append('dateAdded', currentDate);
         articleData.append('state','uploaded')
         Axios.post('http://34.251.202.114:8080/api/v1/articles', articleData, {
             headers: {
@@ -68,7 +69,7 @@ const CreateArticlePage = () => {
                 console.log(res.data)
             });
         }).catch((err) => {console.log(err)})
-
+        navigate('/');
     };
     return (
         <div>
