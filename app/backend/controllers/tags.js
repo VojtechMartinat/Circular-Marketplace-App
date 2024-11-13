@@ -1,6 +1,7 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const Tag = require('../models/Tag')
+const {Tag} = require('../models/initialise')
+
 
 
 /**

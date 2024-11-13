@@ -1,9 +1,7 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const Photo = require('../models/Photo')
-const Tags = require('../models/Tag')
-const {Tag} = require("../__tests__/Setup");
-const {where} = require("sequelize");
+const {Photo, Tag} = require('../models/initialise')
+const fs = require("fs").promises;
 
 
 /**
@@ -22,10 +20,23 @@ const getAllPhotos = asyncErrorWrapper(async (req,res) =>{
  * @param req Request from the client (req.body should contain photo data)
  * @param res Response sent to the client containing new photo data
  * */
-const createPhoto= asyncErrorWrapper(async (req,res) =>{
-    const photo = Photo.create(req.body)
-    res.status(201).json({photo: photo})
-})
+const createPhoto = asyncErrorWrapper(async (req, res) => {
+    // Ensure file exists
+    if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const articleID = req.body.articleID;
+    const image = await fs.readFile(req.file.path);
+
+    const photo = await Photo.create({
+        image: image,
+        articleID: articleID
+    });
+
+    // Send response with created photo object
+    res.status(201).json({ photo: photo });
+});
 
 
 /**
@@ -94,7 +105,7 @@ const deletePhoto = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const photosTags =  asyncErrorWrapper(async (req,res,next) =>{
     const {id:photoID} = req.params
-    const tags = await Tags.findAll({
+    const tags = await Tag.findAll({
         where:{
             photoID: photoID
         }

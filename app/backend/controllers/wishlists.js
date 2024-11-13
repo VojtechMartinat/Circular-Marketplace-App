@@ -1,6 +1,7 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const Wishlist = require('../models/Wishlist')
+const {Wishlist} = require('../models/initialise')
+
 
 
 /**

@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: dev  # Checkout the dev branch
+          ref: dev
 
       - name: Install SSH Key
         # Set up SSH key for deployment
