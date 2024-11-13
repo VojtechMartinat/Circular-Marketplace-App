@@ -1,7 +1,3 @@
-export function single(image) {
-    return undefined;
-}
-
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
