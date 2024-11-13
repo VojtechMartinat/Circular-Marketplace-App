@@ -14,13 +14,10 @@ async function createArticle(articleData) {
     };
 
     try {
-        const response = await fetch(`${userAPI}articles`, requestOptions);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        return await response.json();
+        await fetch(`${userAPI}articles`, requestOptions).then((res) => res.json())
+            .then((data) => {
+                return data
+            });
     } catch (error) {
         console.error('Error:', error);
         throw error;
@@ -37,10 +34,10 @@ async function getArticles() {
             throw new Error("No articles found or data missing!");
         }
 
-        return data;  // Return articles here
+        return data;
     } catch (error) {
         console.log('Error fetching articles:', error);
-        throw error;  // Re-throw the error to handle it in the calling function
+        throw error;
     }
 }
 async function getArticle(articleID) {
@@ -69,10 +66,30 @@ async function getArticlePhotos(articleID) {
             throw new Error("No photos found or data missing!");
         }
 
-        return data;  // Return article
+        return data;
     } catch (error) {
         console.log('Error fetching articles:', error);
-        throw error;  // Re-throw the error to handle it in the calling function
+        throw error;
     }
 }
-module.exports = {createArticle, getArticles, getArticle,getArticlePhotos}
+
+async function deleteArticle(articleID) {
+    const requestOptions = {
+        method: 'DELETE',
+    };
+
+    try {
+        const response = await fetch(`${userAPI}articles/${articleID}`, requestOptions);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        return { message: 'Article deleted successfully' };
+    } catch (error) {
+        console.error('Error deleting article:', error);
+        throw error;
+    }
+}
+
+module.exports = {createArticle, getArticles, getArticle,getArticlePhotos, deleteArticle}
