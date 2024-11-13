@@ -18,14 +18,17 @@ jobs:
         # Set up SSH key for deployment
         run: |
           mkdir -p ~/.ssh  # Ensure the .ssh directory exists
-          printf "%s" "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa.pem
+          echo "-----BEGIN RSA PRIVATE KEY-----" > ~/.ssh/id_rsa.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" >> ~/.ssh/id_rsa.pem
+          echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa.pem
           chmod 600 ~/.ssh/id_rsa.pem
+
 
       - name: Deploy to EC2
         env:
           HOST: 34.251.202.114
         run: |
-         # Checking if key is correct. (First 5 lines are not)
+         # Checking if key is correct
            base64 ~/.ssh/id_rsa.pem | head -c 100
           ssh -i ~/.ssh/id_rsa.pem ec2-user@$HOST -o StrictHostKeyChecking=no << 'EOF'
             cd /home/ec2-user/  # Navigate to your app's directory on the EC2 instance
