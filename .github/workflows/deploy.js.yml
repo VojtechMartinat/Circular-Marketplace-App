@@ -3,8 +3,8 @@ name: Deploy to AWS EC2
 on:
   push:
     branches:
-      - dev
-
+      - dev  # Trigger the workflow only on pushes to the dev branch
+    workflow_dispatch:
 jobs:
   deploy:
     runs-on: ubuntu-latest
