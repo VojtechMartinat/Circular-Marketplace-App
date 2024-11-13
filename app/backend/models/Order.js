@@ -17,18 +17,10 @@ module.exports = (sequelize) => {
             userID: {
                 type: DataTypes.UUID,
                 allowNull: false,
-                references: {
-                    model: User,
-                    key: 'userID',
-                },
             },
             paymentMethodID: {
                 type: DataTypes.UUID,
                 allowNull: false,
-                references: {
-                    model: PaymentCard,
-                    key: 'paymentMethodID',
-                },
             },
             dateOfPurchase: {
                 type: DataTypes.DATE,

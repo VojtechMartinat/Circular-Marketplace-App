@@ -3,20 +3,14 @@ const userAPI = 'http://34.251.202.114:8080/api/v1/';
 
 async function uploadPhoto(photoData) {
     try {
-        const response = await fetch(`${userAPI}photos`, {
+        await fetch(`${userAPI}photos`, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add authorization if needed
-            },
             body: photoData,
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to upload photo');
-        }
-
-        const data = await response.json();
-        return data; // Return response data if necessary
+        }).then((res) => res.json())
+            .then((data) => {
+                    return data
+                }
+            );
     } catch (error) {
         console.error('Error uploading photo:', error);
         throw error;
@@ -39,4 +33,4 @@ async function getPhotos() {
     }
 }
 
-module.exports = {getPhotos, uploadPhoto };
+export { getPhotos, uploadPhoto };

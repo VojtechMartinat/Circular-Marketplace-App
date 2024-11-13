@@ -13,18 +13,10 @@ module.exports = (sequelize) => {
             userID: {
                 type: DataTypes.UUID,
                 allowNull: false,
-                references: {
-                    model: User,
-                    key: 'userID',
-                },
             },
             articleID: {
                 type: DataTypes.UUID,
                 allowNull: true,
-                references: {
-                    model: Article,
-                    key: 'articleID',
-                },
             },
             totalPrice: {
                 type: DataTypes.DOUBLE,

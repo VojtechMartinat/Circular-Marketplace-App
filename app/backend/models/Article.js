@@ -17,18 +17,10 @@ Article.init(
         userID: {
             type: DataTypes.UUID,
             allowNull: false,
-            references: {
-                model: User,
-                key: 'userID',
-            },
         },
         orderID: {
             type: DataTypes.UUID,
             allowNull: true,
-            references: {
-                model: Order,
-                key: 'orderID',
-            }
         },
         articleTitle: {
             type: DataTypes.STRING,

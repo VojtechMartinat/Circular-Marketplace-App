@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getArticle } from '../services/articleService'; // Adjust path as necessary
+import { getArticles } from '../services/articleService'; // Adjust path as necessary
 
 const Home = () => {
     const [articles, setArticles] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
     useEffect(() => {
-        getArticle()
+        getArticles()
             .then(response => {
                 console.log('Fetched articles:', response);
                 if (response && response.article) {
-                    setArticles(response.article); // Update with correct structure
+                    setArticles(response.article);
                 } else {
                     console.error('No articles data found');
                 }
@@ -25,6 +25,10 @@ const Home = () => {
         setInputValue(event.target.value);
     };
 
+    const filteredArticles = articles.filter(article =>
+        article.articleTitle.toLowerCase().includes(inputValue.toLowerCase() && article.state === "uploaded")
+    );
+
     return (
         <div>
             <h1>Welcome to Circular MarketPlace App</h1>
@@ -33,19 +37,21 @@ const Home = () => {
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
-                placeholder="Enter something..."
+                placeholder="Search articles..."
             />
+            {filteredArticles.length > 0 ? (
+                filteredArticles.map(article => (
+                    <div key={article.articleID}>
+                        <Link to={`/articles/${article.articleID}`}>
+                            <h2>{article.articleTitle}</h2>
+                        </Link>
+                        <p>Price: ${article.price}</p>
+                    </div>
+                ))
+            ) : (
+                <p>No articles found matching "{inputValue}"</p>
+            )}
             <p>You entered: {inputValue}</p>
-
-            {articles.map(article => (
-                <div key={article.articleID}>
-                    <Link to={`/articles/${article.articleID}`}>
-                        <h2>{article.articleTitle}</h2>
-                    </Link>
-                    <p></p>
-                    <p>Price: ${article.price}</p>
-                </div>
-            ))}
         </div>
     );
 };
