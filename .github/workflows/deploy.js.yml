@@ -25,7 +25,7 @@ jobs:
         env:
           HOST: 34.251.202.114
         run: |
-          ssh -i ~/.ssh/id_rsa.pem ec2-user@$HOST << 'EOF'
+          ssh -i ~/.ssh/id_rsa.pem ec2-user@$HOST -o StrictHostKeyChecking=no << 'EOF'
             cd /home/ec2-user/  # Navigate to your app's directory on the EC2 instance
             git fetch origin dev  # Fetch the latest changes on the dev branch
             git reset --hard origin/dev  # Reset to the latest commit on dev branch
