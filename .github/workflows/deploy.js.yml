@@ -26,7 +26,7 @@ jobs:
           HOST: 34.251.202.114
         run: |
          # Checking if key is correct. (First 5 lines are not)
-          cat ~/.ssh/id_rsa.pem
+           base64 ~/.ssh/id_rsa.pem | head -c 100
           ssh -i ~/.ssh/id_rsa.pem ec2-user@$HOST -o StrictHostKeyChecking=no << 'EOF'
             cd /home/ec2-user/  # Navigate to your app's directory on the EC2 instance
             git fetch origin dev  # Fetch the latest changes on the dev branch
