@@ -18,6 +18,12 @@ const Photo = PhotoModel(sequelize);
 const Wishlist = WishlistModel(sequelize);
 const Tag = TagModel(sequelize);
 
+User.hasMany(Wishlist, {foreignKey: 'userID'});
+Wishlist.belongsTo(User, {foreignKey: 'userID'});
+
+Article.hasMany(Wishlist, {foreignKey: 'articleID'});
+Wishlist.belongsTo(Article, {foreignKey: 'articleID'});
+
 Order.hasMany(Article, { foreignKey: 'orderID' });
 Article.belongsTo(Order, { foreignKey: 'orderID' });
 
