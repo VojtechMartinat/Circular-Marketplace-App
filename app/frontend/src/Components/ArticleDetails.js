@@ -4,7 +4,7 @@ import { getArticle, getArticlePhotos } from '../services/articleService';
 import {createOrder} from "../services/orderService";
 import Axios from "axios";
 import {useAuth} from "../Contexts/AuthContext";
-
+import {url} from "../Config/config"
 const ArticleDetails = () => {
     const { id } = useParams();
     const [article, setArticle] = useState(null);
@@ -55,7 +55,7 @@ const ArticleDetails = () => {
                     { articleID: id }
                 ]
             };
-            Axios.post('http://34.251.202.114:8080/api/v1/orders', orderData, {
+            Axios.post(`http://${url}orders`, orderData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

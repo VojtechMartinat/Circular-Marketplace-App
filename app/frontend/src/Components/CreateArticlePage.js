@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import { createArticle } from '../services/articleService';
 import { useAuth } from '../Contexts/AuthContext';
 import Axios from "axios";
+import {url} from "../Config/config"
 
 const CreateArticlePage = () => {
     const [articleTitle, setArticleTitle] = useState('');
@@ -44,7 +44,7 @@ const CreateArticlePage = () => {
         articleData.append('price', parseFloat(price));
         articleData.append('dateAdded', currentDate);
         articleData.append('state','uploaded')
-        Axios.post('http://34.251.202.114:8080/api/v1/articles', articleData, {
+        Axios.post(`http://${url}articles`, articleData, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -60,7 +60,7 @@ const CreateArticlePage = () => {
             photoData.append('articleID', res.data.article.articleID);
             photoData.append('image', image);
 
-            Axios.post('http://34.251.202.114:8080/api/v1/photos', photoData, {
+            Axios.post(`http://${url}photos`, photoData, {
                 headers: {
                     'Content-Header': 'value',
                 },

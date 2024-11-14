@@ -1,4 +1,4 @@
-const userAPI = 'http://34.251.202.114:8080/api/v1/'
+import {url} from "../Config/config"
 
 async function createArticle(articleData) {
     var data = articleData
@@ -14,7 +14,7 @@ async function createArticle(articleData) {
     };
 
     try {
-        await fetch(`${userAPI}articles`, requestOptions).then((res) => res.json())
+        await fetch(`${url}articles`, requestOptions).then((res) => res.json())
             .then((data) => {
                 return data
             });
@@ -25,9 +25,8 @@ async function createArticle(articleData) {
 }
 
 async function getArticles() {
-    const userAPI = 'http://34.251.202.114:8080/api/v1/';
     try {
-        const response = await fetch(`${userAPI}articles`);
+        const response = await fetch(`${url}articles`);
         const data = await response.json();
 
         if (!data) {
@@ -41,9 +40,8 @@ async function getArticles() {
     }
 }
 async function getArticle(articleID) {
-    const userAPI = 'http://34.251.202.114:8080/api/v1/';
     try {
-        const response = await fetch(`${userAPI}articles/${articleID}`);
+        const response = await fetch(`${url}articles/${articleID}`);
         const data = await response.json();
 
         if (!data) {
@@ -57,9 +55,8 @@ async function getArticle(articleID) {
     }
 }
 async function getArticlePhotos(articleID) {
-    const userAPI = 'http://34.251.202.114:8080/api/v1/';
     try {
-        const response = await fetch(`${userAPI}articles/${articleID}/photos`);
+        const response = await fetch(`${url}articles/${articleID}/photos`);
         const data = await response.json();
 
         if (!data) {
@@ -79,7 +76,7 @@ async function deleteArticle(articleID) {
     };
 
     try {
-        const response = await fetch(`${userAPI}articles/${articleID}`, requestOptions);
+        const response = await fetch(`${url}articles/${articleID}`, requestOptions);
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);

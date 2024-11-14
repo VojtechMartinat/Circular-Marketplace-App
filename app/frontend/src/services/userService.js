@@ -1,4 +1,4 @@
-const userAPI = 'http://34.251.202.114:8080/api/v1/'
+import {url} from "../Config/config"
 
 // services/userService.js
 async function loginUser(username, password) {
@@ -9,7 +9,7 @@ async function loginUser(username, password) {
 
     try {
         // Fetch all users from the API
-        const response = await fetch(`${userAPI}users`, requestOptions);
+        const response = await fetch(`${url}users`, requestOptions);
 
         if (!response.ok) {
             throw new Error('Failed to fetch users');
@@ -64,7 +64,7 @@ async function createUser(userData) {
     };
 
     try {
-        const response = await fetch(`${userAPI}users`, requestOptions);
+        const response = await fetch(`${url}users`, requestOptions);
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -86,7 +86,7 @@ async function getUserArticles(userID){
     }
 
     try {
-        const response = await fetch(`${userAPI}users/${userID}/articles`, requestOptions);
+        const response = await fetch(`${url}users/${userID}/articles`, requestOptions);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -106,7 +106,7 @@ async function getUserOrders(userID){
     }
 
     try {
-        const response = await fetch(`${userAPI}users/${userID}/orders`, requestOptions);
+        const response = await fetch(`${url}users/${userID}/orders`, requestOptions);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
