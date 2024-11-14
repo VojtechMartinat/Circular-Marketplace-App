@@ -3,8 +3,8 @@ name: Deploy to AWS EC2
 on:
   push:
     branches:
-      - dev  # Trigger the workflow only on pushes to the dev branch
-    workflow_dispatch:
+      - dev  # Existing trigger for dev branch
+      - CDTest  # Add other branches here for testing
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,20 +18,24 @@ jobs:
         # Set up SSH key for deployment
         run: |
           mkdir -p ~/.ssh  # Ensure the .ssh directory exists
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "-----BEGIN RSA PRIVATE KEY-----" > ~/.ssh/id_rsa.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" >> ~/.ssh/id_rsa.pem
+          echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa.pem
+          chmod 600 ~/.ssh/id_rsa.pem
+
 
       - name: Deploy to EC2
         env:
           HOST: 34.251.202.114
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@$HOST << 'EOF'
+         # Checking if key is correct
+           base64 ~/.ssh/id_rsa.pem | head -c 100
+          ssh -i ~/.ssh/id_rsa.pem ec2-user@$HOST -o StrictHostKeyChecking=no << 'EOF'
             cd /home/ec2-user/  # Navigate to your app's directory on the EC2 instance
             git fetch origin dev  # Fetch the latest changes on the dev branch
             git reset --hard origin/dev  # Reset to the latest commit on dev branch
             cd app/backend
             npm install  # Install dependencies
-            npm install -g pm2  # Install pm2 globally if it's not already installed
+            sudo npm install -g pm2  # Install pm2 globally if it's not already installed
             pm2 stop server.js || true  # Stop the server if it’s running, ignoring errors if it’s not
             pm2 start server.js  # Start the server from app/backend/server.js
-          EOF
