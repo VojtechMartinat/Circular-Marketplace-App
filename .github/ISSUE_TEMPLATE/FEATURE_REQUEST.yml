@@ -1,0 +1,35 @@
+name: Feature Request
+description: Request a new feature.
+title: "[FEATURE]: "
+labels: ["enhancement"]
+projects: ["spe-upb/2024-CircularMarketplaces"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for filling out a feature request form for ReList App. To help us understand and implement your feature request, please fill out the following information.
+  - type: markdown
+    attributes:
+      value: |
+        Please add all relevant issue metadata to your issue. This includes all relevant: assignees, labels, milestone and relevant branches/pull requests. 
+  - type: dropdown
+    id: subproject-type
+    attributes:
+      label: Sub-project
+      description: Which sub-project would this feature be implemented in?
+      options:
+        - App
+        - Web
+        - Frontend
+        - Backend
+      multiple: true
+    validations:
+      required: true
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: A clear and concise description of what the feature is.
+      placeholder: Describe the feature here.
+    validations:
+      required: true
