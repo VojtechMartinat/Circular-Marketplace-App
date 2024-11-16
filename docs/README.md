@@ -75,32 +75,28 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 
 ## Project Structure
 <pre>
-.
-└── app
-    ├── backend
-    │   ├── controllers
-    │   ├── middleware
-    │   ├── models
-    │   ├── routes
-    │   ├── __tests__
-    │   ├── package-lock.json
-    │   ├── package.json
-    │   └── server.js
-    └── frontend
-        ├── public
-        ├── src
-        │   ├── Components
-        │   ├── Contexts
-        │   ├── services
-        │   ├── App.js
-        │   ├── App.test.js
-        │   ├── index.css
-        │   ├── index.js
-        │   ├── logo.svg
-        │   ├── reportWebVitals.js
-        │   └── setupTests.js
-        ├── package-lock.json
-        └── package.json
+2024-CircularMarketplaces
+└── app/
+    ├── backend/           
+    │   ├── controllers/             # Handles application logic
+    │   ├── models/                  # Defines database schemas and interactions
+    │   ├── routes/                  # Maps API endpoints to controllers
+    │   ├── __tests__/               # Contains backend test files
+    │   └── ...
+    ├── frontend/
+    │   ├── public/                
+    │   └── src/                     
+    │       ├── Components/          # Reusable UI elements
+    │       ├── Contexts/            # Global state management files
+    │       ├── services/            # API call functions
+    │       ├── App.js               # Main React app component 
+    │       ├── App.test.js          # Tests for App.js
+    │       ├── index.css            
+    │       ├── index.js
+    │       ├── logo.svg
+    │       ├── reportWebVitals.js
+    │       └── setupTests.js
+    └── ...
   </pre>
 ## Links
 Main Kanban
