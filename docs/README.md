@@ -74,17 +74,15 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 | Jagannath Sankar  | [yi23615@bristol.ac.uk](mailto:yi23615@bristol.ac.uk) | 
 
 ## Project Structure
+<pre>
 .
 └── app
     ├── backend
-    │   ├── config
     │   ├── controllers
-    │   ├── database
-    │   ├── errors
     │   ├── middleware
     │   ├── models
     │   ├── routes
-    │   ├── tests
+    │   ├── __tests__
     │   ├── package-lock.json
     │   ├── package.json
     │   └── server.js
@@ -103,6 +101,7 @@ This project aims to transform second-hand marketplaces by harnessing the power 
         │   └── setupTests.js
         ├── package-lock.json
         └── package.json
+  </pre>
 ## Links
 Main Kanban
 
