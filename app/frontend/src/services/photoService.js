@@ -1,4 +1,5 @@
 import {url} from "../Config/config"
+import Axios from "axios";
 
 
 async function uploadPhoto(photoData) {
@@ -32,5 +33,11 @@ async function getPhotos() {
         throw error;
     }
 }
+async function createPhoto(photoData) {
+    Axios.post(`${url}photos`, photoData)
+        .then(res => {
+            console.log(res.data)
+    });
 
-export { getPhotos, uploadPhoto };
+}
+export { getPhotos, uploadPhoto, createPhoto };

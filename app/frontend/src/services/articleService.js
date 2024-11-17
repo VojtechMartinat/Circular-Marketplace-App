@@ -1,23 +1,17 @@
-import {url} from "../Config/config"
+import {url} from "../Config/config";
+import axios from "axios";
 
 async function createArticle(articleData) {
-    var data = articleData
-    if (articleData == null){
-        throw new Error("Article data missing!")
+    if (articleData == null) {
+        throw new Error("Article data missing!");
     }
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    };
 
     try {
-        await fetch(`${url}articles`, requestOptions).then((res) => res.json())
-            .then((data) => {
-                return data
-            });
+        return await axios.post(`${url}articles`, articleData, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
     } catch (error) {
         console.error('Error:', error);
         throw error;
@@ -39,6 +33,7 @@ async function getArticles() {
         throw error;
     }
 }
+
 async function getArticle(articleID) {
     try {
         const response = await fetch(`${url}articles/${articleID}`);
@@ -48,12 +43,13 @@ async function getArticle(articleID) {
             throw new Error("No articles found or data missing!");
         }
 
-        return data;  // Return article
+        return data;
     } catch (error) {
         console.log('Error fetching articles:', error);
-        throw error;  // Re-throw the error to handle it in the calling function
+        throw error;
     }
 }
+
 async function getArticlePhotos(articleID) {
     try {
         const response = await fetch(`${url}articles/${articleID}/photos`);
@@ -89,4 +85,4 @@ async function deleteArticle(articleID) {
     }
 }
 
-module.exports = {createArticle, getArticles, getArticle,getArticlePhotos, deleteArticle}
+export { createArticle, getArticles, getArticle, getArticlePhotos, deleteArticle };

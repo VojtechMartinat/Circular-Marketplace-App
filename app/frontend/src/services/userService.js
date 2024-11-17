@@ -118,4 +118,4 @@ async function getUserOrders(userID){
 }
 
 
-module.exports = {createUser,getUserArticles,getUserOrders, loginUser}
+export {createUser,getUserArticles,getUserOrders, loginUser}
