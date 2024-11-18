@@ -1,29 +1,23 @@
-const userAPI = 'http://34.251.202.114:8080/api/v1/'
+import {url} from "../Config/config"
+import Axios from "axios";
 
-async function createOrder(articleData) {
-    var data = articleData
-    if (articleData == null){
+
+async function createOrder(orderData) {
+    if (orderData == null){
         throw new Error("Article data missing!")
     }
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    };
-
     try {
-        const response = await fetch(`${userAPI}orders`, requestOptions);
+        Axios.post(`${url}orders`, orderData, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => {
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;
+        }).catch((error) => {
+            throw new Error(error)
+        })
+    } catch (error){
+        throw new Error(error)
     }
 }
 
@@ -36,7 +30,7 @@ async function getOrder(orderID) {
     };
 
     try {
-        const response = await fetch(`${userAPI}orders/${orderID}`, requestOptions);
+        const response = await fetch(`${url}orders/${orderID}`, requestOptions);
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -57,7 +51,7 @@ async function getOrderArticles(orderID) {
     };
 
     try {
-        const response = await fetch(`${userAPI}orders/${orderID}/articles`, requestOptions);
+        const response = await fetch(`${url}orders/${orderID}/articles`, requestOptions);
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -69,5 +63,5 @@ async function getOrderArticles(orderID) {
         throw error;
     }
 }
-module.exports = {createOrder, getOrder, getOrderArticles}
+export {createOrder, getOrder, getOrderArticles}
 

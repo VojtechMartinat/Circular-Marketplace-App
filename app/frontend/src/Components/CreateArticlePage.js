@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
-import { createArticle } from '../services/articleService';
+import {useNavigate} from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
-import Axios from "axios";
+import {createArticle} from "../services/articleService";
+import {createPhoto} from "../services/photoService";
 
 const CreateArticlePage = () => {
     const [articleTitle, setArticleTitle] = useState('');
@@ -44,31 +44,24 @@ const CreateArticlePage = () => {
         articleData.append('price', parseFloat(price));
         articleData.append('dateAdded', currentDate);
         articleData.append('state','uploaded')
-        Axios.post('http://34.251.202.114:8080/api/v1/articles', articleData, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then((res) => {
-            console.log('Response: ',res)
-            console.log('Article ID:', res.data.article.articleID);
-            setArticleID(res.data.article.articleID)
+        createArticle(articleData).then((res) => {
             const photoData = new FormData();
             if (!image){
                 console.log("No image uploaded")
             }
-            console.log(image)
             photoData.append('articleID', res.data.article.articleID);
             photoData.append('image', image);
 
-            Axios.post('http://34.251.202.114:8080/api/v1/photos', photoData, {
-                headers: {
-                    'Content-Header': 'value',
-                },
-            }).then(res => {
-                console.log(res.data)
-            });
-        }).catch((err) => {console.log(err)})
-        navigate('/');
+            createPhoto(photoData).then(res => {
+            }).catch(err => {
+                throw new Error(err)
+                }
+            )
+
+        }).catch((err) => {
+            console.log(err)
+            alert("Error creating an article!")
+        })
     };
     return (
         <div>
