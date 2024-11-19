@@ -26,7 +26,7 @@ const Home = () => {
     };
 
     const filteredArticles = articles.filter(article =>
-        article.articleTitle.toLowerCase().includes(inputValue.toLowerCase() && article.state === "uploaded")
+        article.articleTitle.toLowerCase().includes(inputValue.toLowerCase()) && article.state === "uploaded"
     );
 
     return (
