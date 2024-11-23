@@ -22,12 +22,12 @@ describe('User Controller Tests', () => {
     beforeEach(async () => {
         await sequelize.sync({ force: true }); // Drops existing tables and recreates them
 
-        await Tag.destroy({ where: {} });
+        await User.destroy({ where: {} });
     });
 
     afterEach(async () => {
         // Ensure that no data remains in the database by explicitly deleting it
-        await Tag.destroy({ where: {} });
+        await User.destroy({ where: {} });
     });
 
     test('GET /api/v1/users - Should return an empty array if no users exist', async () => {
