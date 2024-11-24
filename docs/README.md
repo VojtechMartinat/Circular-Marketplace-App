@@ -93,3 +93,140 @@ https://github.com/orgs/spe-uob/projects/215
 
 ## Technology Stack Diagram
 ![Architecture](Architecture_Diagram.drawio.png)
+
+
+# Project Setup Guide
+
+## 1. Install Git (if not already installed)
+
+- **For Ubuntu/Linux:**
+  ```bash
+  sudo apt update
+  sudo apt install git
+  ```
+
+- **For macOS:**
+  ```bash
+  brew install git
+  ```
+
+- **For Windows:**
+  [Download and install Git](https://git-scm.com/download/win).
+
+---
+
+## 2. Install Node.js 18 (if not already installed)
+
+- **For Ubuntu/Linux:**
+  ```bash
+  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  ```
+
+- **For macOS:**
+  Install via Homebrew:
+  ```bash
+  brew install node@18
+  ```
+
+- **For Windows:**
+  [Download Node.js 18.x installer](https://nodejs.org/en/download/).
+
+---
+
+## 3. Initialize Git Repository
+
+1. Navigate to your project folder.
+2. Run:
+   ```bash
+   git init
+   ```
+
+---
+
+## 4. Clone Repository
+
+To clone a Git repository:
+```bash
+git clone <repository-url>
+```
+
+---
+
+## 5. Backend Setup
+
+1. Navigate to the backend folder:
+   ```bash
+   cd app/backend
+   ```
+
+2. Install required packages (with `sudo` to install `nodemon` and `pm2` globally):
+   ```bash
+   sudo npm install
+   ```
+
+3. Set environment variables:
+   ```bash
+   export DB_USER="<your-db-username>"
+   export DB_PASS="<your-db-password>"
+   ```
+
+4. **Launch the Backend**
+   - **For Development and Production:**  
+     Start the server with PM2:
+     ```bash
+     pm2 start server.js
+     ```
+   - **Stop the Backend:**  
+     Stop all PM2 processes:
+     ```bash
+     pm2 stop all
+     ```
+
+   - **For Testing:**  
+     Use `nodemon` to automatically restart the server on code changes:
+     ```bash
+     nodemon
+     ```
+   - **Stop Testing:**  
+     Press `Ctrl + C` to stop.
+
+---
+
+## 6. Frontend Setup
+
+1. Navigate to the frontend folder:
+   ```bash
+   cd app/frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. **Configure Backend URL**  
+   Edit the backend URL in `src/Config/config.js` to point to your local backend (e.g., `http://localhost:8080/api/v1/`).
+
+4. **Launch the Frontend**
+   - **For Development and Testing:**  
+     Start the frontend locally:
+     ```bash
+     npm start
+     ```
+
+   - **For Production:**  
+     Build the frontend and run it using PM2:
+     ```bash
+     npm run build
+     pm2 start npm --name "react-dev" -- start
+     ```
+
+   - **Stop the Frontend:**  
+     Stop the PM2 process:
+     ```bash
+     pm2 stop all
+     ```
+
+---
+
