@@ -52,11 +52,19 @@ describe('Wishlist Controller Tests', () => {
     });
 
     test('GET /api/v1/wishlists - Should return all wishlists as JSON', async () => {
+
+        const fetchRes = await request(app).get('/api/v1/wishlists');
+        const wishlists = fetchRes.body.wishlist;
+        if (wishlists && wishlists.length > 0) {
+            for (const wishlist of wishlists) {
+                await request(app).delete(`/api/v1/wishlists/${wishlist.id}`);
+            }
+        }
+
         const newWishlist = { userID: '1', articleID: '101', totalPrice: 100.0 };
         await request(app).post('/api/v1/wishlists').send(newWishlist);
 
         const res2 = await request(app).get('/api/v1/wishlists');
-        console.log(res2.body);
         expect(res2.statusCode).toBe(200);
         expect(res2.body.wishlist.length).toBe(1);
     });
@@ -64,9 +72,9 @@ describe('Wishlist Controller Tests', () => {
     test('GET /api/v1/wishlists/:id - Should return a wishlist by ID', async () => {
         const newWishlist = { userID: '1', articleID: '101', totalPrice: 100.0 };
         const postRes = await request(app).post('/api/v1/wishlists').send(newWishlist);
-
-        const res = await request(app).get(`/api/v1/wishlists/${postRes.body.id}`);
-        console.log(res.body);
+        console.log(postRes.body);
+        console.log(postRes.body.wishlist.id);
+        const res = await request(app).get(`/api/v1/wishlists/${postRes.body.wishlist.id}`);
         expect(res.statusCode).toBe(200);
         expect(res.body).toHaveProperty('id');
         expect(res.body.totalPrice).toBe(100.0);
@@ -78,7 +86,6 @@ describe('Wishlist Controller Tests', () => {
 
         const updatedData = { totalPrice: 120.0 };
         const res = await request(app).patch(`/api/v1/wishlists/${postRes.body.id}`).send(updatedData);
-        console.log(res.body);
         expect(res.statusCode).toBe(200);
         expect(res.body.totalPrice).toBe(120.0);
     });
@@ -87,13 +94,12 @@ describe('Wishlist Controller Tests', () => {
         const newWishlist = { userID: '1', articleID: '101', totalPrice: 100.0 };
         const postRes = await request(app).post('/api/v1/wishlists').send(newWishlist);
 
-        const res = await request(app).delete(`/api/v1/wishlists/${postRes.body.id}`);
+        const res = await request(app).delete(`/api/v1/wishlists/${postRes.body.wishlist.id}`);
         expect(res.statusCode).toBe(204); // No content
     });
 
     test('GET /api/v1/wishlists/:id - Should return 404 for non-existing wishlist', async () => {
         const res = await request(app).get('/api/v1/wishlists/999');
-        console.log(res.body);
         expect(res.statusCode).toBe(404);
         expect(res.body.error).toBe('Wishlist not found');
     });
@@ -101,14 +107,12 @@ describe('Wishlist Controller Tests', () => {
     test('PATCH /api/v1/wishlists/:id - Should return 404 for non-existing wishlist', async () => {
         const updatedData = { totalPrice: 120.0 };
         const res = await request(app).patch('/api/v1/wishlists/999').send(updatedData);
-        console.log(res.body);
         expect(res.statusCode).toBe(404);
         expect(res.body.error).toBe('Wishlist not found');
     });
 
     test('DELETE /api/v1/wishlists/:id - Should return 404 for non-existing wishlist', async () => {
         const res = await request(app).delete('/api/v1/wishlists/999');
-        console.log(res.body);
         expect(res.statusCode).toBe(404);
         expect(res.body.error).toBe('Wishlist not found');
     });

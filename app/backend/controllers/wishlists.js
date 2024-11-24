@@ -22,7 +22,7 @@ const getAllWishlists = asyncErrorWrapper(async (req,res) =>{
  * */
 const createWishlist= asyncErrorWrapper(async (req,res) =>{
     const wishlist = await Wishlist.create(req.body)
-    res.status(201).json({wishlist: wishlist})
+    res.status(201).json({wishlist})
 })
 
 
@@ -71,16 +71,18 @@ const updateWishlist = asyncErrorWrapper(async (req,res,next) =>{
  * @param res Response sent to the client containing wishlist data
  * */
 const deleteWishlist = asyncErrorWrapper(async (req,res,next) =>{
-    const {id:wishlistID} = req.params
-    const wishlist = await Wishlist.destroy({
-        where:{
-            wishlistID:wishlistID
+    try {
+        const id = req.params.id;
+        const deleted = await Wishlist.destroy({ where: { id: id } });
+        if (deleted) {
+            return res.status(204).send(); // No content
+        } else {
+            return res.status(404).json({ error: "Wishlist not found" });
         }
-    });
-    if (!wishlist){
-        next(new APIError(`No wishlist with id : ${wishlistID}`),404)
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
-    res.status(200).json({wishlist})
 })
 
 module.exports = {
