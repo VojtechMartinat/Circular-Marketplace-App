@@ -10,7 +10,7 @@ if (isTest) {
     sequelize = new Sequelize({
         dialect: 'sqlite',
         storage: ':memory:',  // In-memory SQLite database
-        logging: false,       // Disable logging for tests (optional)
+        logging: true,       // Disable logging for tests (optional)
     });
 } else {
     // PostgreSQL configuration for production or development

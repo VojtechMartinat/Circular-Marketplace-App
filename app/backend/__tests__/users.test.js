@@ -53,6 +53,15 @@ describe('User Controller Tests', () => {
         expect(res3.body.users[1].username).toBe('jane_doe');
     });
 
+    test('GET /api/v1/wishlists/:id - Should return a user by ID', async () => {
+        const newUser = { userID: '6', username: 'john_joe', password: '1234', email: 'john@example.com', wallet: 100.0 };
+        const postRes = await request(app).post('/api/v1/users').send(newUser);
+        const res = await request(app).get(`/api/v1/users/${newUser.userID}`);
+        console.log(newUser.userID);
+        expect(res.statusCode).toBe(200);
+    });
+
+
 
 
     test('POST /api/v1/users - Should create a new user', async () => {

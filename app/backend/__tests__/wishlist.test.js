@@ -72,22 +72,25 @@ describe('Wishlist Controller Tests', () => {
     test('GET /api/v1/wishlists/:id - Should return a wishlist by ID', async () => {
         const newWishlist = { userID: '1', articleID: '101', totalPrice: 100.0 };
         const postRes = await request(app).post('/api/v1/wishlists').send(newWishlist);
-        console.log(postRes.body);
-        console.log(postRes.body.wishlist.id);
+
         const res = await request(app).get(`/api/v1/wishlists/${postRes.body.wishlist.id}`);
+
+        const res2 = await request(app).get('/api/v1/wishlists');
+
         expect(res.statusCode).toBe(200);
-        expect(res.body).toHaveProperty('id');
-        expect(res.body.totalPrice).toBe(100.0);
+        expect(res.body.wishlist.totalPrice).toBe(100.0);
     });
 
     test('PATCH /api/v1/wishlists/:id - Should update a wishlist', async () => {
-        const newWishlist = { userID: '1', articleID: '101', totalPrice: 100.0 };
+        const newWishlist = {id:'3' ,userID: '1', articleID: '101', totalPrice: 100.0 };
         const postRes = await request(app).post('/api/v1/wishlists').send(newWishlist);
 
         const updatedData = { totalPrice: 120.0 };
-        const res = await request(app).patch(`/api/v1/wishlists/${postRes.body.id}`).send(updatedData);
+        const res = await request(app).patch(`/api/v1/wishlists/${postRes.body.wishlist.id}`).send(updatedData);
         expect(res.statusCode).toBe(200);
-        expect(res.body.totalPrice).toBe(120.0);
+
+        const res2 = await request(app).get(`/api/v1/wishlists/${postRes.body.wishlist.id}`);
+        expect(res2.body.wishlist.totalPrice).toBe(120.0);
     });
 
     test('DELETE /api/v1/wishlists/:id - Should delete a wishlist', async () => {
@@ -100,13 +103,15 @@ describe('Wishlist Controller Tests', () => {
 
     test('GET /api/v1/wishlists/:id - Should return 404 for non-existing wishlist', async () => {
         const res = await request(app).get('/api/v1/wishlists/999');
+        console.log(res.error);
         expect(res.statusCode).toBe(404);
         expect(res.body.error).toBe('Wishlist not found');
+
     });
 
     test('PATCH /api/v1/wishlists/:id - Should return 404 for non-existing wishlist', async () => {
         const updatedData = { totalPrice: 120.0 };
-        const res = await request(app).patch('/api/v1/wishlists/999').send(updatedData);
+        const res = await request(app).patch('/api/v1/wishlists/9999').send(updatedData);
         expect(res.statusCode).toBe(404);
         expect(res.body.error).toBe('Wishlist not found');
     });

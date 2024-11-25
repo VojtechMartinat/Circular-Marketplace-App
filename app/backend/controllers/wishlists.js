@@ -35,13 +35,17 @@ const getWishlist = asyncErrorWrapper(async (req,res,next) =>{
     const {id:wishlistID} = req.params
     const wishlist = await Wishlist.findOne({
         where:{
-            wishlistID: wishlistID
+            id: wishlistID
         }
     })
     if (!wishlist){
+        res.status(404).json({ error: "Wishlist not found" });
         next(new APIError(`No wishlist with id : ${wishlistID}`),404)
     }
-    res.status(200).json({wishlist})
+    else{
+        res.status(200).json({wishlist})
+    }
+
 })
 
 
@@ -54,13 +58,19 @@ const updateWishlist = asyncErrorWrapper(async (req,res,next) =>{
     const {id:wishlistID} = req.params
     const wishlist = await Wishlist.update(req.body,{
         where: {
-            wishlistID: wishlistID
+            id: wishlistID
         }
+
     })
-    if (!wishlist){
+    console.log(wishlist)
+    if (wishlist[0] === 0){
+        res.status(404).json({error:"Wishlist not found"})
         next(new APIError(`No wishlist with id : ${wishlistID}`),404)
     }
-    res.status(200).json({wishlist})
+    else{
+        res.status(200).json({wishlist})
+    }
+
 })
 
 
