@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createArticle } from '../services/articleService';
-import { uploadPhoto } from '../services/photoService'; // Import the uploadPhoto service
+import {createPhoto, uploadPhoto} from '../services/photoService'; // Import the uploadPhoto service
 import './AddItem.css';
+import { useAuth } from '../Contexts/AuthContext';
 
 function AddItem() {
   const [price, setPrice] = useState('');
@@ -13,7 +14,12 @@ function AddItem() {
   const [images, setImages] = useState([]); // State for the uploaded image
   const navigate = useNavigate();
   const maxImages = 5;
-
+  const { isLoggedIn, user } = useAuth()
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate('/login'); // Redirect to login page
+        }
+    }, [isLoggedIn, navigate]);
   const handleImageChange = (event, index) => {
     const file = event.target.files[0];
     if (file) {
@@ -34,26 +40,43 @@ function AddItem() {
 
       try {
           // Create article first
-          const articleData = {
-              articleTitle,
-              description,
-              price: parseFloat(price),
-              dateAdded: new Date(),
-              state: 'uploaded',
-          };
+          const articleData = new FormData();
+          const currentDate = new Date().toISOString();
+          articleData.append('userID', user.userID);
+          articleData.append('articleTitle', articleTitle);
+          articleData.append('description', description);
+          articleData.append('price', parseFloat(price));
+          articleData.append('dateAdded', currentDate);
+          articleData.append('state','uploaded')
 
-          const articleResponse = await createArticle(articleData); // Create the article in the DB
-          console.log(articleResponse)
+          createArticle(articleData).then((res) => {
+              const photoData = new FormData();
+              if (!images[0]){
+                  console.log("No image uploaded")
+              }
+              photoData.append('articleID', res.data.article.articleID);
+              photoData.append('image', images[0]);
+
+              createPhoto(photoData).then(res => {
+              }).catch(err => {
+                      throw new Error(err)
+                  }
+              )
+
+          }).catch((err) => {
+              console.log(err)
+              alert("Error creating an article!")
+          })
 
           // Upload the photo
-          for (let i = 0; i < images.length; i++) {
-            const photoData = new FormData();
-            const file = images[i];
-            photoData.append('image', file);
-            photoData.append('articleID', articleResponse.articleID); // Attach the article ID
-
-            await uploadPhoto(photoData); // Upload the photo and associate with the article
-          } // Upload the photo and associate with the article
+          // for (let i = 0; i < images.length; i++) {
+          //   const photoData = new FormData();
+          //   const file = images[i];
+          //   photoData.append('image', file);
+          //   photoData.append('articleID', articleResponse.articleID); // Attach the article ID
+          //
+          //   await uploadPhoto(photoData); // Upload the photo and associate with the article
+          // } // Upload the photo and associate with the article
 
           // Redirect to home or another page
           navigate('/');

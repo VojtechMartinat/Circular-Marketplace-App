@@ -4,23 +4,31 @@ import Home from './Components/Home';
 import ArticleDetails from './Components/ArticleDetails';
 import NotFound from './Components/NotFound';
 import NavBarDefault from './Components/NavBarDefault';
-import Account from './Components/Account';
 import CreateArticlePage from './Components/CreateArticlePage';
-import Profile from "./Components/Profile"; // Import the new CreateArticlePage component
+import Profile from "./Components/Profile";
+import {AuthProvider} from "./Contexts/AuthContext";
+import Login from './Components/Login';
+import Register from "./Components/Register";
+
 
 const App = () => {
     return (
-        <Router>
-            <NavBarDefault />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/articles/:id" element={<ArticleDetails />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/create-article" element={<CreateArticlePage />} /> {/* New route for creating articles */}
-                <Route path="/profile/:id" element={<Profile/>} />
-                <Route path="*" element={<NotFound />} />
-            </Routes>
-        </Router>
+        <AuthProvider>
+            <Router>
+
+                <NavBarDefault />
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/articles/:id" element={<ArticleDetails />} />
+                    <Route path="/create-article" element={<CreateArticlePage />} /> {}
+                    <Route path="/profile/:id" element={<Profile/>} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+
+            </Router>
+        </AuthProvider>
     );
 };
 

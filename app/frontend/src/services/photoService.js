@@ -1,22 +1,17 @@
+import Axios from "axios";
+const url = 'http://34.251.202.114:8080/api/v1/';
 
-const userAPI = 'http://34.251.202.114:8080/api/v1/';
 
 async function uploadPhoto(photoData) {
     try {
-        const response = await fetch(`${userAPI}photos`, {
+        await fetch(`${url}photos`, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add authorization if needed
-            },
             body: photoData,
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to upload photo');
-        }
-
-        const data = await response.json();
-        return data; // Return response data if necessary
+        }).then((res) => res.json())
+            .then((data) => {
+                    return data
+                }
+            );
     } catch (error) {
         console.error('Error uploading photo:', error);
         throw error;
@@ -25,7 +20,7 @@ async function uploadPhoto(photoData) {
 
 async function getPhotos() {
     try {
-        const response = await fetch(`${userAPI}photos`);
+        const response = await fetch(`${url}photos`);
         const data = await response.json();
 
         if (!data) {
@@ -38,5 +33,11 @@ async function getPhotos() {
         throw error;
     }
 }
+async function createPhoto(photoData) {
+    Axios.post(`${url}photos`, photoData)
+        .then(res => {
+            console.log(res.data)
+        });
 
-module.exports = {getPhotos, uploadPhoto };
+}
+export { getPhotos, uploadPhoto, createPhoto };
