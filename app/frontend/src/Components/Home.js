@@ -1,22 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getArticles } from '../services/articleService'; // Adjust path as necessary
+import {getArticlePhotos, getArticles} from '../services/articleService';
 import './home.css'
 
 function App() {
   const [articles, setArticles] = useState([]);
   const [inputValue, setInputValue] = useState('');
 
-  useEffect(() => {
-      getArticles()
-          .then(response => {
-              console.log('Fetched articles:', response);
-              if (response && response.article) {
-                  setArticles(response.article); // Update with correct structure
-              } else {
-                  console.error('No articles data found');
-              }
-          })
+    useEffect(() => {
+        getArticles()
+            .then(async (response) => {
+                console.log('Fetched articles:', response);
+                if (response && response.article) {
+                    const articlesWithPhotos = await Promise.all(response.article.map(async (article) => {
+                        const photosResponse = await getArticlePhotos(article.articleID);
+                        if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
+                            const photoData = photosResponse.photos[0].image.data;
+                            const uint8Array = new Uint8Array(photoData);
+                            const blob = new Blob([uint8Array], { type: 'image/png' });
+                            const reader = new FileReader();
+                            return new Promise((resolve) => {
+                                reader.onloadend = () => {
+                                    article.imageUrl = reader.result;
+                                    resolve(article);
+                                };
+                                reader.readAsDataURL(blob);
+                            });
+                        }
+                        return article;
+                    }));
+                    setArticles(articlesWithPhotos);
+                } else {
+                    console.error('No articles data found');
+                }
+            })
           .catch(error => {
               console.error('Error fetching articles:', error);
           });
@@ -64,7 +81,11 @@ function Header({handleInputChange}) {
 function ProductCard({ article }) {
   return (
     <div className='product-card'>
-      <div className='product-image-placeholder'>🖼️</div>
+        {article.imageUrl ? (
+            <img src={article.imageUrl} alt={article.articleTitle} />
+        ) : (
+            <div className="product-image-placeholder">🖼️</div>
+        )}
       <div className='product-info'>
       <Link to ={`/articles/${article.articleID}`}>
         <p className='product-name'>
@@ -89,6 +110,7 @@ function ProductCard({ article }) {
   //   </div>
   // );
 }
+
 
 function BottomNav() {
   const navigate = useNavigate();
