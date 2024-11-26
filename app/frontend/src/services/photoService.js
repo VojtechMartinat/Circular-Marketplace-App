@@ -1,5 +1,5 @@
+import {url} from "../Config/config"
 import Axios from "axios";
-const url = 'http://34.251.202.114:8080/api/v1/';
 
 
 async function uploadPhoto(photoData) {
@@ -37,7 +37,7 @@ async function createPhoto(photoData) {
     Axios.post(`${url}photos`, photoData)
         .then(res => {
             console.log(res.data)
-        });
+    });
 
 }
 export { getPhotos, uploadPhoto, createPhoto };

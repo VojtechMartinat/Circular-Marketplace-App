@@ -5,12 +5,16 @@ import './article.css'
 
 
 function App() {
+import {useNavigate, useParams } from 'react-router-dom';
+import { getArticle, getArticlePhotos } from '../services/articleService';
+import {createOrder} from "../services/orderService";
+import {useAuth} from "../Contexts/AuthContext";
+const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [article, setArticle] = useState(null);
     const [imageUrl, setImageUrl] = useState(null); // State to store image URL
-    
-    console.log(article)
+    const { isLoggedIn, user } = useAuth(); // Access logged-in user data
     useEffect(() => {
         getArticle(id).then(response => {
             if (response) {
@@ -19,25 +23,49 @@ function App() {
         });
     }, [id]);
 
+
     useEffect(() => {
         getArticlePhotos(id).then(response => {
             console.log("Article photos response:", response);
             if (response && response.photos && response.photos[0]) {
-                const photoData = response.photos[0].image.data;
-
-                // Convert the Buffer data to a base64 string using FileReader
-                const uint8Array = new Uint8Array(photoData);
-                const blob = new Blob([uint8Array], { type: 'image/png' }); // assuming image is PNG
-                const reader = new FileReader();
-
-                reader.onloadend = () => {
-                    setImageUrl(reader.result); // Base64 URL
-                };
-
-                reader.readAsDataURL(blob); // This will trigger the onloadend function
+                const imageData = response.photos[0].image.data; // Assuming this is an array of bytes
+                const base64data = arrayBufferToBase64(imageData);
+                console.log(base64data);
+                setImageUrl(base64data);
             }
         });
     }, [id]);
+
+    const arrayBufferToBase64 = (array) => {
+        let binary = '';
+        for (let i = 0; i < array.length; i++) {
+            binary += String.fromCharCode(array[i]);
+        }
+        return 'data:image/png;base64,' + window.btoa(binary);
+    };
+
+    const handleBuy = async () => {
+        if (!isLoggedIn){
+            alert("Please log in to buy an article");
+            return;
+        }
+        const orderData = {
+            userID: user.userID,
+            paymentMethodID : "4d530d77-217e-4a89-952e-f4cee8e3fe5c",
+            dateOfPurchase : new Date().toISOString(),
+            collectionMethod : "collection",
+            articles:[
+                { articleID: id }
+            ]
+        };
+        createOrder(orderData)
+            .then((res) => {
+                alert(`Order created succesfully!`)
+            })
+            .catch((error) => {
+                alert(`Error: ${error}`)
+            })
+    };
 
     // If article or imageUrl is not available, show loading
     if (!article) return <div>Loading...</div>;
@@ -47,7 +75,7 @@ function App() {
         <div className="app">
         {/* Header section */}
         <div className="header">
-            <button className="back-button" onClick={() => navigate('/')}>←</button>            
+            <button className="back-button" onClick={() => navigate('/')}>←</button>
             <div className="icons">
             <button className="icon-button">❤</button>
             <button className="icon-button">⇧</button>
@@ -90,10 +118,10 @@ function App() {
 
         {/* Purchase Button */}
         <div className="purchase-button">
-            <button>Buy for £10 including money-back guarantee</button>
+            <button onClick={handleBuy}>Buy</button>
         </div>
         </div>
     );
-    }
+};
 
-    export default App;
+export default ArticleDetails;

@@ -1,4 +1,5 @@
-const url = 'http://34.251.202.114:8080/api/v1/';
+import {url} from "../Config/config"
+
 // services/userService.js
 async function loginUser(username, password) {
     const requestOptions = {

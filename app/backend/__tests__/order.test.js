@@ -1,6 +1,10 @@
 const { sequelize, Order } = require('./Setup');
 const request = require('supertest');
 const app = require('../server');
+process.env.NODE_ENV = 'test'; // Ensure test environment is used
+const { beforeAll, afterAll, beforeEach, describe, test,expect,} = require('@jest/globals');
+
+
 
 beforeAll(async () => {
     await sequelize.sync();

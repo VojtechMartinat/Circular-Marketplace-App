@@ -4,6 +4,7 @@ import Home from './Components/Home';
 import ArticleDetails from './Components/ArticleDetails';
 import NotFound from './Components/NotFound';
 import NavBarDefault from './Components/NavBarDefault';
+import Account from './Components/Account';
 import CreateArticlePage from './Components/CreateArticlePage';
 import Profile from "./Components/Profile";
 import {AuthProvider} from "./Contexts/AuthContext";
@@ -14,20 +15,20 @@ import Register from "./Components/Register";
 const App = () => {
     return (
         <AuthProvider>
-            <Router>
+        <Router>
 
-                <NavBarDefault />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/articles/:id" element={<ArticleDetails />} />
-                    <Route path="/create-article" element={<CreateArticlePage />} /> {}
-                    <Route path="/profile/:id" element={<Profile/>} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
+            <NavBarDefault />
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/articles/:id" element={<ArticleDetails />} />
+                <Route path="/create-article" element={<CreateArticlePage />} /> {}
+                <Route path="/profile/:id" element={<Profile/>} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
 
-            </Router>
+        </Router>
         </AuthProvider>
     );
 };

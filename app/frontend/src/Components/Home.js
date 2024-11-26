@@ -3,33 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import {getArticlePhotos, getArticles} from '../services/articleService';
 import './home.css'
 
-function App() {
-  const [articles, setArticles] = useState([]);
-  const [inputValue, setInputValue] = useState('');
+const Home = () => {
+    const [articles, setArticles] = useState([]);
+    const [inputValue, setInputValue] = useState('');
 
     useEffect(() => {
         getArticles()
-            .then(async (response) => {
+            .then(response => {
                 console.log('Fetched articles:', response);
                 if (response && response.article) {
-                    const articlesWithPhotos = await Promise.all(response.article.map(async (article) => {
-                        const photosResponse = await getArticlePhotos(article.articleID);
-                        if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
-                            const photoData = photosResponse.photos[0].image.data;
-                            const uint8Array = new Uint8Array(photoData);
-                            const blob = new Blob([uint8Array], { type: 'image/png' });
-                            const reader = new FileReader();
-                            return new Promise((resolve) => {
-                                reader.onloadend = () => {
-                                    article.imageUrl = reader.result;
-                                    resolve(article);
-                                };
-                                reader.readAsDataURL(blob);
-                            });
-                        }
-                        return article;
-                    }));
-                    setArticles(articlesWithPhotos);
+                    setArticles(response.article);
                 } else {
                     console.error('No articles data found');
                 }
@@ -43,17 +26,10 @@ function App() {
       setInputValue(event.target.value);
   };
 
-  const filteredArticles = articles.filter(article =>
-    article.articleTitle.toLowerCase().includes(inputValue.toLowerCase())
-  )
+    const filteredArticles = articles.filter(article =>
+        article.articleTitle.toLowerCase().includes(inputValue.toLowerCase()) && article.state === "uploaded"
+    );
 
-  // const products = [
-  //     { name: "Helmut", price: "£10" },
-  //     { name: "Chair", price: "£15" },
-  //     { name: "Shirt", price: "Free" },
-  //     { name: "Jacket", price: "Free" },
-  //     { name: "Sion", price: "Free" },
-  // ];
 
   return (
     <div className="app">
@@ -78,6 +54,34 @@ function Header({handleInputChange}) {
   );
 }
 
+/*
+function SearchBar() {
+    return(
+            <input>
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                placeholder="Search articles..."
+            <input/>
+            {filteredArticles.length > 0 ? (
+                filteredArticles.map(article => (
+                    <div key={article.articleID}>
+                        <Link to={`/articles/${article.articleID}`}>
+                            <h2>{article.articleTitle}</h2>
+                        </Link>
+                        <p>Price: ${article.price}</p>
+                    </div>
+                ))
+            ) : (
+                <p>No articles found matching "{inputValue}"</p>
+            )}
+            <p>You entered: {inputValue}</p>
+        </div>
+);
+};
+
+
+ */
 function ProductCard({ article }) {
   return (
     <div className='product-card'>
@@ -123,4 +127,4 @@ function BottomNav() {
   );
 }
 
-export default App;
+export default Home;

@@ -15,6 +15,42 @@ const getAllUsers = asyncErrorWrapper(async (req,res) =>{
 
 })
 
+/**
+ * Checks all the database records to see whether a user account exists with correct password
+ */
+const loginUser = asyncErrorWrapper(async (req, res, next) => {
+    const { username, password } = req.body;
+
+    // Fetch all users
+    const users = await User.findAll();
+
+    // Check if the username exists in the list of users
+    const user = users.find(user => user.username === username);
+
+    // If user does not exist, throw an error
+    if (!user) {
+        return next(new APIError('Invalid username or password', 401));
+    }
+
+    // Check if the passwords match
+    if (user.password !== password) {
+        return next(new APIError('Invalid username or password', 401));
+    }
+
+    // Send user data in response
+    res.status(200).json({
+        user: {
+            userID: user.userID,
+            username: user.username,
+            email: user.email,
+            location: user.location,
+            wallet: user.wallet,
+        }
+    });
+});
+
+
+
 
 /**
 * * Create a new User and save him in the database
@@ -22,6 +58,7 @@ const getAllUsers = asyncErrorWrapper(async (req,res) =>{
  *  @param res Response sent to the client containing new user data
 * */
 const createUser = asyncErrorWrapper(async (req,res) =>{
+    console.log("User data received:", req.body);
     const user = await User.create(req.body)
     res.status(201).json({user})
 })
@@ -121,5 +158,5 @@ const userArticles = asyncErrorWrapper(async (req,res,next) =>{
     res.status(200).json({articles})
 })
 module.exports = {
-    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles
+    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser
 }
