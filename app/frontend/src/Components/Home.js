@@ -9,10 +9,27 @@ const Home = () => {
 
     useEffect(() => {
         getArticles()
-            .then(response => {
+            .then(async response => {
                 console.log('Fetched articles:', response);
                 if (response && response.article) {
-                    setArticles(response.article);
+                    const articlesWithPhotos = await Promise.all(response.article.map(async (article) => {
+                        const photosResponse = await getArticlePhotos(article.articleID);
+                        if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
+                            const photoData = photosResponse.photos[0].image.data;
+                            const uint8Array = new Uint8Array(photoData);
+                            const blob = new Blob([uint8Array], {type: 'image/png'});
+                            const reader = new FileReader();
+                            return new Promise((resolve) => {
+                                reader.onloadend = () => {
+                                    article.imageUrl = reader.result;
+                                    resolve(article);
+                                };
+                                reader.readAsDataURL(blob);
+                            });
+                        }
+                        return article;
+                    }));
+                    setArticles(articlesWithPhotos);
                 } else {
                     console.error('No articles data found');
                 }

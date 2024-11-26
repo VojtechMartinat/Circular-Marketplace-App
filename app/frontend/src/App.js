@@ -4,7 +4,6 @@ import Home from './Components/Home';
 import ArticleDetails from './Components/ArticleDetails';
 import NotFound from './Components/NotFound';
 import NavBarDefault from './Components/NavBarDefault';
-import Account from './Components/Account';
 import CreateArticlePage from './Components/CreateArticlePage';
 import Profile from "./Components/Profile";
 import {AuthProvider} from "./Contexts/AuthContext";

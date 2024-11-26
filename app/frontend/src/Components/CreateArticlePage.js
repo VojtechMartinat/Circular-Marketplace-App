@@ -16,6 +16,8 @@ const CreateArticlePage = () => {
     const [isCollection, setIsCollection] = useState(true);
     const [images, setImages] = useState([]); // State for the uploaded image
     const maxImages = 5;
+    const navigate = useNavigate();
+
     useEffect(() => {
         if (!isLoggedIn) {
             navigate('/login'); // Redirect to login page
@@ -30,7 +32,6 @@ const CreateArticlePage = () => {
     };
     const [image, setImage] = useState(null);
 
-    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -82,9 +83,7 @@ const CreateArticlePage = () => {
             </header>
 
             <form onSubmit={handleSubmit}>
-                <div className="photo-section">
-                    {Array.from({ length: maxImages }, (_, index) => renderPhotoBox(index))}
-                </div>
+
 
                 <div className="input-group">
                     <label>Title</label>
