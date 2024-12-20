@@ -1,79 +1,112 @@
-
-import React, { useState, useEffect } from 'react';
-import {useNavigate} from 'react-router-dom';
-import { useAuth } from '../Contexts/AuthContext';
-import {createArticle} from "../services/articleService";
-import {createPhoto, uploadPhoto} from "../services/photoService";
+import React, {useEffect, useState} from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createArticle } from '../services/articleService';
+import {createPhoto} from '../services/photoService'; // Import the uploadPhoto service
 import './AddItem.css';
+import { useAuth } from '../Contexts/AuthContext';
 
-
-const CreateArticlePage = () => {
-    const [articleTitle, setArticleTitle] = useState('');
-    const [description, setDescription] = useState('');
+function AddItem() {
     const [price, setPrice] = useState('');
-    const { isLoggedIn, user } = useAuth(); // Access logged-in user data
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(true);
+    const [articleTitle, setArticleTitle] = useState('');
+    const [description, setDescription] = useState('');
     const [images, setImages] = useState([]); // State for the uploaded image
-    const maxImages = 5;
     const navigate = useNavigate();
-
+    const maxImages = 5;
+    const { isLoggedIn, user } = useAuth()
     useEffect(() => {
         if (!isLoggedIn) {
             navigate('/login'); // Redirect to login page
         }
     }, [isLoggedIn, navigate]);
-
-    const handleImageChange = (event) => {
+    const handleImageChange = (event, index) => {
         const file = event.target.files[0];
         if (file) {
-            setImage(file);
+            // Create a new image array with the uploaded image
+            const newImages = [...images];
+            newImages[index] = file; // Store the image URL
+            setImages(newImages); // Update the state with the new image list
         }
     };
-    const [image, setImage] = useState(null);
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-
-    useEffect(() => {
-        if (!isLoggedIn) {
-            navigate('/login'); // Redirect to login page
-        }
-    }, [isLoggedIn, navigate]);
-    const [articleID, setArticleID] = useState("")
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        if (!articleTitle || !description || !price || !image) {
-            alert("Please fill in all fields and upload an image");
+        if (!articleTitle || !description || !price || images.length === 0) {
+            alert("Please fill in all fields and upload an image.");
             return;
         }
-        const articleData = new FormData();
-        const currentDate = new Date().toISOString();
-        articleData.append('userID', user.userID);
-        articleData.append('articleTitle', articleTitle);
-        articleData.append('description', description);
-        articleData.append('price', parseFloat(price));
-        articleData.append('dateAdded', currentDate);
-        articleData.append('state','uploaded')
-        createArticle(articleData).then((res) => {
-            const photoData = new FormData();
-            if (!image){
-                console.log("No image uploaded")
-            }
-            photoData.append('articleID', res.data.article.articleID);
-            photoData.append('image', image);
 
-            createPhoto(photoData).then(res => {
-            }).catch(err => {
-                throw new Error(err)
+        try {
+            // Create article first
+            const articleData = new FormData();
+            const currentDate = new Date().toISOString();
+            articleData.append('userID', user.userID);
+            articleData.append('articleTitle', articleTitle);
+            articleData.append('description', description);
+            articleData.append('price', parseFloat(price));
+            articleData.append('dateAdded', currentDate);
+            articleData.append('state','uploaded')
+
+            createArticle(articleData).then((res) => {
+                for (let i = 0; i < images.length; i++) {
+                    const photoData = new FormData();
+                    photoData.append('articleID', res.data.article.articleID);
+                    photoData.append('image', images[i]);
+                    if (!images[i]){
+                        break;
+                    }
+                    createPhoto(photoData).then(res => {
+                    }).catch(err => {
+                            throw new Error(err)
+                        }
+                    )
                 }
-            )
+            }).catch((err) => {
+                console.log(err)
+                alert("Error creating an article!")
+            })
 
-        }).catch((err) => {
-            console.log(err)
-            alert("Error creating an article!")
-        })
+            // Upload the photo
+            // for (let i = 0; i < images.length; i++) {
+            //   const photoData = new FormData();
+            //   const file = images[i];
+            //   photoData.append('image', file);
+            //   photoData.append('articleID', articleResponse.articleID); // Attach the article ID
+            //
+            //   await uploadPhoto(photoData); // Upload the photo and associate with the article
+            // } // Upload the photo and associate with the article
+
+            // Redirect to home or another page
+            navigate('/');
+        } catch (error) {
+            console.error('Error creating article and uploading photo:', error);
+            alert('Failed to create article or upload photo');
+        }
     };
+
+    const renderPhotoBox = (index) => {
+        return (
+            <div className="photo-box" key={index}>
+                {images[index] ? (
+                    <img src={URL.createObjectURL(images[index])} alt={`Uploaded ${index}`} className="image-preview" />
+                ) : (
+                    index === images.length && images.length < maxImages && (
+                        <label htmlFor={`image-upload-${index}`} className="upload-label">+</label>
+                    )
+                )}
+                <input
+                    type="file"
+                    accept="image/*"
+                    id={`image-upload-${index}`}
+                    onChange={(e) => handleImageChange(e, index)}
+                    style={{ display: 'none' }}
+                />
+            </div>
+        );
+    };
+
     return (
         <div className="add-item">
             <header className="header">
@@ -83,7 +116,9 @@ const CreateArticlePage = () => {
             </header>
 
             <form onSubmit={handleSubmit}>
-
+                <div className="photo-section">
+                    {Array.from({ length: maxImages }, (_, index) => renderPhotoBox(index))}
+                </div>
 
                 <div className="input-group">
                     <label>Title</label>
@@ -128,11 +163,12 @@ const CreateArticlePage = () => {
                 </div>
 
                 <button className="publish-button">
-                    Publish for £2.20<br />
+                    Publish for £{price? parseFloat(price) + 0.2 : 0}<br />
                     <span className="subtext">Including shipping & buyer protection</span>
                 </button>
             </form>
         </div>
     );
-};
-export default CreateArticlePage;
+}
+
+export default AddItem;
