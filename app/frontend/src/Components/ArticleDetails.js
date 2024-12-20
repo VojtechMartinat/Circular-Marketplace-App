@@ -4,6 +4,7 @@ import { getArticle, getArticlePhotos } from '../services/articleService'; // Ad
 import './article.css'
 import {createOrder} from "../services/orderService";
 import {useAuth} from "../Contexts/AuthContext";
+import {getUser} from "../services/userService";
 
 
     const ArticleDetails = () => {
@@ -11,21 +12,32 @@ import {useAuth} from "../Contexts/AuthContext";
         const navigate = useNavigate();
         const [article, setArticle] = useState(null);
         const [imageUrl, setImageUrl] = useState(null); // State to store image URL
+        const [articleUser, setArticleUser] = useState(null)
         const {isLoggedIn, user} = useAuth(); // Access logged-in user data
         useEffect(() => {
             getArticle(id).then(response => {
                 if (response) {
                     setArticle(response.article);
+                    console.log(response.article)
+
                 }
             });
         }, [id]);
-
+        useEffect(() => {
+            if (article && article.userID) {
+                getUser(article.userID).then(response => {
+                    if (response) {
+                        console.log(response.user)
+                        setArticleUser(response.user)
+                    }
+                })
+            }
+        }, [article]);
 
         useEffect(() => {
             getArticlePhotos(id).then(response => {
-                console.log("Article photos response:", response);
                 if (response && response.photos && response.photos[0]) {
-                    const imageData = response.photos[0].image.data; // Assuming this is an array of bytes
+                    const imageData = response.photos[0].image.data;
                     const base64data = arrayBufferToBase64(imageData);
                     console.log(base64data);
                     setImageUrl(base64data);
@@ -97,10 +109,12 @@ import {useAuth} from "../Contexts/AuthContext";
                 <div className="seller-info">
                     <div className="seller-avatar">👤</div>
                     <div className="seller-details">
-                        <p className="seller-name">Name of Seller(placeholder) </p>
-                        <p className="seller-rating">★★★★★ (4)</p>
+                        <p className="seller-name">{articleUser?.username} </p>
+                        <p className="seller-rating">
+                            {articleUser?.rating ? `${articleUser.rating} (0 reviews)` : "★★★★★ (0 reviews)"} {/* make the rating display correct rating} */}
+                        </p>
                     </div>
-                    <div className="seller-location">📍 Bristol</div>
+                    <div className="seller-location">📍{articleUser?.location}</div>
                 </div>
 
                 {/* Shipping and Collection */}
