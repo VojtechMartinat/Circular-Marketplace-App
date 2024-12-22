@@ -82,12 +82,12 @@ const ArticleDetails = () => {
     const responsive = {
         desktop: {
             breakpoint: { max: 3000, min: 1024 },
-            items: Math.min(photos.length, 3), // Adjust based on number of images
+            items: Math.min(photos.length, 3),
             slidesToSlide: 1,
         },
         tablet: {
             breakpoint: { max: 1024, min: 464 },
-            items: Math.min(photos.length, 2), // Adjust based on number of images
+            items: Math.min(photos.length, 2),
             slidesToSlide: 1,
         },
         mobile: {
