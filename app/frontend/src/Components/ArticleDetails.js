@@ -16,6 +16,39 @@ const ArticleDetails = () => {
     const [articleUser, setArticleUser] = useState(null);
     const { isLoggedIn, user } = useAuth();
 
+    const KebabMenu = () => {
+        const [isOpen, setIsOpen] = useState(false);
+
+        const toggleMenu = () => {
+            setIsOpen(!isOpen);
+        };
+
+        const handleSharing = () => {
+            const currentUrl = window.location.href
+            navigator.clipboard.writeText(currentUrl)
+                .then(() => {alert('Article copied to the clipboard!')})
+                .catch((error) => {
+                    console.error('Error copying text: ',error)
+                })
+            setIsOpen(false);
+        };
+
+        return (
+            <div className="icons">
+                <button className="kebab-button" onClick={toggleMenu}>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                </button>
+                {isOpen && (
+                    <div className="menu">
+                        <div className="menu-item" onClick={() => handleSharing()}>Share</div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     useEffect(() => {
         getArticle(id).then((response) => {
             if (response) {
@@ -104,11 +137,7 @@ const ArticleDetails = () => {
                 <button className="back-button" onClick={() => navigate('/')}>
                     ←
                 </button>
-                <div className="icons">
-                    <button className="icon-button">❤</button>
-                    <button className="icon-button">⇧</button>
-                    <button className="icon-button">⋮</button>
-                </div>
+                <KebabMenu />
             </div>
 
             {/* Carousel for images */}
