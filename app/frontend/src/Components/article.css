@@ -31,6 +31,27 @@
   font-size: 24px;
 }
 
+.carousel-container {
+  margin: 0 auto;
+  width: 100%;
+}
+
+.carousel-image {
+  overflow: hidden;
+  height: 300px;
+  width: 100%;
+  padding: 10px;
+  margin: 0;
+}
+
+.carousel-image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+
 .image-placeholder {
   width: 100%;
   height: 200px;
@@ -118,4 +139,49 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+}
+
+
+.kebab-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.kebab-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 4px auto;
+  border-radius: 50%;
+  background-color: black;
+}
+
+.icons {
+  position: relative; /* Make sure the menu is positioned relative to this container */
+}
+
+.menu {
+  position: absolute; /* Position it absolutely */
+  top: 100%; /* Position it below the button */
+  right: 0; /* Align it to the right */
+  background-color: white; /* Background color for visibility */
+  border: 1px solid #ccc; /* Optional border */
+  z-index: 1000; /* Ensure it appears above other elements */
+  display: block; /* Ensure it is displayed */
+}
+
+.menu-item {
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: #f0f0f0;
 }

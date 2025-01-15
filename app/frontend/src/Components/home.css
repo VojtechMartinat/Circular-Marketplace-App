@@ -40,7 +40,7 @@
 }
 
 .product-grid {
-  flex-grow: 1;
+  flex-grow: 0;
   padding: 10px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -64,6 +64,7 @@
   border-radius: 8px;
   background-color: #e0e0e0;
 }
+
 .product-image-placeholder {
   background-color: #e0e0e0;
   height: 100px;
