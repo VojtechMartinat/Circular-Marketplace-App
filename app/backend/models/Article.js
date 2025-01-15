@@ -39,6 +39,11 @@ Article.init(
         state: {
             type: DataTypes.ENUM('uploaded','sold','archived','collected')
         },
+        shippingType: {
+            type: DataTypes.ENUM('shipping', 'collection', 'both'),
+            allowNull: false,
+            defaultValue: 'both'
+        }
     },
     {
         sequelize,

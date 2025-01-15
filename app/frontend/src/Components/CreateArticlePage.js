@@ -48,6 +48,9 @@ function AddItem() {
             articleData.append('price', parseFloat(price));
             articleData.append('dateAdded', currentDate);
             articleData.append('state','uploaded')
+            const shippingType = isShipping ? (isCollection ? "both" : "shipping") : "collection";
+            console.log(shippingType)
+            articleData.append('shippingType', shippingType);
 
             createArticle(articleData).then((res) => {
                 for (let i = 0; i < images.length; i++) {
@@ -147,14 +150,15 @@ function AddItem() {
                         placeholder="£ Free or enter amount"
                     />
                 </div>
-
                 <div className="shipping-options">
                     <button
+                        type="button"
                         className={`option-button ${isShipping ? 'selected' : ''}`}
                         onClick={() => setIsShipping(!isShipping)}>
                         Shipping
                     </button>
                     <button
+                        type="button"
                         className={`option-button ${isCollection ? 'selected' : ''}`}
                         onClick={() => setIsCollection(!isCollection)}>
                         Collection
