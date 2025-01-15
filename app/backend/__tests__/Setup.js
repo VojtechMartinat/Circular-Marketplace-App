@@ -39,7 +39,8 @@ afterAll(async () => {
 
 beforeEach(async () => {
     // Clear data from the User table before each test
-    await User.destroy({ where: {} }); // Clear all users
+    await User.destroy({ where: {} });
+    await PaymentCard.destroy({ where: {} });// Clear all users
 });
 
 

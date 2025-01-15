@@ -2,76 +2,189 @@ const request = require('supertest');
 const { sequelize, PaymentCard } = require('./Setup'); // Import correctly
 const app = require('../server'); // Import the app
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
-const { beforeAll, afterAll, beforeEach, describe, test,expect,} = require('@jest/globals');
-
-
-
-beforeAll(async () => {
-    await sequelize.sync();
-});
-
-afterAll(async () => {
-    await sequelize.close();
-});
-
-beforeEach(async () => {
-    await PaymentCard.destroy({ where: {} }); // Clear data before each test
-});
+const { beforeAll, afterAll, beforeEach, describe, test,expect, afterEach,} = require('@jest/globals');
 
 describe('PaymentCard Controller Tests', () => {
 
+    beforeAll(async () => {
+        // Sync models with in-memory database before running tests
+        await sequelize.sync({ force: true });
+    });
+
+    afterAll(async () => {
+        // Close the Sequelize connection after tests are done
+        await sequelize.close();
+    });
+
+    beforeEach(async () => {
+        // Clear data from tables before each test
+        await sequelize.models.User.destroy({ where: {}, force: true });
+        await sequelize.models.Wishlist.destroy({ where: {}, force: true });
+        await sequelize.models.PaymentCard.destroy({ where: {}, force: true });
+
+
+        // Insert necessary data for each test
+        const newUser = { userID: '1', username: 'user1', password: 'password', email: 'user1@example.com', wallet: 100.0 };
+        await request(app).post('/api/v1/users').send(newUser);
+    });
+
+    afterEach(async () => {
+        // Ensure no data remains in the database by truncating tables again
+        await sequelize.models.User.destroy({ where: {}, force: true });
+        await sequelize.models.Wishlist.destroy({ where: {}, force: true });
+        await sequelize.models.PaymentCard.destroy({ where: {}, force: true });
+
+
+    });
+
     test('GET /api/v1/paymentcards - Should return all payment cards', async () => {
-        // Replace bulkCreate with individual POST requests
-        await request(app).post('/api/v1/paymentcards').send({
-            paymentMethod: 'Visa', userID: '1', cardHolder: 'John Doe', sortCode: 123456, cardNumber: 1234567812345678, ExpiryDate: '2025-12-01'
-        });
-        await request(app).post('/api/v1/paymentcards').send({
-            paymentMethod: 'MasterCard', userID: '2', cardHolder: 'Jane Doe', sortCode: 654321, cardNumber: 8765432187654321, ExpiryDate: '2026-06-01'
-        });
-
-        const res = await request(app).get('/api/v1/paymentcards');
-        expect(res.statusCode).toBe(200);
-        expect(res.body.card.length).toBe(2);
-        expect(res.body.card[0].paymentMethod).toBe('Visa');
-    });
-
-    test('POST /api/v1/paymentcards - Should create a new payment card', async () => {
+        // New payment card data
         const newCard = {
-            paymentMethod: 'Visa', userID: '1', cardHolder: 'John Doe', sortCode: 123456, cardNumber: 1234567812345678, ExpiryDate: '2025-12-01'
+            userID: '1',
+            cardHolder: 'John Doe',
+            sortCode: 123456,
+            cardNumber: 1234567812345678,
+            ExpiryDate: '2025-12-01',
         };
-        const res = await request(app).post('/api/v1/paymentcards').send(newCard);
-        expect(res.statusCode).toBe(201);
-        expect(res.body.card.cardHolder).toBe('John Doe');
+
+        // Await the POST request to ensure it's completed before continuing
+        const postRes = await request(app)
+            .post('/api/v1/paymentcards')
+            .send(newCard);
+
+        // Log the POST response to verify it's correct
+        // Check the POST request response
+        expect(postRes.statusCode).toBe(201);
+
+        // Fetch all payment cards to confirm the new card was added
+        const getRes = await request(app).get('/api/v1/paymentcards');
+
+        // Assertions on the GET response
+        expect(getRes.statusCode).toBe(200);
+        expect(getRes.body.card).toHaveLength(1);
+        expect(getRes.body.card[0].cardHolder).toBe('John Doe');
+    });
+    test('GET /api/v1/paymentcards - Should return an empty array if no cards exist', async () => {
+        // Clear all records directly using Sequelize
+        await sequelize.models.PaymentCard.destroy({ where: {}, force: true });
+
+        // Fetch all payment cards to ensure the table is empty
+        const res = await request(app).get('/api/v1/paymentcards');
+        const paymentcards = await sequelize.models.PaymentCard.findAll();
+        console.log('Remaining records:', paymentcards); // Should be empty
+
+
+        // Assertions on the response
+        expect(res.statusCode).toBe(200);
+        expect(res.body.card).toHaveLength(0);
     });
 
-    test('GET /api/v1/paymentcards/:id - Should return a single payment card by ID', async () => {
-        const cardResponse = await request(app).post('/api/v1/paymentcards').send({
-            paymentMethod: 'Visa', userID: '3', cardHolder: 'Alice Doe', sortCode: 111111, cardNumber: 1111222233334444, ExpiryDate: '2027-08-01'
-        });
-        const res = await request(app).get(`/api/v1/paymentcards/${cardResponse.body.card.id}`);
-        expect(res.statusCode).toBe(200);
-        expect(res.body.card.cardHolder).toBe('Alice Doe');
+    test('GET /api/v1/paymentcards/:id - Should return a specific payment card by ID', async () => {
+        const newCard = {
+            paymentMethod: 'Visa',
+            userID: '1',
+            cardHolder: 'John Doe',
+            sortCode: 123456,
+            cardNumber: 1234567812345678,
+            ExpiryDate: '2025-12-01',
+        };
+
+        const postRes = await request(app)
+            .post('/api/v1/paymentcards')
+            .send(newCard);
+
+        const cardID = postRes.body.paymentCard.paymentMethodID;
+        const getRes = await request(app).get(`/api/v1/paymentcards/${cardID}`);
+
+        expect(getRes.statusCode).toBe(200);
+        expect(getRes.body.card.paymentMethodID).toBe(cardID);
+        expect(getRes.body.card.cardHolder).toBe('John Doe');
     });
 
     test('PUT /api/v1/paymentcards/:id - Should update an existing payment card', async () => {
-        const cardResponse = await request(app).post('/api/v1/paymentcards').send({
-            paymentMethod: 'Visa', userID: '4', cardHolder: 'Mark Doe', sortCode: 333333, cardNumber: 5555666677778888, ExpiryDate: '2028-09-01'
-        });
-        const res = await request(app).put(`/api/v1/paymentcards/${cardResponse.body.card.id}`).send({ cardHolder: 'Mark Smith' });
-        expect(res.statusCode).toBe(200);
-        expect(res.body.card[0]).toBe(1); // Sequelize returns the number of rows updated
+        const newCard = {
+            paymentMethod: 'Visa',
+            userID: '1',
+            cardHolder: 'John Doe',
+            sortCode: 123456,
+            cardNumber: 1234567812345678,
+            ExpiryDate: '2025-12-01',
+        };
+
+        const postRes = await request(app)
+            .post('/api/v1/paymentcards')
+            .send(newCard);
+
+        const cardID = postRes.body.paymentCard.paymentMethodID;
+        const updatedData = { cardHolder: 'Jane Doe' };
+
+        const updateRes = await request(app)
+            .put(`/api/v1/paymentcards/${cardID}`)
+            .send(updatedData);
+
+        expect(updateRes.statusCode).toBe(200);
+        expect(updateRes.body.paymentCard.cardHolder).toBe('Jane Doe');
+
+        const getRes = await request(app).get(`/api/v1/paymentcards/${cardID}`);
+        expect(getRes.body.card.cardHolder).toBe('Jane Doe');
     });
 
-    test('DELETE /api/v1/paymentcards/:id - Should delete a payment card', async () => {
-        const cardResponse = await request(app).post('/api/v1/paymentcards').send({
-            paymentMethod: 'Visa', userID: '5', cardHolder: 'John Smith', sortCode: 444444, cardNumber: 9999888877776666, ExpiryDate: '2029-10-01'
-        });
-        const res = await request(app).delete(`/api/v1/paymentcards/${cardResponse.body.card.id}`);
-        expect(res.statusCode).toBe(200);
-        expect(res.body.message).toBe('Payment card deleted successfully');
+    test('DELETE /api/v1/paymentcards/:id - Should delete an existing payment card', async () => {
+        const newCard = {
+            userID: '1',
+            cardHolder: 'John Doe',
+            sortCode: 123456,
+            cardNumber: 1234567812345678,
+            ExpiryDate: '2025-12-01',
+        };
 
-        const deletedCard = await PaymentCard.findOne({ where: { id: cardResponse.body.card.id } });
-        expect(deletedCard).toBeNull();
+        const postRes = await request(app)
+            .post('/api/v1/paymentcards')
+            .send(newCard);
+
+        const cardID = postRes.body.card[0].paymentMethodID;
+
+        const deleteRes = await request(app).delete(`/api/v1/paymentcards/${cardID}`);
+        expect(deleteRes.statusCode).toBe(204);
+
+        const getRes = await request(app).get(`/api/v1/paymentcards/${cardID}`);
+        expect(getRes.statusCode).toBe(404); // Not Found
+    });
+
+    test('POST /api/v1/paymentcards - Should return 400 for invalid input', async () => {
+        const invalidCard = {
+            paymentMethod: 'Visa',
+            userID: '1',
+            cardHolder: '', // Missing cardHolder
+            sortCode: 123456,
+            cardNumber: 'invalid', // Invalid card number
+            ExpiryDate: '2025-12-01',
+        };
+
+        const res = await request(app)
+            .post('/api/v1/paymentcards')
+            .send(invalidCard);
+
+        expect(res.statusCode).toBe(400); // Bad Request
+        expect(res.body.error).toBeDefined();
+    });
+
+    test('GET /api/v1/paymentcards/:id - Should return 404 for a non-existent card', async () => {
+        const res = await request(app).get('/api/v1/paymentcards/nonexistent-id');
+        expect(res.statusCode).toBe(404);
+    });
+
+    test('PUT /api/v1/paymentcards/:id - Should return 404 for updating a non-existent card', async () => {
+        const res = await request(app)
+            .put('/api/v1/paymentcards/nonexistent-id')
+            .send({ cardHolder: 'Non Existent' });
+
+        expect(res.statusCode).toBe(404);
+    });
+
+    test('DELETE /api/v1/paymentcards/:id - Should return 404 for deleting a non-existent card', async () => {
+        const res = await request(app).delete('/api/v1/paymentcards/nonexistent-id');
+        expect(res.statusCode).toBe(404);
     });
 
 });
