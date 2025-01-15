@@ -49,7 +49,6 @@ function AddItem() {
             articleData.append('dateAdded', currentDate);
             articleData.append('state','uploaded')
             const shippingType = isShipping ? (isCollection ? "both" : "shipping") : "collection";
-            console.log(shippingType)
             articleData.append('shippingType', shippingType);
 
             createArticle(articleData).then((res) => {
