@@ -1,16 +1,14 @@
 const request = require('supertest');
-const { sequelize, Photo } = require('./Setup.js');
+const { sequelize, Photo } = require('./Setup');
 const app = require('../server');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, afterEach, describe, test, expect } = require('@jest/globals');
-const { Article, User } = require('./Setup');
-const fs = require('fs');
 
 
 describe('Photo Controller Tests', () => {
     beforeAll(async () => {
         // Sync models with in-memory database before running tests
-        await sequelize.sync({});
+        await sequelize.sync({ force:  true});
     });
 
     afterAll(async () => {
@@ -40,16 +38,27 @@ describe('Photo Controller Tests', () => {
 
     });
 
+
+
     test('POST /api/v1/photos - Should create a new photo', async () => {
-        const newPhoto = { photoID: '1',image: fs.readFileSync('__tests__/test_photo.jpg') ,articleID: '101' };
+        const path = require('path');
+        const filePath = path.join(__dirname, 'test_photo.jpg'); // Path to your test photo
+        console.log(filePath);
 
-        const res = await request(app).post('/api/v1/photos').send(newPhoto);
+        // Perform the POST request with the file attachment
+        const res = await request(app)
+            .post('/api/v1/photos')
+            .field('articleID', '101') // Add additional fields as form data
+            .attach('image', filePath); // Attach the image file
+        console.log(res.body);
+        // Perform a GET request to verify the uploaded photo
         const res2 = await request(app).get('/api/v1/photos');
-        console.log(res2.body)
+        console.log(res2.body);
 
+
+        expect(res.body.photo.articleID).toBe('101');
+        expect(res.body.photo.image).toBeDefined(); // Ensure the image was uploaded
         expect(res.statusCode).toBe(201);
-        expect(res.body.photo.photoID).toBe('1');
-        expect(res.body.photo.articleID).toBe('123');
     });
 
     test('GET /api/v1/photos - Should return all photos', async () => {

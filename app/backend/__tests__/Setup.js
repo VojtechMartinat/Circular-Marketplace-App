@@ -1,4 +1,6 @@
 const { Sequelize } = require('sequelize');
+const sequelize = require('../database/connect');
+
 const defineUserModel = require('../models/User');
 const defineArticleModel = require('../models/Article');
 const defineOrderModel = require('../models/Order');
@@ -10,12 +12,6 @@ process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, describe} = require('@jest/globals');
 
 const app = require('../server');
-
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: ':memory:', // Use in-memory storage for testing
-    logging: false,      // Disable logging for cleaner output
-});
 
 
 // Define the User model by calling the function and passing sequelize
