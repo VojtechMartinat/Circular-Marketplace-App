@@ -1,7 +1,7 @@
 const request = require('supertest');
 const { sequelize, Wishlist } = require('./Setup.js');
 const app = require('../server');
-process.env.DEBUG = 'sequelize:*';
+
 
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, afterEach, test, expect, describe } = require('@jest/globals');
