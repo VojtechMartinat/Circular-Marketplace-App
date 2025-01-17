@@ -8,10 +8,11 @@ const {Order, Article} = require('../models/initialise')
  * @param req Request from the client
  * @param res Response sent to the client containing data about all orders
  * */
-const getAllOrders = asyncErrorWrapper(async (req,res) =>{
-    const order = Order.findAll()
-    res.status(200).json({order})
-})
+const getAllOrders = asyncErrorWrapper(async (req, res) => {
+    const orders = await Order.findAll(); // Use 'await' to resolve the promise
+    res.status(200).json({ orders }); // Use 'orders' (plural) to indicate an array
+});
+
 
 
 /**
@@ -21,7 +22,6 @@ const getAllOrders = asyncErrorWrapper(async (req,res) =>{
  * */
 const createOrder= asyncErrorWrapper(async (req,res,next) =>{
     const {userID, paymentMethodID, dateOfPurchase, collectionMethod} = req.body;
-    console.log(req.body)
     let sum = 0
     for (const x of req.body.articles){
         const article = await Article.findOne({
@@ -30,7 +30,7 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
             }
         })
         if (article == null){
-            next(new APIError(`Article with id:${x.articleID} doesnt exists`))
+            next(new APIError(`Article with id:${x.articleID} doesnt exists`), 400)
             return
         }
         if (article.orderID != null){
@@ -44,11 +44,6 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
         }
         sum += price
     }
-    console.log(userID)
-    console.log(paymentMethodID)
-    console.log(dateOfPurchase)
-    console.log(collectionMethod)
-    console.log(sum)
     const order = await Order.create(
         {
             userID : userID,
@@ -61,8 +56,6 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
     )
 
     for (const articles of req.body.articles) {
-        console.log(articles)
-        console.log(order.orderID)
         await Article.update(
             { orderID: order.orderID, state:"sold" },
             {

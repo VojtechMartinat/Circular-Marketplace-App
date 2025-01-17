@@ -37,6 +37,11 @@ beforeEach(async () => {
     // Clear data from the User table before each test
     await User.destroy({ where: {} });
     await PaymentCard.destroy({ where: {} });// Clear all users
+    await Article.destroy({ where: {} });
+    await Order.destroy({ where: {} });
+    await Tag.destroy({ where: {} });
+    await Wishlist.destroy({ where: {} });
+    await Photo.destroy({ where: {} });
 });
 
 
