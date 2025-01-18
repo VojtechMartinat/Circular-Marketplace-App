@@ -66,6 +66,16 @@ const Profile = () => {
         try {
             const newStatus = collectionMethod === 'delivery' ? 'shipped' : 'collected'
             await changeOrderStatus(orderID, newStatus);
+            setOrderDetails(prevDetails => ({
+                ...prevDetails,
+                [orderID]: {
+                    ...prevDetails[orderID],
+                    order: {
+                        ...prevDetails[orderID].order,
+                        orderStatus: newStatus
+                    }
+                }
+            }));
             alert("Order status changed")
         } catch (error) {
             console.log(error)
@@ -79,7 +89,7 @@ const Profile = () => {
             <h1>Your Profile</h1>
 
             {/* Orders Section */}
-            <h2>Articles bought</h2>
+            <h2>Articles Bought</h2>
             {orders && orders.length > 0 ? (
                 orders.map(order => (
                     <div key={order.orderID}>
@@ -101,7 +111,7 @@ const Profile = () => {
                                 <p>{article.articleTitle}</p>
                             </Link>
                             <p>Price: ${article.price}</p>
-                            <p>Status: {article.state}</p>
+                            <p>Status: {orderDetails[article.orderID]?.order.orderStatus}</p>
                             {orderDetails[article.orderID] ? (
                                 <button
                                     onClick={() =>
@@ -122,7 +132,7 @@ const Profile = () => {
             ) : (
                 <p>No articles found</p>
             )}
-            <h2>Articles posted</h2>
+            <h2>Articles Posted</h2>
             {articles && articles.length > 0 ? (
                 articles.map(article =>
                     article.orderID === null ? (
