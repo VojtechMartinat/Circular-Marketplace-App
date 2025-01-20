@@ -6,7 +6,7 @@
 - [Features](#features)
 - [Project Goals](#project-goals)
 - [User Stories](#user-stories)
-- [Stakeholders](#Stakeholders)
+- [Stakeholders](#stakeholders)
 - [Documentation](#documentation)
 - [License](#license)
 - [Setup and Deployment](#setup-and-deployment)
@@ -76,27 +76,47 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 ## Project Structure
 <pre>
 2024-CircularMarketplaces
-└── app/
-    ├── backend/           
-    │   ├── controllers/             # Handles application logic
-    │   ├── models/                  # Defines database schemas and interactions
-    │   ├── routes/                  # Maps API endpoints to controllers
-    │   ├── __tests__/               # Contains backend test files
-    │   └── ...
-    ├── frontend/
-    │   ├── public/                
-    │   └── src/                     
-    │       ├── Components/          # Reusable UI elements
-    │       ├── Contexts/            # Global state management files
-    │       ├── services/            # API call functions
-    │       ├── App.js               # Main React app component 
-    │       ├── App.test.js          # Tests for App.js
-    │       ├── index.css            
-    │       ├── index.js
-    │       ├── logo.svg
-    │       ├── reportWebVitals.js
-    │       └── setupTests.js
-    └── ...
+.
+├── .github/
+├── app/
+│   ├── backend/
+│   │   ├── __tests__/               # Contains backend test files
+│   │   ├── config/           
+│   │   ├── controllers/             # Handles application logic
+│   │   ├── databse/
+│   │   ├── errors/
+│   │   ├── middleware/
+│   │   ├── models/                  # Defines database schemas and interactions
+│   │   ├── routes/                  # Maps API endpoints to controllers
+│   │   ├── .babelrc
+│   │   ├── jest.config.js
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   └── server.js
+│   ├── frontend/
+│   │   ├── public/
+│   │   │   ├── favicon2.ico
+│   │   │   ├── index.html
+│   │   │   ├── logo192.png
+│   │   │   ├── logo512.png
+│   │   │   ├── manifest.json
+│   │   │   └── robots.txt                      
+│   │   └── src/                     
+│   │       ├── Components/          # Reusable UI elements
+│   │       ├── Config/
+│   │       ├── Contexts/            # Global state management files
+│   │       ├── services/            # API call functions
+│   │       ├── App.js               # Main React app component 
+│   │       ├── App.test.js          # Tests for App.js
+│   │       ├── index.css            
+│   │       ├── index.js
+│   │       ├── logo.svg
+│   │       ├── reportWebVitals.js
+│   │       └── setupTests.js
+│   ├── README.md
+│   ├── package-lock.json
+│   └── package.json
+└── docs/
   </pre>
 ## Links
 Main Kanban
