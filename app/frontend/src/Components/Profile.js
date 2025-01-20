@@ -112,7 +112,8 @@ const Profile = () => {
                             </Link>
                             <p>Price: ${article.price}</p>
                             <p>Status: {orderDetails[article.orderID]?.order.orderStatus}</p>
-                            {orderDetails[article.orderID] ? (
+                            {orderDetails[article.orderID] && orderDetails[article.orderID].order.orderStatus !== 'collected'
+                            && orderDetails[article.orderID].order.orderStatus !== 'shipped' ? (
                                 <button
                                     onClick={() =>
                                         handleChangeOrderStatus(article.orderID, orderDetails[article.orderID].collectionMethod)
@@ -123,9 +124,7 @@ const Profile = () => {
                                         ? 'shipped'
                                         : 'collected'}
                                 </button>
-                            ) : (
-                                <p>Loading order details...</p>
-                            )}
+                            ) : null}
                         </div>
                     ) : null
                 )
