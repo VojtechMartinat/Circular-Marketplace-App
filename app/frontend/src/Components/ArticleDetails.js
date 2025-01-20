@@ -15,6 +15,8 @@ const ArticleDetails = () => {
     const [photos, setPhotos] = useState([]); // State for multiple photos
     const [articleUser, setArticleUser] = useState(null);
     const { isLoggedIn, user } = useAuth();
+    const [isShipping, setIsShipping] = useState(false);
+    const [isCollection, setIsCollection] = useState(false);
 
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
@@ -92,12 +94,23 @@ const ArticleDetails = () => {
             alert('Please log in to buy an article');
             return;
         }
+        let collectionMethod = '';
+        if (isShipping) {
+            collectionMethod = 'shipping';
+        } else if (isCollection) {
+            collectionMethod = 'collection';
+        } else {
+            alert('Please select a collection method');
+            return;
+        }
+
         const orderData = {
             userID: user.userID,
             paymentMethodID: '4d530d77-217e-4a89-952e-f4cee8e3fe5c',
             dateOfPurchase: new Date().toISOString(),
-            collectionMethod: 'collection',
+            collectionMethod: collectionMethod,
             articles: [{ articleID: id }],
+
         };
         createOrder(orderData)
             .then(() => {
@@ -173,12 +186,28 @@ const ArticleDetails = () => {
 
             {/* Shipping and Collection */}
             <div className="purchase-options">
-                <div className="option shipping">
-                    <p>Shipping</p>
-                </div>
-                <div className="option collection">
-                    <p>Collection</p>
-                </div>
+                {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
+                        <button
+                            type="button"
+                            className={`option-button ${isShipping ? 'selected' : ''}`}
+                            onClick={() => {
+                                setIsShipping(!isShipping);
+                                if (!isShipping) setIsCollection(false);
+                            }}>
+                            <p>Shipping</p>
+                        </button>
+                ) : null}
+                {article.shippingType === 'collection' || article.shippingType === 'both' ? (
+                        <button
+                            type="button"
+                            className={`option-button ${isCollection ? 'selected' : ''}`}
+                            onClick={() => {
+                                setIsCollection(!isCollection);
+                                if (!isCollection) setIsShipping(false);
+                            }}>
+                            <p>Collection</p>
+                        </button>
+                ) : null}
             </div>
 
             {/* Purchase Button */}
