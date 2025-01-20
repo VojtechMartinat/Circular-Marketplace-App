@@ -1,4 +1,4 @@
-const { sequelize, Order, Article, User } = require('./Setup');
+const { sequelize} = require('../config/Setup');
 const request = require('supertest');
 const app = require('../server');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
@@ -66,19 +66,13 @@ afterEach(async () => {
 
 describe('Order Controller Tests', () => {
 
-    test('POST /api/v1/orders - Should create a new order', async () => {
-        const res1 = await request(app).post('/api/v1/orders').send({
-            userID: 1,
-            paymentMethodID: 1,
-            dateOfPurchase: '2024-10-01',
-            collectionMethod: 'delivery',
-            orderStatus: 'confirmed',
-            articles: [{ articleID: '1' }],
-        })
 
-        expect(res1.statusCode).toBe(201);
-        expect(res1.body.order.totalPrice).toBe(20);
+    test('GET /api/v1/orders - Should return an empty array if no orders exist', async () => {
+        const res = await request(app).get('/api/v1/orders');
+        expect(res.statusCode).toBe(200);
+        expect(res.body.orders).toEqual([]);  // Should return an empty array
     });
+
 
     test('GET /api/v1/orders - Should return all orders', async () => {
         const res1 = await request(app).post('/api/v1/orders').send({
@@ -118,6 +112,41 @@ describe('Order Controller Tests', () => {
         expect(res.body.order.userID).toBe(1);
     });
 
+    test('POST /api/v1/orders - Should create a new order', async () => {
+        const res1 = await request(app).post('/api/v1/orders').send({
+            userID: 1,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
+        })
+
+        expect(res1.statusCode).toBe(201);
+        expect(res1.body.order.totalPrice).toBe(20);
+    });
+
+    test('GET /api/v1/orders/:id - Should return error  if order is not found', async () => {
+        const res = await request(app).get('/api/v1/orders/9999');  // Non-existent ID
+        expect(res.statusCode).toBe(500);
+        expect(res.body.error).toBe('No order with id : 9999');
+    });
+
+
+    test('DELETE /api/v1/orders/:id - Should delete an order', async () => {
+        const res1 = await request(app).post('/api/v1/orders').send({
+            userID: 1,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
+        })
+
+        const res = await request(app).delete(`/api/v1/orders/${res1.body.order.orderID}`);
+        expect(res.statusCode).toBe(200);
+    });
+
     test('PUT /api/v1/orders/:id - Should update an existing order', async () => {
         const res1 = await request(app).post('/api/v1/orders').send({
             userID: 1,
@@ -134,21 +163,7 @@ describe('Order Controller Tests', () => {
         expect(res2.body.orders[0].dateOfPurchase).toBe("2024-12-12T00:00:00.000Z");
     });
 
-    test('DELETE /api/v1/orders/:id - Should delete an order', async () => {
-        const res1 = await request(app).post('/api/v1/orders').send({
-            userID: 1,
-            paymentMethodID: 1,
-            dateOfPurchase: '2024-10-01',
-            collectionMethod: 'delivery',
-            orderStatus: 'confirmed',
-            articles: [{ articleID: '1' }],
-        })
-
-        const res = await request(app).delete(`/api/v1/orders/${res1.body.order.orderID}`);
-        expect(res.statusCode).toBe(200);
-    });
-
-    test('Nonexisting article', async () => {
+    test('Nonexisting article for order', async () => {
         const res1 = await request(app).post('/api/v1/orders').send({
             userID: 1,
             paymentMethodID: 1,
@@ -160,7 +175,7 @@ describe('Order Controller Tests', () => {
         expect(res1.statusCode).toBe(500);
     });
 
-    test('Article assigned to order already', async () => {
+    test('Referenced article assigned to another order already', async () => {
 
         const res1 = await request(app).post('/api/v1/orders').send({
             userID: 1,

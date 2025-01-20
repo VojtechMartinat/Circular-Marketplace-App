@@ -77,14 +77,16 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
 const getOrder = asyncErrorWrapper(async (req,res,next) =>{
     const {id:orderID} = req.params
     const order = await Order.findOne({
+
         where:{
             orderID: orderID
         }
     })
-    if (!order){
-        next(new APIError(`No order with id : ${orderID}`),404)
+    if (order){
+        res.status(200).json({order})
+
     }
-    res.status(200).json({order})
+    next(new APIError(`No order with id : ${orderID}`),404)
 })
 
 

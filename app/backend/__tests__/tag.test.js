@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { sequelize, Tag } = require('./Setup.js');
+const { sequelize, Tag } = require('../config/Setup');
 const app = require('../server');
 const relations = require('../models/initialise');
 

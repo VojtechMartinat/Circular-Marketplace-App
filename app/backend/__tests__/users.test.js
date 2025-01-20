@@ -1,10 +1,10 @@
 const request = require('supertest');
-const { sequelize, User } = require('./Setup.js');
+const { sequelize, User } = require('../config/Setup');
 const app = require('../server');
 const relations = require('../models/initialise');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, afterEach, test, expect, describe } = require('@jest/globals');
-const { Tag } = require("./Setup");
+const { Tag } = require('../config/Setup');
 
 describe('User Controller Tests', () => {
 

@@ -1,3 +1,4 @@
+// jest-ignore
 const { Sequelize } = require('sequelize');
 const sequelize = require('../database/connect');
 
@@ -24,14 +25,6 @@ const Tag = defineTagModel(sequelize);
 const Wishlist = defineWishlistModel(sequelize);
 
 // Sync database before running tests
-beforeAll(async () => {
-    await sequelize.authenticate(); // Connect to the in-memory DB
-    await sequelize.sync(); // Synchronize all models with the database
-});
-
-afterAll(async () => {
-    await sequelize.close(); // Close the connection after tests
-});
 
 beforeEach(async () => {
     // Clear data from the User table before each test

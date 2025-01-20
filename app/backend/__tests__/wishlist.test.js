@@ -1,11 +1,11 @@
 const request = require('supertest');
-const { sequelize, Wishlist } = require('./Setup.js');
+const { sequelize, Wishlist } = require('../config/Setup');
 const app = require('../server');
 
 
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, afterEach, test, expect, describe } = require('@jest/globals');
-const { Article, User } = require('./Setup');
+const { Article, User } = require('../config/Setup');
 
 describe('Wishlist Controller Tests', () => {
     beforeAll(async () => {

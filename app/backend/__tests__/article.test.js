@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { sequelize, Article } = require('./Setup.js');
+const { sequelize, Article } = require('../config/Setup');
 const app = require('../server');
 
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
@@ -80,6 +80,7 @@ describe('Article Controller Tests with Sequelize', () => {
 
         const res = await request(app).get(`/api/v1/articles/${newArticle2.articleID}`);
         expect(res.statusCode).toBe(200);
+        expect(res.body.article.userID).toBe(1);
     });
 
 
@@ -98,7 +99,7 @@ describe('Article Controller Tests with Sequelize', () => {
         expect(res.statusCode).toBe(201);
     });
 
-    test('GET /api/v1/articles/:id - Should return 404 if article is not found', async () => {
+    test('GET /api/v1/articles/:id - Should return error if article is not found', async () => {
         const res = await request(app).get('/api/v1/articles/999');  // Non-existent user ID
         expect(res.statusCode).toBe(500);
         expect(res.body.error).toBe('No article with id : 999');
@@ -139,5 +140,5 @@ describe('Article Controller Tests with Sequelize', () => {
         expect(res.statusCode).toBe(200);
     });
 
-    //TODO article - tage link table tests
+    //TODO article - tag link table tests
 });

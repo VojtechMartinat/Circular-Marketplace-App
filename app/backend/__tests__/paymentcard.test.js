@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { sequelize, PaymentCard } = require('./Setup'); // Import correctly
+const { sequelize, PaymentCard } = require('../config/Setup');// Import correctly
 const app = require('../server'); // Import the app
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, describe, test,expect, afterEach,} = require('@jest/globals');
@@ -33,6 +33,16 @@ describe('PaymentCard Controller Tests', () => {
         await sequelize.models.PaymentCard.destroy({ where: {}, force: true });
     });
 
+    test('GET /api/v1/paymentcards - Should return an empty array if no cards exist', async () => {
+        // Explicitly clear PaymentCards table
+
+        // Fetch all payment cards
+        const res = await request(app).get('/api/v1/paymentcards');
+
+        // Assert the response
+        expect(res.statusCode).toBe(200);
+        expect(res.body.card).toEqual([]); // Validate it's an empty array
+    });
     test('GET /api/v1/paymentcards - Should return all payment cards', async () => {
         // New payment card data
         const newCard = {
@@ -59,16 +69,6 @@ describe('PaymentCard Controller Tests', () => {
         expect(getRes.statusCode).toBe(200);
         expect(getRes.body.card).toHaveLength(1);
         expect(getRes.body.card[0].cardHolder).toBe('John Doe');
-    });
-    test('GET /api/v1/paymentcards - Should return an empty array if no cards exist', async () => {
-        // Explicitly clear PaymentCards table
-
-        // Fetch all payment cards
-        const res = await request(app).get('/api/v1/paymentcards');
-
-        // Assert the response
-        expect(res.statusCode).toBe(200);
-        expect(res.body.card).toEqual([]); // Validate it's an empty array
     });
 
     test('GET /api/v1/paymentcards/:id - Should return a specific payment card by ID', async () => {
