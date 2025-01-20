@@ -62,7 +62,6 @@ const updateWishlist = asyncErrorWrapper(async (req,res,next) =>{
         }
 
     })
-    console.log(wishlist)
     if (wishlist[0] === 0){
         res.status(404).json({error:"Wishlist not found"})
         next(new APIError(`No wishlist with id : ${wishlistID}`),404)
@@ -90,7 +89,6 @@ const deleteWishlist = asyncErrorWrapper(async (req,res,next) =>{
             return res.status(404).json({ error: "Wishlist not found" });
         }
     } catch (error) {
-        console.error(error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
 })

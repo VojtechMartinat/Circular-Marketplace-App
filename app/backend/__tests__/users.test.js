@@ -57,7 +57,6 @@ describe('User Controller Tests', () => {
         const newUser = { userID: '6', username: 'john_joe', password: '1234', email: 'john@example.com', wallet: 100.0 };
         const postRes = await request(app).post('/api/v1/users').send(newUser);
         const res = await request(app).get(`/api/v1/users/${newUser.userID}`);
-        console.log(newUser.userID);
         expect(res.statusCode).toBe(200);
     });
 

@@ -103,7 +103,6 @@ describe('Wishlist Controller Tests', () => {
 
     test('GET /api/v1/wishlists/:id - Should return 404 for non-existing wishlist', async () => {
         const res = await request(app).get('/api/v1/wishlists/999');
-        console.log(res.error);
         expect(res.statusCode).toBe(404);
         expect(res.body.error).toBe('Wishlist not found');
 

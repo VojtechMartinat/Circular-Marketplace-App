@@ -41,8 +41,6 @@ describe('Tag Controller Tests', () => {
 
         const res2 = await request(app).get('/api/v1/tags');
 
-        console.log(res2.body);
-
         // Check the response status and content
         expect(res2.statusCode).toBe(200);
         expect(res2.body.tag.length).toBe(1);  // Should return one tag

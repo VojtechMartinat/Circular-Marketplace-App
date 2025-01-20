@@ -57,7 +57,6 @@ describe('PaymentCard Controller Tests', () => {
         const postRes = await request(app)
             .post('/api/v1/paymentcards')
             .send(newCard);
-        console.log(postRes.body);
         // Log the POST response to verify it's correct
         // Check the POST request response
         expect(postRes.statusCode).toBe(201);
