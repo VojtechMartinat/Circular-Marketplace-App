@@ -96,7 +96,7 @@ const ArticleDetails = () => {
         }
         let collectionMethod = '';
         if (isShipping) {
-            collectionMethod = 'shipping';
+            collectionMethod = 'delivery';
         } else if (isCollection) {
             collectionMethod = 'collection';
         } else {
@@ -180,6 +180,7 @@ const ArticleDetails = () => {
                             ? `${articleUser.rating} (0 reviews)`
                             : '★★★★★ (0 reviews)'}
                     </p>
+                    <p>Cost : {article.price}</p>
                 </div>
                 <div className="seller-location">📍{articleUser?.location}</div>
             </div>
@@ -212,7 +213,7 @@ const ArticleDetails = () => {
 
             {/* Purchase Button */}
             <div className="purchase-button">
-                <button onClick={handleBuy}>Buy</button>
+                <button onClick={handleBuy}>Buy for {isShipping ? article.price + 2 : article.price}</button>
             </div>
         </div>
     );

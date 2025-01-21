@@ -38,6 +38,7 @@ const Profile = () => {
                     for (const article of articles) {
                         if (article.orderID) {
                             details[article.orderID] = await getOrder(article.orderID);
+                            console.log(details[article.orderID].order.collectionMethod)
                         }
                     }
                     setOrderDetails(details);
@@ -112,15 +113,16 @@ const Profile = () => {
                             </Link>
                             <p>Price: ${article.price}</p>
                             <p>Status: {orderDetails[article.orderID]?.order.orderStatus}</p>
-                            {orderDetails[article.orderID] && orderDetails[article.orderID].order.orderStatus !== 'collected'
+                            {orderDetails[article.orderID]?.order ? (<p>Collection Method: {orderDetails[article.orderID]?.order.collectionMethod}</p>) : null}
+                            {orderDetails[article.orderID] && orderDetails[article.orderID].order && orderDetails[article.orderID].order.orderStatus !== 'collected'
                             && orderDetails[article.orderID].order.orderStatus !== 'shipped' ? (
                                 <button
                                     onClick={() =>
-                                        handleChangeOrderStatus(article.orderID, orderDetails[article.orderID].collectionMethod)
+                                        handleChangeOrderStatus(article.orderID, orderDetails[article.orderID].order.collectionMethod)
                                     }
                                 >
                                     Change status to{' '}
-                                    {orderDetails[article.orderID].collectionMethod === 'delivery'
+                                    {orderDetails[article.orderID].order.collectionMethod === 'delivery'
                                         ? 'shipped'
                                         : 'collected'}
                                 </button>
