@@ -46,7 +46,7 @@ describe('Wishlist Controller Tests', () => {
         expect(res.statusCode).toBe(201);
         expect(res.body.wishlist.totalPrice).toBe(100.0);
 
-        const reset = await request(app).delete(`/api/v1/wishlists/${res.body.id}`);
+        await request(app).delete(`/api/v1/wishlists/${res.body.id}`);
 
 
     });
@@ -75,7 +75,7 @@ describe('Wishlist Controller Tests', () => {
 
         const res = await request(app).get(`/api/v1/wishlists/${postRes.body.wishlist.id}`);
 
-        const res2 = await request(app).get('/api/v1/wishlists');
+        await request(app).get('/api/v1/wishlists');
 
         expect(res.statusCode).toBe(200);
         expect(res.body.wishlist.totalPrice).toBe(100.0);

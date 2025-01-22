@@ -1,10 +1,8 @@
 const request = require('supertest');
 const { sequelize, User } = require('../config/Setup');
 const app = require('../server');
-const relations = require('../models/initialise');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, afterEach, test, expect, describe } = require('@jest/globals');
-const { Tag } = require('../config/Setup');
 
 describe('User Controller Tests', () => {
 
@@ -41,8 +39,8 @@ describe('User Controller Tests', () => {
         const newUser2 = { userID: '2', username: 'jane_doe', password: '5678', email: 'jane@example.com', wallet: 150.0 };
 
         // Create two users
-        const res1 = await request(app).post('/api/v1/users').send(newUser);
-        const res2 = await request(app).post('/api/v1/users').send(newUser2);
+        await request(app).post('/api/v1/users').send(newUser);
+        await request(app).post('/api/v1/users').send(newUser2);
 
         // Get all users
         const res3 = await request(app).get('/api/v1/users');
@@ -55,7 +53,7 @@ describe('User Controller Tests', () => {
 
     test('GET /api/v1/wishlists/:id - Should return a user by ID', async () => {
         const newUser = { userID: '6', username: 'john_joe', password: '1234', email: 'john@example.com', wallet: 100.0 };
-        const postRes = await request(app).post('/api/v1/users').send(newUser);
+        await request(app).post('/api/v1/users').send(newUser);
         const res = await request(app).get(`/api/v1/users/${newUser.userID}`);
         expect(res.statusCode).toBe(200);
     });
@@ -96,7 +94,7 @@ describe('User Controller Tests', () => {
             wallet: 50.0,
         }
 
-        const res2 = await request(app)
+        await request(app)
             .post('/api/v1/users')
             .send(user);
 
@@ -116,7 +114,7 @@ describe('User Controller Tests', () => {
             wallet: 75.0,
         };
 
-        const res2 = await request(app)
+         await request(app)
             .post('/api/v1/users')
             .send(user);
 
