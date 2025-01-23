@@ -7,8 +7,4 @@ module.exports = {
         '/node_modules/'
     ],
     testEnvironment: 'node',
-    testMatch: [
-        "**/__tests__/**/*.[jt]s?(x)",
-        "**/?(*.)+(spec|test).[jt]s?(x)"
-    ]
 };

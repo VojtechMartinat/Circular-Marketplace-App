@@ -34,7 +34,7 @@ const getCard = asyncErrorWrapper(async (req,res,next) =>{
     const {id:cardID} = req.params
     const card = await PaymentCard.findOne({
         where:{
-            paymentMethodID: cardID
+            cardID: cardID
         }
     })
     if (!card){
@@ -49,25 +49,18 @@ const getCard = asyncErrorWrapper(async (req,res,next) =>{
  * @param req Request from the client (req.params should contain a valid cardID and req.body should contain new card data)
  * @param res Response sent to the client containing card data
  * */
-const updateCard = asyncErrorWrapper(async (req, res, next) => {
-    const { id: cardID } = req.params;
-
-    // Update card
-    const [rowsUpdated] = await PaymentCard.update(req.body, {
-        where: { paymentMethodID: cardID },
-    });
-
-    if (rowsUpdated === 0) {
-        return next(new APIError(`No card with id: ${cardID}`, 404));
+const updateCard = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:cardID} = req.params
+    const card = await PaymentCard.update(req.body,{
+        where: {
+            cardID: cardID
+        }
+    })
+    if (!card){
+        next(new APIError(`No card with id : ${cardID}`),404)
     }
-
-    // Fetch the updated card
-    const updatedCard = await PaymentCard.findOne({
-        where: { paymentMethodID: cardID },
-    });
-
-    res.status(200).json({ card: updatedCard });
-});
+    res.status(200).json({card})
+})
 
 
 /**
@@ -76,21 +69,18 @@ const updateCard = asyncErrorWrapper(async (req, res, next) => {
  * @param req Request from the client (req.params should contain a valid cardID)
  * @param res Response sent to the client containing card data
  * */
-const deleteCard = asyncErrorWrapper(async (req, res, next) => {
-    const { id: cardID } = req.params;
-
-    // Delete card
-    const rowsDeleted = await PaymentCard.destroy({
-        where: { paymentMethodID: cardID },
+const deleteCard = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:cardID} = req.params
+    const card = await PaymentCard.destroy({
+        where:{
+            cardID:cardID
+        }
     });
-
-    if (rowsDeleted === 0) {
-        return next(new APIError(`No card with id: ${cardID}`, 404));
+    if (!card){
+        next(new APIError(`No card with id : ${cardID}`),404)
     }
-
-    res.status(200).json({ message: `Card with id: ${cardID} successfully deleted` });
-});
-
+    res.status(200).json({card})
+})
 
 module.exports = {
     getAllCards,createCard,getCard,updateCard,deleteCard

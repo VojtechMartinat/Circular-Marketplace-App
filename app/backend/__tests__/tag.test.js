@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { sequelize, Tag } = require('../config/Setup');
+const { sequelize, Tag } = require('./Setup.js');
 const app = require('../server');
 const relations = require('../models/initialise');
 
@@ -40,6 +40,8 @@ describe('Tag Controller Tests', () => {
             .send(newTag);
 
         const res2 = await request(app).get('/api/v1/tags');
+
+        console.log(res2.body);
 
         // Check the response status and content
         expect(res2.statusCode).toBe(200);

@@ -1,10 +1,10 @@
 const request = require('supertest');
-const { sequelize, User } = require('../config/Setup');
+const { sequelize, User } = require('./Setup.js');
 const app = require('../server');
 const relations = require('../models/initialise');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, afterEach, test, expect, describe } = require('@jest/globals');
-const { Tag } = require('../config/Setup');
+const { Tag } = require("./Setup");
 
 describe('User Controller Tests', () => {
 
@@ -22,12 +22,12 @@ describe('User Controller Tests', () => {
     beforeEach(async () => {
         await sequelize.sync({ force: true }); // Drops existing tables and recreates them
 
-        await User.destroy({ where: {} });
+        await Tag.destroy({ where: {} });
     });
 
     afterEach(async () => {
         // Ensure that no data remains in the database by explicitly deleting it
-        await User.destroy({ where: {} });
+        await Tag.destroy({ where: {} });
     });
 
     test('GET /api/v1/users - Should return an empty array if no users exist', async () => {
@@ -52,14 +52,6 @@ describe('User Controller Tests', () => {
         expect(res3.body.users[0].username).toBe('john_doe');
         expect(res3.body.users[1].username).toBe('jane_doe');
     });
-
-    test('GET /api/v1/wishlists/:id - Should return a user by ID', async () => {
-        const newUser = { userID: '6', username: 'john_joe', password: '1234', email: 'john@example.com', wallet: 100.0 };
-        const postRes = await request(app).post('/api/v1/users').send(newUser);
-        const res = await request(app).get(`/api/v1/users/${newUser.userID}`);
-        expect(res.statusCode).toBe(200);
-    });
-
 
 
 

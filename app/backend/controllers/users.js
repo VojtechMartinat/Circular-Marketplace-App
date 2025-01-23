@@ -58,6 +58,7 @@ const loginUser = asyncErrorWrapper(async (req, res, next) => {
  *  @param res Response sent to the client containing new user data
 * */
 const createUser = asyncErrorWrapper(async (req,res) =>{
+    console.log("User data received:", req.body);
     const user = await User.create(req.body)
     res.status(201).json({user})
 })

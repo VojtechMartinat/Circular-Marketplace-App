@@ -32,14 +32,13 @@ app.use('/api/v1/wishlists', wishlists);
 app.use(errorHandler);
 
 const port = 8080;
-if (require.main === module) {
-    app.listen(port, (err) => {
-        if (err) {
-            console.error('Error starting the server:', err);
-            return;
-        }
-        console.log(`Server is listening on port ${port}...`);
-    });
-}
+app.listen(port, (err) => {
+    if (err) {
+        console.error('Error starting the server:', err);
+        return;
+    }
+    console.log(`Server is listening on port ${port}...`);
+});
+
 module.exports = app;
 
