@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
 import { loginUser } from '../services/userService'; // Adjust path as necessary
+import './Login.css'
 
 const LoginPage = () => {
     const [username, setUsername] = useState('');
@@ -14,10 +15,10 @@ const LoginPage = () => {
         e.preventDefault();
 
         try {
-            const userData = await loginUser(username, password); // Fetch user data from server
+            const userData = await loginUser(username, password); 
             login(userData);
 
-            navigate('/'); // Redirect to Home page
+            navigate('/'); 
         } catch (error) {
             console.error('Login failed:', error);
             alert('Invalid username or password.');
@@ -25,35 +26,36 @@ const LoginPage = () => {
     };
 
     const handleRegisterRedirect = () => {
-        navigate('/register'); // Redirect to the register page
+        navigate('/register'); 
     };
 
     return (
-        <div>
-            <h2>Login</h2>
+        <div className='login-container'>
+            <h2 className='login-header'>Login</h2>
             <form onSubmit={handleLogin}>
-                <div>
-                    <label>Username:</label>
+                <div className='input-group'>
                     <input
+                        className='input'
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        placeholder='Username'
                         required
                     />
                 </div>
-                <div>
-                    <label>Password:</label>
+                <div className='input-group'>
                     <input
+                        className='input'
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        placeholder='Password'
                         required
                     />
                 </div>
-                <button type="submit">Login</button>
+                <button type="submit" className='button'>Login</button>
             </form>
-            <p>Don't have an account?</p>
-            <button onClick={handleRegisterRedirect}>Register</button>
+            <p className='login-footer'>Don't have an account? <a href="#" onClick={handleRegisterRedirect}>Register</a></p>
         </div>
     );
 };
