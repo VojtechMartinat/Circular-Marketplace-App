@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom'; // For matchers like 'toBeInTheDocument'
-import Login from '../Components/Login'; // Import the component you want to test
+import '@testing-library/jest-dom';
+import Login from '../Components/Login';
 import { MemoryRouter } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
 
