@@ -95,7 +95,7 @@ describe('Tag Controller Tests', () => {
             tagID: 2
         };
 
-        const res = await request(app)
+        await request(app)
             .post('/api/v1/tags')
             .send(newTag);
 

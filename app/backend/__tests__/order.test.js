@@ -177,7 +177,7 @@ describe('Order Controller Tests', () => {
 
     test('Referenced article assigned to another order already', async () => {
 
-        const res1 = await request(app).post('/api/v1/orders').send({
+        await request(app).post('/api/v1/orders').send({
             userID: 1,
             paymentMethodID: 1,
             dateOfPurchase: '2024-10-01',
