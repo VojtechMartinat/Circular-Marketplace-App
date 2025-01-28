@@ -5,8 +5,6 @@ const isTest = process.env.NODE_ENV === 'test';
 
 let sequelize;
 
-console.log(process.env.DB_PASS)
-
 if (isTest) {
     //SQLite in-memory database for testing
     sequelize = new Sequelize({

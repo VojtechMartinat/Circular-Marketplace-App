@@ -1,0 +1,44 @@
+/* Basic reset for the nav bar */
+nav {
+    background-color: #333;
+    padding: 10px 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Style for the unordered list */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+/* Style for each list item */
+nav ul li {
+    margin: 0 15px;
+}
+
+/* Style for the links */
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s ease;
+}
+
+/* Hover effect */
+nav ul li a:hover {
+    background-color: #555;
+    transform: scale(1.05);
+}
+
+/* Active state for the links (optional if using react-router's Link component) */
+nav ul li a.active {
+    background-color: #007bff;
+    color: white;
+}

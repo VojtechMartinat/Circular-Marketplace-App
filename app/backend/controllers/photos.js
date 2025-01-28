@@ -27,13 +27,15 @@ const createPhoto = asyncErrorWrapper(async (req, res) => {
     }
 
     const articleID = req.body.articleID;
+    if (!articleID) {
+        return res.status(400).json({message: 'Article ID is required'})
+    }
     const image = await fs.readFile(req.file.path);
-
     const photo = await Photo.create({
         image: image,
         articleID: articleID
-    });
-
+    }).catch((err) => {console.log(err)});
+    await fs.unlink(req.file.path)
     // Send response with created photo object
     res.status(201).json({ photo: photo });
 });

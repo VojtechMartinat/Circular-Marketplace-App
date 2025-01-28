@@ -1,23 +1,17 @@
-const userAPI = 'http://34.251.202.114:8080/api/v1/'
+import {url} from "../Config/config";
+import axios from "axios";
 
 async function createArticle(articleData) {
-    var data = articleData
-    if (articleData == null){
-        throw new Error("Article data missing!")
+    if (articleData == null) {
+        throw new Error("Article data missing!");
     }
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    };
 
     try {
-        await fetch(`${userAPI}articles`, requestOptions).then((res) => res.json())
-            .then((data) => {
-                return data
-            });
+        return await axios.post(`${url}articles`, articleData, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
     } catch (error) {
         console.error('Error:', error);
         throw error;
@@ -25,9 +19,8 @@ async function createArticle(articleData) {
 }
 
 async function getArticles() {
-    const userAPI = 'http://34.251.202.114:8080/api/v1/';
     try {
-        const response = await fetch(`${userAPI}articles`);
+        const response = await fetch(`${url}articles`);
         const data = await response.json();
 
         if (!data) {
@@ -40,26 +33,26 @@ async function getArticles() {
         throw error;
     }
 }
+
 async function getArticle(articleID) {
-    const userAPI = 'http://34.251.202.114:8080/api/v1/';
     try {
-        const response = await fetch(`${userAPI}articles/${articleID}`);
+        const response = await fetch(`${url}articles/${articleID}`);
         const data = await response.json();
 
         if (!data) {
             throw new Error("No articles found or data missing!");
         }
 
-        return data;  // Return article
+        return data;
     } catch (error) {
         console.log('Error fetching articles:', error);
-        throw error;  // Re-throw the error to handle it in the calling function
+        throw error;
     }
 }
+
 async function getArticlePhotos(articleID) {
-    const userAPI = 'http://34.251.202.114:8080/api/v1/';
     try {
-        const response = await fetch(`${userAPI}articles/${articleID}/photos`);
+        const response = await fetch(`${url}articles/${articleID}/photos`);
         const data = await response.json();
 
         if (!data) {
@@ -79,7 +72,7 @@ async function deleteArticle(articleID) {
     };
 
     try {
-        const response = await fetch(`${userAPI}articles/${articleID}`, requestOptions);
+        const response = await fetch(`${url}articles/${articleID}`, requestOptions);
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -92,4 +85,4 @@ async function deleteArticle(articleID) {
     }
 }
 
-module.exports = {createArticle, getArticles, getArticle,getArticlePhotos, deleteArticle}
+export { createArticle, getArticles, getArticle, getArticlePhotos, deleteArticle };
