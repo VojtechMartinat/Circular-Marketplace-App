@@ -1,0 +1,94 @@
+/* General styling */
+.profile-box {
+    background-color: #666;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 700px;
+    margin: 10px auto auto;
+}
+
+/* Header */
+.header2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: gray;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.dropdown-container {
+    background-color: #333; /* Dark gray background */
+    border-radius: 15px; /* Rounded corners for the entire box */
+    padding: 20px;
+    margin: 20px;
+}
+
+/* Each dropdown box with sharp corners */
+.dropdown {
+    background-color: #fff; /* White background for each dropdown */
+    border: 1px solid #000; /* Black border */
+    padding: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+/* Optionally, change the text color to make it consistent */
+.dropdown h2 {
+    color: #000000;
+    margin: 0;
+}
+
+.dropdown p {
+    color: #000; /* Black text */
+}
+
+/* Optionally, you can specify the color for links as well */
+.dropdown a {
+    color: #000; /* Black color for links */
+}
+
+.orders-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Create a responsive grid */
+    gap: 20px;
+    padding-top: 20px;
+}
+
+/* Each order box */
+.order-box {
+    background-color: #666; /* Gray background */
+    color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Order image */
+.order-image {
+    width: 100%;
+    height: auto;
+    max-height: 200px; /* Limit image height */
+    border-radius: 5px;
+    object-fit: cover; /* Maintain aspect ratio while filling container */
+    margin-bottom: 10px;
+}
+
+/* Order details */
+.order-details {
+    text-align: center;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    .orders-gallery {
+        grid-template-columns: 1fr; /* Single column for small screens */
+    }
+}
