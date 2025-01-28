@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom'; // For matchers like 'toBeInTheDocument'Register';
+import '@testing-library/jest-dom';
+import Register from '../Components/Register';
+
 import { MemoryRouter } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
 
