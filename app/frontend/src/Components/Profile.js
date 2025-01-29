@@ -6,6 +6,7 @@ import {changeOrderStatus, getOrder} from "../services/orderService"
 import {getArticlePhotos} from '../services/articleService';
 import { FaGear } from "react-icons/fa6";
 import './Profile.css';
+import {FaWallet} from "react-icons/fa";
 
 
 const Profile = () => {
@@ -128,7 +129,7 @@ const Profile = () => {
     }
 
     return (
-
+        <body>
         <div className="profile-box">
             <header className="header2">
                 <b>Your Profile</b>
@@ -138,10 +139,14 @@ const Profile = () => {
 
                 <div className="top-items">
                     <div className="dropdown" onClick={() => toggleDropdown('wallet')}>
-                        <h2>Wallet</h2>
+                        <h2 style={{display: "flex", alignItems: "center", textAlign: "left", paddingLeft: 20}}>
+                            <FaWallet size={30} style={{color: "black"}}/>
+                            0£
+                        </h2>
+
                     </div>
                     <div className="dropdown" onClick={() => toggleDropdown('settings')}>
-                        <FaGear size={24} style={{ color: 'black' }} />
+                        <FaGear size={30} style={{ color: 'black' }} />
                     </div>
                 </div>
 
@@ -278,6 +283,8 @@ const Profile = () => {
             </div>
 
         </div>
+
+        </body>
     )
         ;
 };
