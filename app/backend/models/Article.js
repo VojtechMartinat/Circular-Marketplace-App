@@ -44,10 +44,7 @@ Article.init(
             allowNull: false,
             defaultValue: 'both'
         },
-        reviewID: {
-            type: DataTypes.UUID,
-            allowNull: true,
-        }
+
     },
     {
         sequelize,
