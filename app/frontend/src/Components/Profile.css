@@ -92,3 +92,21 @@
         grid-template-columns: 1fr; /* Single column for small screens */
     }
 }
+
+.top-items {
+    display: flex;
+    width: 100%;
+    padding: 10px 0;
+}
+
+.top-items .dropdown:nth-child(1) {
+    flex: 2;
+}
+
+.top-items .dropdown:nth-child(2) {
+    flex: 1;
+}
+
+.top-items .dropdown {
+    text-align: center;
+}

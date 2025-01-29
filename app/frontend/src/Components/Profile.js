@@ -4,7 +4,7 @@ import {getUserArticles, getUserOrders} from "../services/userService";
 import {deleteArticle} from "../services/articleService";
 import {changeOrderStatus, getOrder} from "../services/orderService"
 import {getArticlePhotos} from '../services/articleService';
-
+import { FaGear } from "react-icons/fa6";
 import './Profile.css';
 
 
@@ -141,7 +141,7 @@ const Profile = () => {
                         <h2>Wallet</h2>
                     </div>
                     <div className="dropdown" onClick={() => toggleDropdown('settings')}>
-                        <h2>Settings</h2>
+                        <FaGear size={24} style={{ color: 'black' }} />
                     </div>
                 </div>
 
