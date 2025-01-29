@@ -45,7 +45,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  background-color: #d3d3d3;
+  /* background-color: #ff0000; */
 }
 
 .product-card {

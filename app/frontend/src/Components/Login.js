@@ -30,6 +30,7 @@ const LoginPage = () => {
     };
 
     return (
+        <div className='body'>
         <div className='login-container'>
             <h2 className='login-header'>Login</h2>
             <form onSubmit={handleLogin}>
@@ -56,6 +57,7 @@ const LoginPage = () => {
                 <button type="submit" className='button'>Login</button>
             </form>
             <p className='login-footer'>Don't have an account? <a href="#" onClick={handleRegisterRedirect}>Register</a></p>
+        </div>
         </div>
     );
 };
