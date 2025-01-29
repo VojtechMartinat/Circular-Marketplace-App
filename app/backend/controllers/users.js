@@ -157,6 +157,27 @@ const userArticles = asyncErrorWrapper(async (req,res,next) =>{
     }
     res.status(200).json({articles})
 })
+
+/**
+ * * Get average rating of a user from a database
+ * @param req Request from the client (req.params should contain a valid userID)
+ * @param res Response sent to the client containing average rating
+ * */
+const userRating = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:userID} = req.params
+    const review = await Review.findAll({
+        where:{
+            userID: userID
+        }
+    });
+    if (!review){
+        next(new APIError(`No reviews with user id : ${userID}`),404)
+    }
+    const ratings = review.map(review => review.rating)
+    const totalRating = ratings.reduce((acc, rating) => acc + rating, 0);
+    const averageRating = totalRating / review.length;
+    res.status(200).json({averageRating})
+})
 module.exports = {
-    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser
+    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser, userRating
 }

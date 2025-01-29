@@ -44,10 +44,8 @@ Photo.belongsTo(Article, { foreignKey: 'articleID' });
 User.hasMany(PaymentCard, { foreignKey: 'userID' });
 PaymentCard.belongsTo(User, { foreignKey: 'userID' });
 
-Article.hasMany(Review, {foreignKey: 'reviewID' });
-Review.belongsTo(Article, { foreignKey: 'reviewID' });
-
-Review.belongsTo(User, { foreignKey: 'userID' });
+User.hasMany(Review, {foreignKey: 'reviewID' });
+Review.belongsTo(User, { foreignKey: 'reviewID' });
 
 module.exports = {
     User,
