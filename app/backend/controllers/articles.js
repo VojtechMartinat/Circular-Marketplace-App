@@ -97,6 +97,26 @@ const articlePhotos = asyncErrorWrapper(async (req,res,next) =>{
 
 })
 
+/**
+ * * Get average rating of an article from a database
+ * @param req Request from the client (req.params should contain a valid articleID)
+ * @param res Response sent to the client containing average rating
+ * */
+const articleRating = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:articleID} = req.params
+    const review = await Review.findAll({
+        where:{
+            articleID: articleID
+        }
+    });
+    if (!review){
+        next(new APIError(`No reviews with article id : ${articleID}`),404)
+    }
+    const ratings = review.map(review => review.rating)
+    const totalRating = ratings.reduce((acc, rating) => acc + rating, 0);
+    const averageRating = totalRating / review.length;
+    res.status(200).json({averageRating})
+})
 module.exports = {
-    getAllArticles,createArticle,getArticle,updateArticle,deleteArticle, articlePhotos
+    getAllArticles,createArticle,getArticle,updateArticle,deleteArticle, articlePhotos, articleRating
 }
