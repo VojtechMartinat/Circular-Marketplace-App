@@ -43,6 +43,10 @@ Article.init(
             type: DataTypes.ENUM('shipping', 'collection', 'both'),
             allowNull: false,
             defaultValue: 'both'
+        },
+        reviewID: {
+            type: DataTypes.UUID,
+            allowNull: true,
         }
     },
     {

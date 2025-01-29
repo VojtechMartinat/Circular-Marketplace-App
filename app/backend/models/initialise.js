@@ -9,6 +9,7 @@ const PaymentCardModel = require('./PaymentCard');
 const PhotoModel = require('./Photo');
 const TagModel = require('./Tag');
 const WishlistModel = require('./Wishlist');
+const ReviewModel = require('./Review');
 
 const User = UserModel(sequelize);
 const PaymentCard = PaymentCardModel(sequelize);
@@ -17,6 +18,8 @@ const Article = ArticleModel(sequelize);
 const Photo = PhotoModel(sequelize);
 const Wishlist = WishlistModel(sequelize);
 const Tag = TagModel(sequelize);
+const Review = ReviewModel(sequelize);
+
 
 User.hasMany(Wishlist, {foreignKey: 'userID'});
 Wishlist.belongsTo(User, {foreignKey: 'userID'});
@@ -41,6 +44,11 @@ Photo.belongsTo(Article, { foreignKey: 'articleID' });
 User.hasMany(PaymentCard, { foreignKey: 'userID' });
 PaymentCard.belongsTo(User, { foreignKey: 'userID' });
 
+Article.hasMany(Review, {foreignKey: 'reviewID' });
+Review.belongsTo(Article, { foreignKey: 'reviewID' });
+
+Review.belongsTo(User, { foreignKey: 'userID' });
+
 module.exports = {
     User,
     Article,
@@ -49,5 +57,6 @@ module.exports = {
     Photo,
     Tag,
     Wishlist,
+    Review,
     sequelize
 };
