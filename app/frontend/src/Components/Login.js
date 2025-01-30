@@ -1,15 +1,22 @@
 // Components/LoginPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
-import { loginUser } from '../services/userService'; // Adjust path as necessary
 import './Login.css'
-
+import { loginUser } from '../services/userService';
+import {createTaskLog} from "../services/logService";
 const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useAuth();
     const navigate = useNavigate();
+    const [startTime, setStartTime] = useState(null);
+    const [timeTaken, setTimeTaken] = useState(null);
+
+    // Start the timer when the component mounts
+    useEffect(() => {
+        setStartTime(Date.now());
+    }, []);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -18,7 +25,19 @@ const LoginPage = () => {
             const userData = await loginUser(username, password); 
             login(userData);
 
-            navigate('/'); 
+            // Calculate time taken
+            const endTime = Date.now();
+            const duration = endTime - startTime;
+            setTimeTaken(duration);
+
+            console.log(`Time taken to log in: ${duration} ms`);
+            const taskLogData = {
+                timeTaken : duration,
+                taskID: 1
+            }
+            await createTaskLog(taskLogData)
+
+            navigate('/'); // Redirect to Home page
         } catch (error) {
             console.error('Login failed:', error);
             alert('Invalid username or password.');
@@ -56,8 +75,11 @@ const LoginPage = () => {
                 </div>
                 <button type="submit" className='button'>Login</button>
             </form>
+            {timeTaken !== null && (
+                <p>Time taken to complete login: {timeTaken} ms</p>
+            )}
             <p className='login-footer'>Don't have an account? <a href="#" onClick={handleRegisterRedirect}>Register</a></p>
-        </div>
+            <button onClick={handleRegisterRedirect}>Register</button>
         </div>
     );
 };

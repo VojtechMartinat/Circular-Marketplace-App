@@ -23,7 +23,7 @@ async function createOrder(orderData) {
 
 async function getOrder(orderID) {
     const requestOptions = {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         },
@@ -63,5 +63,23 @@ async function getOrderArticles(orderID) {
         throw error;
     }
 }
-export {createOrder, getOrder, getOrderArticles}
 
+async function changeOrderStatus(orderID, newStatus){
+    const orderData = new FormData();
+    orderData.append("orderID",orderID);
+    orderData.append("orderStatus",newStatus)
+    try {
+        Axios.patch(`${url}orders/${orderID}`, orderData, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((res) => {
+
+        }).catch((error) => {
+            throw new Error(error)
+        })
+    } catch (error){
+        throw new Error(error)
+    }
+}
+export {createOrder, getOrder, getOrderArticles, changeOrderStatus}
