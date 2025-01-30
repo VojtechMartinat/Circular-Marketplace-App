@@ -15,15 +15,26 @@ module.exports = (sequelize) => {
             },
             rating: {
                 type: DataTypes.INTEGER,
+                allowNull: false,
+                validate: {
+                    min: { arg: [1] },
+                    max: { arg: [5] }
+                }
             },
             comment: {
                 type: DataTypes.STRING,
+                validate: {
+                    is: /^(?=.*[a-zA-Z0-9]).{1,5000}$/,
+                }
             },
             userID: {
                 type: DataTypes.UUID,
                 allowNull: false,
             },
-
+            reviewer: {
+                type: DataTypes.UUID,
+                allowNull: false,
+            }
 
         },
         {
