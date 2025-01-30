@@ -1,8 +1,10 @@
-/* General styling */
 
-body {
+.profile-back {
     /* background-color: #1481a3; */
     background-image: linear-gradient(#48A9FE, #0BEEF9);
+    bottom: 0; /* Starts from the bottom */
+    left: 0; /* Align to the left (or adjust as needed) */
+    min-height: 100vh; /* Allows it to grow when content expands */
 
 }
 
@@ -13,7 +15,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     max-width: 700px;
-    margin: 10px auto auto;
+    margin: 0 auto;
 }
 
 /* Header */

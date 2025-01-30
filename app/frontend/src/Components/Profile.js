@@ -129,7 +129,7 @@ const Profile = () => {
     }
 
     return (
-        <body>
+        <div className="profile-back">
         <div className="profile-box">
             <header className="header2">
                 <b>Your Profile</b>
@@ -284,7 +284,7 @@ const Profile = () => {
 
         </div>
 
-        </body>
+        </div>
     )
         ;
 };
