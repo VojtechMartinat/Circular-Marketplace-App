@@ -50,36 +50,36 @@ const LoginPage = () => {
 
     return (
         <div className='body'>
-        <div className='login-container'>
-            <h2 className='login-header'>Login</h2>
-            <form onSubmit={handleLogin}>
-                <div className='input-group'>
-                    <input
-                        className='input'
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder='Username'
-                        required
-                    />
-                </div>
-                <div className='input-group'>
-                    <input
-                        className='input'
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder='Password'
-                        required
-                    />
-                </div>
-                <button type="submit" className='button'>Login</button>
-            </form>
-            {timeTaken !== null && (
-                <p>Time taken to complete login: {timeTaken} ms</p>
-            )}
-            <p className='login-footer'>Don't have an account? <a href="#" onClick={handleRegisterRedirect}>Register</a></p>
-            <button onClick={handleRegisterRedirect}>Register</button>
+            <div className='login-container'>
+                <h2 className='login-header'>Login</h2>
+                <form onSubmit={handleLogin}>
+                    <div className='input-group'>
+                        <input
+                            className='input'
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder='Username'
+                            required
+                        />
+                    </div>
+                    <div className='input-group'>
+                        <input
+                            className='input'
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder='Password'
+                            required
+                        />
+                    </div>
+                    <button type="submit" className='button'>Login</button>
+                </form>
+                {timeTaken !== null && (
+                    <p>Time taken to complete login: {timeTaken} ms</p>
+                )}
+                <p className='login-footer'>Don't have an account? <a href="#" onClick={handleRegisterRedirect}>Register</a></p>
+            </div>
         </div>
     );
 };
