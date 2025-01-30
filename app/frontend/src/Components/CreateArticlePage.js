@@ -4,7 +4,7 @@ import { createArticle } from '../services/articleService';
 import {createPhoto} from '../services/photoService'; // Import the uploadPhoto service
 import './AddItem.css';
 import { useAuth } from '../Contexts/AuthContext';
-
+import {createTaskLog} from  '../services/logService'
 function AddItem() {
     const [price, setPrice] = useState('');
     const [isShipping, setIsShipping] = useState(false);
@@ -12,6 +12,9 @@ function AddItem() {
     const [articleTitle, setArticleTitle] = useState('');
     const [description, setDescription] = useState('');
     const [images, setImages] = useState([]); // State for the uploaded image
+    const [startTime, setStartTime] = useState(null);
+    const [timeTaken, setTimeTaken] = useState(null);
+
     const navigate = useNavigate();
     const maxImages = 5;
     const { isLoggedIn, user } = useAuth()
@@ -19,6 +22,7 @@ function AddItem() {
         if (!isLoggedIn) {
             navigate('/login'); // Redirect to login page
         }
+        setStartTime(Date.now());
     }, [isLoggedIn, navigate]);
     const handleImageChange = (event, index) => {
         const file = event.target.files[0];
@@ -33,12 +37,25 @@ function AddItem() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+
+
         if (!articleTitle || !description || !price || images.length === 0) {
             alert("Please fill in all fields and upload an image.");
             return;
         }
 
         try {
+            const endTime = Date.now();
+            const duration = endTime - startTime;
+            setTimeTaken(duration);
+
+            console.log(`Time taken to complete form: ${duration} ms`);
+            const taskLogData = {
+                timeTaken : duration,
+                taskID: 2
+            }
+            await createTaskLog(taskLogData)
+
             // Create article first
             const articleData = new FormData();
             const currentDate = new Date().toISOString();
@@ -48,6 +65,8 @@ function AddItem() {
             articleData.append('price', parseFloat(price));
             articleData.append('dateAdded', currentDate);
             articleData.append('state','uploaded')
+            const shippingType = isShipping ? (isCollection ? "both" : "shipping") : "collection";
+            articleData.append('shippingType', shippingType);
 
             createArticle(articleData).then((res) => {
                 for (let i = 0; i < images.length; i++) {
@@ -147,14 +166,15 @@ function AddItem() {
                         placeholder="£ Free or enter amount"
                     />
                 </div>
-
                 <div className="shipping-options">
                     <button
+                        type="button"
                         className={`option-button ${isShipping ? 'selected' : ''}`}
                         onClick={() => setIsShipping(!isShipping)}>
                         Shipping
                     </button>
                     <button
+                        type="button"
                         className={`option-button ${isCollection ? 'selected' : ''}`}
                         onClick={() => setIsCollection(!isCollection)}>
                         Collection

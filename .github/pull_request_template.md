@@ -22,9 +22,9 @@ Screenshots/GIFs can be included to visually present the changes made if relevan
 
 _Put an `x` in the boxes that apply. These can also be filled out after creation of the PR. If you are unsure of any of these, please let the maintainers know. These are only meant to serve as a reminder of what to check before your code is merged._
 
+- [ ] **I have testes these changes locally as described in the docs/Testing.md file!**
 - [ ] I have linked all relevant issues.
 - [ ] I have added all relevant pull request metadata.
-- [ ] I have tested these changes locally
 - [ ] I have updated the documentation accordingly
 - [ ] My code follows the project's coding style guide
 - [ ] My changes generate no new warnings or errors

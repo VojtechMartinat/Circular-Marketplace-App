@@ -7,6 +7,7 @@ import { createOrder } from '../services/orderService';
 import { useAuth } from '../Contexts/AuthContext';
 import { getUser } from '../services/userService';
 import './article.css';
+import {createTaskLog} from "../services/logService";
 
 const ArticleDetails = () => {
     const { id } = useParams();
@@ -15,6 +16,9 @@ const ArticleDetails = () => {
     const [photos, setPhotos] = useState([]); // State for multiple photos
     const [articleUser, setArticleUser] = useState(null);
     const { isLoggedIn, user } = useAuth();
+    const [isShipping, setIsShipping] = useState(false);
+    const [isCollection, setIsCollection] = useState(false);
+    const [startTime, setStartTime] = useState(null);
 
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
@@ -50,6 +54,7 @@ const ArticleDetails = () => {
     };
 
     useEffect(() => {
+        setStartTime(Date.now());
         getArticle(id).then((response) => {
             if (response) {
                 setArticle(response.article);
@@ -92,15 +97,34 @@ const ArticleDetails = () => {
             alert('Please log in to buy an article');
             return;
         }
+        let collectionMethod = '';
+        if (isShipping) {
+            collectionMethod = 'delivery';
+        } else if (isCollection) {
+            collectionMethod = 'collection';
+        } else {
+            alert('Please select a collection method');
+            return;
+        }
+
         const orderData = {
             userID: user.userID,
             paymentMethodID: '4d530d77-217e-4a89-952e-f4cee8e3fe5c',
             dateOfPurchase: new Date().toISOString(),
-            collectionMethod: 'collection',
+            collectionMethod: collectionMethod,
             articles: [{ articleID: id }],
+
         };
         createOrder(orderData)
             .then(() => {
+                const endTime = Date.now();
+                const timeTaken = (endTime - startTime)
+                const taskLogData = {
+                    timeTaken : timeTaken,
+                    taskID: 3
+                }
+                createTaskLog(taskLogData)
+
                 alert('Order created successfully!');
             })
             .catch((error) => {
@@ -167,23 +191,40 @@ const ArticleDetails = () => {
                             ? `${articleUser.rating} (0 reviews)`
                             : '★★★★★ (0 reviews)'}
                     </p>
+                    <p>Cost : {article.price}</p>
                 </div>
                 <div className="seller-location">📍{articleUser?.location}</div>
             </div>
 
             {/* Shipping and Collection */}
             <div className="purchase-options">
-                <div className="option shipping">
-                    <p>Shipping</p>
-                </div>
-                <div className="option collection">
-                    <p>Collection</p>
-                </div>
+                {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
+                        <button
+                            type="button"
+                            className={`option-button ${isShipping ? 'selected' : ''}`}
+                            onClick={() => {
+                                setIsShipping(!isShipping);
+                                if (!isShipping) setIsCollection(false);
+                            }}>
+                            <p>Shipping</p>
+                        </button>
+                ) : null}
+                {article.shippingType === 'collection' || article.shippingType === 'both' ? (
+                        <button
+                            type="button"
+                            className={`option-button ${isCollection ? 'selected' : ''}`}
+                            onClick={() => {
+                                setIsCollection(!isCollection);
+                                if (!isCollection) setIsShipping(false);
+                            }}>
+                            <p>Collection</p>
+                        </button>
+                ) : null}
             </div>
 
             {/* Purchase Button */}
             <div className="purchase-button">
-                <button onClick={handleBuy}>Buy</button>
+                <button onClick={handleBuy}>Buy for {isShipping ? article.price + 2 : article.price}</button>
             </div>
         </div>
     );

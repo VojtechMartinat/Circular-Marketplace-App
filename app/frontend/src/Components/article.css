@@ -117,13 +117,16 @@
 .purchase-options {
   display: flex;
   justify-content: space-around;
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 .option {
   background-color: #d3d3d3;
   padding: 10px 20px;
   border-radius: 8px;
+}
+.purchase-options button {
+  background-color: #666;
 }
 
 .purchase-button {
