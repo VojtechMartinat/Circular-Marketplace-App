@@ -56,6 +56,7 @@
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  cursor:pointer;
 }
 .product-card img {
   width: 100%;
@@ -80,10 +81,8 @@
 }
 
 .product-name  {
-  font-size: 16px;
+  background-color: #333;
   font-weight: bold;
-
-  color: #333;
   
 }
 

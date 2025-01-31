@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, redirect, useNavigate } from 'react-router-dom';
 import { getArticlePhotos, getArticles } from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
@@ -8,7 +8,8 @@ const Home = () => {
     const [articles, setArticles] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [startTime, setStartTime] = useState(null);
-
+    const navigate = useNavigate();
+    
     useEffect(() => {
         getArticles()
             .then(async response => {
@@ -88,19 +89,21 @@ function Header({ handleInputChange, handleInputFocus }) {
 }
 
 function ProductCard({ article, onClick }) {
+  const navigate = useNavigate()
     return (
-        <div className='product-card' onClick={onClick}>
+        <div className='product-card' onClick={() => navigate(`/articles/${article.articleID}`)}>
             {article.imageUrl ? (
                 <img src={article.imageUrl} alt={article.articleTitle} />
             ) : (
                 <div className="product-image-placeholder">🖼️</div>
             )}
             <div className='product-info'>
-                <Link to={`/articles/${article.articleID}`}>
+                {/* <Link to={`/articles/${article.articleID}`}>
                     <p className='product-name'>
                         {article.articleTitle}
                     </p>
-                </Link>
+                </Link> */}
+                <p>{article.articleTitle}</p>
                 <p className='product-price'>Price: {article.price}</p>
             </div>
             <button className='favorite-button'>❤</button>
