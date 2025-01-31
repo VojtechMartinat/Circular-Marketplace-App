@@ -44,7 +44,6 @@ const Profile = () => {
                             if (article.orderID) {
                                 // Fetch the order details
                                 details[article.orderID] = await getOrder(article.orderID);
-                                console.log(details[article.orderID].order.collectionMethod);
 
                                 // Fetch photos associated with the article
                                 const photosResponse = await getArticlePhotos(article.articleID);
@@ -86,6 +85,7 @@ const Profile = () => {
             await deleteArticle(articleID); // Call the service function to delete the article
             setArticles(prevArticles => prevArticles.filter(article => article.articleID !== articleID)); // Update state
             alert("Article deleted successfully.");
+            window.location.reload();
         } catch (error) {
             console.error("Error deleting article:", error);
             alert("Failed to delete article.");
@@ -121,6 +121,7 @@ const Profile = () => {
                 }
             }));
             alert("Order status changed")
+            window.location.reload();
         } catch (error) {
             console.log(error)
             console.error("Error changing the status:", error);
@@ -139,7 +140,7 @@ const Profile = () => {
 
                 <div className="top-items">
                     <div className="dropdown" onClick={() => toggleDropdown('wallet')}>
-                        <h2 style={{display: "flex", alignItems: "center", textAlign: "left", paddingLeft: 20}}>
+                        <h2 style={{display: "flex", alignItems: "center", textAlign: "left", paddingLeft: 20, gap: 20}}>
                             <FaWallet size={30} style={{color: "black"}}/>
                             0£
                         </h2>
