@@ -103,8 +103,8 @@ function ProductCard({ article, onClick }) {
                         {article.articleTitle}
                     </p>
                 </Link> */}
-                <p>{article.articleTitle}</p>
-                <p className='product-price'>Price: {article.price}</p>
+                <p className='product-name'>{article.articleTitle}</p>
+                <p className='product-price'>Price: £{article.price}</p>
             </div>
             <button className='favorite-button'>❤</button>
         </div>
