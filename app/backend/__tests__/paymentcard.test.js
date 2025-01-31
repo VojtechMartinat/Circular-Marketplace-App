@@ -1,9 +1,5 @@
 const request = require('supertest');
-<<<<<<< HEAD
-const { sequelize, PaymentCard } = require('./Setup'); // Import correctly
-=======
 const { sequelize} = require('../config/Setup');// Import correctly
->>>>>>> 7a9c9ca (all comments acted on)
 const app = require('../server'); // Import the app
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, describe, test,expect,} = require('@jest/globals');
