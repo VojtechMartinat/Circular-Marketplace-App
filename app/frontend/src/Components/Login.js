@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
+import './Login.css'
 import { loginUser } from '../services/userService';
 import {createTaskLog} from "../services/logService";
 const LoginPage = () => {
@@ -21,7 +22,7 @@ const LoginPage = () => {
         e.preventDefault();
 
         try {
-            const userData = await loginUser(username, password); // Fetch user data from server
+            const userData = await loginUser(username, password); 
             login(userData);
 
             // Calculate time taken
@@ -44,38 +45,41 @@ const LoginPage = () => {
     };
 
     const handleRegisterRedirect = () => {
-        navigate('/register'); // Redirect to the register page
+        navigate('/register'); 
     };
 
     return (
-        <div>
-            <h2>Login</h2>
-            <form onSubmit={handleLogin}>
-                <div>
-                    <label>Username:</label>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit">Login</button>
-            </form>
-            {timeTaken !== null && (
-                <p>Time taken to complete login: {timeTaken} ms</p>
-            )}
-            <p>Don't have an account?</p>
-            <button onClick={handleRegisterRedirect}>Register</button>
+        <div className='body'>
+            <div className='login-container'>
+                <h2 className='login-header'>Login</h2>
+                <form onSubmit={handleLogin}>
+                    <div className='input-group'>
+                        <input
+                            className='input'
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder='Username'
+                            required
+                        />
+                    </div>
+                    <div className='input-group'>
+                        <input
+                            className='input'
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder='Password'
+                            required
+                        />
+                    </div>
+                    <button type="submit" className='button'>Login</button>
+                </form>
+                {timeTaken !== null && (
+                    <p>Time taken to complete login: {timeTaken} ms</p>
+                )}
+                <p className='login-footer'>Don't have an account? <a href="#" onClick={handleRegisterRedirect}>Register</a></p>
+            </div>
         </div>
     );
 };

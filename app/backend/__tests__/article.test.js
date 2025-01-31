@@ -1,5 +1,6 @@
 const request = require('supertest');
-const { sequelize, Article } = require('./Setup.js');
+
+const { sequelize} = require('../config/Setup');
 const app = require('../server');
 
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
