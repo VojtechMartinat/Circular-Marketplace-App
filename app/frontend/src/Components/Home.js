@@ -79,11 +79,13 @@ const Home = () => {
 }
 
 function Header({ handleInputChange, handleInputFocus }) {
+  const input = document.getElementById("search-bar")
+  const searchButton = document.getElementById("button")
     return (
         <div className="header">
             <h1 className='title'>Circular Market System</h1>
             <input type="text" className="search-bar" onFocus={handleInputFocus} onChange={handleInputChange} placeholder="Search" />
-            <button className="search-button">🔍</button>
+            {/* <button className="search-button">🔍</button> */}
         </div>
     );
 }
@@ -98,11 +100,6 @@ function ProductCard({ article, onClick }) {
                 <div className="product-image-placeholder">🖼️</div>
             )}
             <div className='product-info'>
-                {/* <Link to={`/articles/${article.articleID}`}>
-                    <p className='product-name'>
-                        {article.articleTitle}
-                    </p>
-                </Link> */}
                 <p className='product-name'>{article.articleTitle}</p>
                 <p className='product-price'>Price: £{article.price}</p>
             </div>

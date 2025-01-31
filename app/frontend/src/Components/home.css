@@ -32,11 +32,19 @@
 }
 
 .search-bar {
-  flex-grow: 1;
-  padding: 8px;
-  border-radius: 20px;
-  border: none;
-  background-color: #e6e6e6;
+  height: 50px;
+  width: 50px;
+  border-style: none;
+  padding: 10px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  outline: none;
+  border-radius: 25px;
+  transition: all .5s ease-in-out;
+  background-color: #fff;
+  padding-right: 40px;
+  color:#fff;
+  font-family: Arial;
 }
 
 .product-grid {
