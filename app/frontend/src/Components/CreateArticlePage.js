@@ -6,7 +6,7 @@ import './AddItem.css';
 import { useAuth } from '../Contexts/AuthContext';
 import { urlGateway} from  '../Config/config'
 import axios from 'axios';
-
+import {createTaskLog} from  '../services/logService'
 function AddItem() {
     const [price, setPrice] = useState('');
     const [isShipping, setIsShipping] = useState(false);
@@ -15,6 +15,8 @@ function AddItem() {
     const [description, setDescription] = useState('');
     const [images, setImages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [startTime, setStartTime] = useState(null);
+    const [timeTaken, setTimeTaken] = useState(null);
     const navigate = useNavigate();
     const maxImages = 5;
     const { isLoggedIn, user } = useAuth();
@@ -23,6 +25,7 @@ function AddItem() {
         if (!isLoggedIn) {
             navigate('/login');
         }
+        setStartTime(Date.now());
     }, [isLoggedIn, navigate]);
 
     const handleImageChange = (event, index) => {
@@ -37,12 +40,25 @@ function AddItem() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+
+
         if (!articleTitle || !description || !price || images.length === 0) {
             alert("Please fill in all fields and upload an image.");
             return;
         }
 
         try {
+            const endTime = Date.now();
+            const duration = endTime - startTime;
+            setTimeTaken(duration);
+
+            console.log(`Time taken to complete form: ${duration} ms`);
+            const taskLogData = {
+                timeTaken : duration,
+                taskID: 2
+            }
+            await createTaskLog(taskLogData)
+
             const articleData = new FormData();
             const currentDate = new Date().toISOString();
             articleData.append('userID', user.userID);
