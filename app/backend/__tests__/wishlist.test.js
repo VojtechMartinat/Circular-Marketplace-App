@@ -47,7 +47,6 @@ describe('Wishlist Controller Tests', () => {
 
         await request(app).delete(`/api/v1/wishlists/${res.body.id}`);
 
-
     });
 
     test('GET /api/v1/wishlists - Should return all wishlists as JSON', async () => {
@@ -76,6 +75,21 @@ describe('Wishlist Controller Tests', () => {
 
         await request(app).get('/api/v1/wishlists');
 
+        const res2 = await request(app).get('/api/v1/wishlists');
+        expect(res2.statusCode).toBe(200);
+        expect(res2.body.wishlist.length).toBe(1);
+    });
+
+    test('GET /api/v1/wishlists/:id - Should return a wishlist by ID', async () => {
+        const newWishlist = { userID: '1', articleID: '101', totalPrice: 100.0 };
+        const postRes = await request(app).post('/api/v1/wishlists').send(newWishlist);
+
+        await request(app).get(`/api/v1/wishlists/${postRes.body.wishlist.id}`);
+
+        await request(app).get('/api/v1/wishlists');
+
+        await request(app).post('/api/v1/wishlists').send(newWishlist);
+        console.log(res.body);
         expect(res.statusCode).toBe(200);
         expect(res.body.wishlist.totalPrice).toBe(100.0);
     });

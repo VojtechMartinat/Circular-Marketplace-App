@@ -3,7 +3,6 @@ const { sequelize, User } = require('../config/Setup');
 const app = require('../server');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, afterEach, test, expect, describe } = require('@jest/globals');
-
 describe('User Controller Tests', () => {
 
     beforeAll(async () => {
@@ -58,6 +57,14 @@ describe('User Controller Tests', () => {
         expect(res.statusCode).toBe(200);
     });
 
+
+
+    test('GET /api/v1/wishlists/:id - Should return a user by ID', async () => {
+        const newUser = { userID: '6', username: 'john_joe', password: '1234', email: 'john@example.com', wallet: 100.0 };
+        await request(app).post('/api/v1/users').send(newUser);
+        const res = await request(app).get(`/api/v1/users/${newUser.userID}`);
+        expect(res.statusCode).toBe(200);
+    });
 
 
 

@@ -1,37 +1,46 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createArticle } from '../services/articleService';
-import {createPhoto} from '../services/photoService'; // Import the uploadPhoto service
+import { createPhoto } from '../services/photoService';
 import './AddItem.css';
 import { useAuth } from '../Contexts/AuthContext';
-
+import { urlGateway} from  '../Config/config'
+import axios from 'axios';
+import {createTaskLog} from  '../services/logService'
 function AddItem() {
     const [price, setPrice] = useState('');
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(true);
     const [articleTitle, setArticleTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [images, setImages] = useState([]); // State for the uploaded image
+    const [images, setImages] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [startTime, setStartTime] = useState(null);
+    const [timeTaken, setTimeTaken] = useState(null);
     const navigate = useNavigate();
     const maxImages = 5;
-    const { isLoggedIn, user } = useAuth()
+    const { isLoggedIn, user } = useAuth();
+
     useEffect(() => {
         if (!isLoggedIn) {
-            navigate('/login'); // Redirect to login page
+            navigate('/login');
         }
+        setStartTime(Date.now());
     }, [isLoggedIn, navigate]);
+
     const handleImageChange = (event, index) => {
         const file = event.target.files[0];
         if (file) {
-            // Create a new image array with the uploaded image
             const newImages = [...images];
-            newImages[index] = file; // Store the image URL
-            setImages(newImages); // Update the state with the new image list
+            newImages[index] = file;
+            setImages(newImages);
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+
 
         if (!articleTitle || !description || !price || images.length === 0) {
             alert("Please fill in all fields and upload an image.");
@@ -39,7 +48,17 @@ function AddItem() {
         }
 
         try {
-            // Create article first
+            const endTime = Date.now();
+            const duration = endTime - startTime;
+            setTimeTaken(duration);
+
+            console.log(`Time taken to complete form: ${duration} ms`);
+            const taskLogData = {
+                timeTaken : duration,
+                taskID: 2
+            }
+            await createTaskLog(taskLogData)
+
             const articleData = new FormData();
             const currentDate = new Date().toISOString();
             articleData.append('userID', user.userID);
@@ -47,7 +66,7 @@ function AddItem() {
             articleData.append('description', description);
             articleData.append('price', parseFloat(price));
             articleData.append('dateAdded', currentDate);
-            articleData.append('state','uploaded')
+            articleData.append('state', 'uploaded');
             const shippingType = isShipping ? (isCollection ? "both" : "shipping") : "collection";
             articleData.append('shippingType', shippingType);
 
@@ -56,7 +75,7 @@ function AddItem() {
                     const photoData = new FormData();
                     photoData.append('articleID', res.data.article.articleID);
                     photoData.append('image', images[i]);
-                    if (!images[i]){
+                    if (!images[i]) {
                         break;
                     }
                     createPhoto(photoData).then(res => {
@@ -70,22 +89,41 @@ function AddItem() {
                 alert("Error creating an article!")
             })
 
-            // Upload the photo
-            // for (let i = 0; i < images.length; i++) {
-            //   const photoData = new FormData();
-            //   const file = images[i];
-            //   photoData.append('image', file);
-            //   photoData.append('articleID', articleResponse.articleID); // Attach the article ID
-            //
-            //   await uploadPhoto(photoData); // Upload the photo and associate with the article
-            // } // Upload the photo and associate with the article
-
-            // Redirect to home or another page
             navigate('/');
         } catch (error) {
             console.error('Error creating article and uploading photo:', error);
             alert('Failed to create article or upload photo');
         }
+    };
+
+    const handleAISuggest = async () => {
+        if (images.length === 0) {
+            alert("Please upload an image first.");
+            return;
+        }
+
+        setIsLoading(true);
+
+        const file = images[0];
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64Image = reader.result.split(',')[1]; // Get base64 part of the image
+            try {
+                const response = await axios.post(`${urlGateway}` + '/describe', {
+                    image: base64Image
+                });
+                const aiResponse = response.data;
+                setDescription(aiResponse.description);
+                setArticleTitle(aiResponse.topic);
+                setPrice(aiResponse.price);
+            } catch (error) {
+                console.error('Error calling AI suggest API:', error);
+                alert('Failed to get AI suggestion');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        reader.readAsDataURL(file);
     };
 
     const renderPhotoBox = (index) => {
@@ -114,7 +152,9 @@ function AddItem() {
             <header className="header">
                 <button className="back-button" onClick={() => navigate('/')}>←</button>
                 <h1>Add</h1>
-                <button className="ai-suggest-button">AI-Suggest</button>
+                <button className="ai-suggest-button" onClick={handleAISuggest} disabled={isLoading}>
+                    {isLoading ? 'Loading...' : 'AI-Suggest'}
+                </button>
             </header>
 
             <form onSubmit={handleSubmit}>
@@ -128,7 +168,7 @@ function AddItem() {
                         type="text"
                         placeholder="Add a title "
                         value={articleTitle}
-                        onChange ={(e) => setArticleTitle(e.target.value)}/>
+                        onChange={(e) => setArticleTitle(e.target.value)} />
                 </div>
 
                 <div className="input-group">
@@ -166,7 +206,7 @@ function AddItem() {
                 </div>
 
                 <button className="publish-button">
-                    Publish for £{price? parseFloat(price) + 0.2 : 0}<br />
+                    Publish for £{price ? parseFloat(price) + 0.2 : 0}<br />
                     <span className="subtext">Including shipping & buyer protection</span>
                 </button>
             </form>

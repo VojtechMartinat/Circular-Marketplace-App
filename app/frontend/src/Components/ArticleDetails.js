@@ -7,6 +7,7 @@ import { createOrder } from '../services/orderService';
 import { useAuth } from '../Contexts/AuthContext';
 import { getUser } from '../services/userService';
 import './article.css';
+import {createTaskLog} from "../services/logService";
 
 const ArticleDetails = () => {
     const { id } = useParams();
@@ -17,6 +18,7 @@ const ArticleDetails = () => {
     const { isLoggedIn, user } = useAuth();
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
+    const [startTime, setStartTime] = useState(null);
 
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
@@ -52,6 +54,7 @@ const ArticleDetails = () => {
     };
 
     useEffect(() => {
+        setStartTime(Date.now());
         getArticle(id).then((response) => {
             if (response) {
                 setArticle(response.article);
@@ -114,6 +117,14 @@ const ArticleDetails = () => {
         };
         createOrder(orderData)
             .then(() => {
+                const endTime = Date.now();
+                const timeTaken = (endTime - startTime)
+                const taskLogData = {
+                    timeTaken : timeTaken,
+                    taskID: 3
+                }
+                createTaskLog(taskLogData)
+
                 alert('Order created successfully!');
             })
             .catch((error) => {

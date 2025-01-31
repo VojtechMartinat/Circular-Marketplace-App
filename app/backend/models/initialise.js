@@ -9,6 +9,8 @@ const PaymentCardModel = require('./PaymentCard');
 const PhotoModel = require('./Photo');
 const TagModel = require('./Tag');
 const WishlistModel = require('./Wishlist');
+const TaskModel = require('./Task');
+const TaskLogModel = require('./TaskLog')
 
 const User = UserModel(sequelize);
 const PaymentCard = PaymentCardModel(sequelize);
@@ -17,6 +19,8 @@ const Article = ArticleModel(sequelize);
 const Photo = PhotoModel(sequelize);
 const Wishlist = WishlistModel(sequelize);
 const Tag = TagModel(sequelize);
+const Task = TaskModel(sequelize);
+const TaskLog = TaskLogModel(sequelize);
 
 User.hasMany(Wishlist, {foreignKey: 'userID', onDelete: 'CASCADE'});
 Wishlist.belongsTo(User, {foreignKey: 'userID', onDelete: 'CASCADE'});
@@ -41,6 +45,8 @@ Photo.belongsTo(Article, { foreignKey: 'articleID' , onDelete: 'CASCADE'});
 User.hasMany(PaymentCard, { foreignKey: 'userID' , onDelete: 'CASCADE'});
 PaymentCard.belongsTo(User, { foreignKey: 'userID' , onDelete: 'CASCADE'});
 
+TaskLog.belongsTo(Task, {foreignKey: 'taskID'})
+Task.hasMany(TaskLog,{foreignKey: 'taskID'})
 module.exports = {
     User,
     Article,
@@ -49,5 +55,8 @@ module.exports = {
     Photo,
     Tag,
     Wishlist,
+    Task,
+    TaskLog,
     sequelize
+
 };
