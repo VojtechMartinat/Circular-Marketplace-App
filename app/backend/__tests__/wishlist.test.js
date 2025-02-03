@@ -81,17 +81,13 @@ describe('Wishlist Controller Tests', () => {
     });
 
     test('GET /api/v1/wishlists/:id - Should return a wishlist by ID', async () => {
-        const newWishlist = { userID: '1', articleID: '101', totalPrice: 100.0 };
+        const newWishlist = {id:'3' ,userID: '1', articleID: '101', totalPrice: 100.0 };
         const postRes = await request(app).post('/api/v1/wishlists').send(newWishlist);
 
-        await request(app).get(`/api/v1/wishlists/${postRes.body.wishlist.id}`);
 
-        await request(app).get('/api/v1/wishlists');
+        const res2 = await request(app).get(`/api/v1/wishlists/${postRes.body.wishlist.id}`);
+        expect(res2.body.wishlist.totalPrice).toBe(100.0);
 
-        await request(app).post('/api/v1/wishlists').send(newWishlist);
-        console.log(res.body);
-        expect(res.statusCode).toBe(200);
-        expect(res.body.wishlist.totalPrice).toBe(100.0);
     });
 
     test('PATCH /api/v1/wishlists/:id - Should update a wishlist', async () => {

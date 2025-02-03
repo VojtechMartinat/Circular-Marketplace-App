@@ -33,6 +33,7 @@ const createWishlist= asyncErrorWrapper(async (req,res) =>{
  * */
 const getWishlist = asyncErrorWrapper(async (req,res,next) =>{
     const {id:wishlistID} = req.params
+
     const wishlist = await Wishlist.findOne({
         where:{
             id: wishlistID
