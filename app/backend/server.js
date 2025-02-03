@@ -34,13 +34,14 @@ app.use('/api/v1/tasklog',tasklog)
 app.use(errorHandler);
 
 const port = 8080;
-app.listen(port, (err) => {
-    if (err) {
-        console.error('Error starting the server:', err);
-        return;
-    }
-    console.log(`Server is listening on port ${port}...`);
-});
-
+if (require.main === module) {
+    app.listen(port, (err) => {
+        if (err) {
+            console.error('Error starting the server:', err);
+            return;
+        }
+        console.log(`Server is listening on port ${port}...`);
+    });
+}
 module.exports = app;
 

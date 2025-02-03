@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { sequelize, Tag } = require('./Setup.js');
+const { sequelize, Tag } = require('../config/Setup');
 const app = require('../server');
 
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
@@ -38,8 +38,6 @@ describe('Tag Controller Tests', () => {
             .send(newTag);
 
         const res2 = await request(app).get('/api/v1/tags');
-
-        console.log(res2.body);
 
         // Check the response status and content
         expect(res2.statusCode).toBe(200);
@@ -97,7 +95,7 @@ describe('Tag Controller Tests', () => {
             tagID: 2
         };
 
-        const res = await request(app)
+        await request(app)
             .post('/api/v1/tags')
             .send(newTag);
 
