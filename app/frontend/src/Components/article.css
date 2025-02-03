@@ -15,9 +15,14 @@
 }
 
 .back-button {
+  display: flex;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
+  padding:10px 20px; 
+  text-align: center;
+  justify-content: flex-start;
+  max-width: fit-content;
 }
 
 .icons {

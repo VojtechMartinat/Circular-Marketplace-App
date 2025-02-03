@@ -73,19 +73,17 @@ const Home = () => {
                     <ProductCard key={article.articleID} article={article} onClick={() => handleArticleClick(article.articleID)} />
                 ))}
             </div>
-            <BottomNav />
         </div>
     );
 }
 
 function Header({ handleInputChange, handleInputFocus }) {
   const input = document.getElementById("search-bar")
-  const searchButton = document.getElementById("button")
+  const searchButton = document.getElementById("")
     return (
         <div className="header">
             <h1 className='title'>Circular Market System</h1>
             <input type="text" className="search-bar" onFocus={handleInputFocus} onChange={handleInputChange} placeholder="Search" />
-            {/* <button className="search-button">🔍</button> */}
         </div>
     );
 }
@@ -108,15 +106,6 @@ function ProductCard({ article, onClick }) {
     );
 }
 
-function BottomNav() {
-    const navigate = useNavigate();
-    return (
-        <div className="bottom-nav">
-            <button className="nav-button" onClick={() => navigate('/')}>🏠</button>
-            <button className="nav-button" onClick={() => navigate('/CreateArticlePage')}>➕</button>
-            <button className="nav-button">👤</button>
-        </div>
-    );
-}
+
 
 export default Home;

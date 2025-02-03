@@ -65,7 +65,7 @@ const ArticleDetails = () => {
     useEffect(() => {
         if (article && article.userID) {
             getUser(article.userID).then((response) => {
-                if (response) {
+                if (response) { 
                     setArticleUser(response.user);
                 }
             });
@@ -159,7 +159,7 @@ const ArticleDetails = () => {
             {/* Header section */}
             <div className="header">
                 <button className="back-button" onClick={() => navigate('/')}>
-                    ←
+                ← 
                 </button>
                 <KebabMenu />
             </div>
