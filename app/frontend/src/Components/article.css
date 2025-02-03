@@ -9,9 +9,10 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 20px;
+  
 }
 
 .back-button {
@@ -23,6 +24,8 @@
   text-align: center;
   justify-content: flex-start;
   max-width: fit-content;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .icons {
@@ -160,6 +163,8 @@
   border: none;
   cursor: pointer;
   padding: 10px;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .dot {
