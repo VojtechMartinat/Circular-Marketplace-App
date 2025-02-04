@@ -97,6 +97,18 @@ const ArticleDetails = () => {
             alert('Please log in to buy an article');
             return;
         }
+
+        if (user.userID === article.userID) {
+            alert('You cannot buy your own article');
+            return;
+        }
+
+        const totalPrice = isShipping ? article.price + 2 : article.price;
+        if (user.wallet < totalPrice) {
+            alert('You do not have enough money to buy this article');
+            return;
+        }
+
         let collectionMethod = '';
         if (isShipping) {
             collectionMethod = 'delivery';
@@ -113,7 +125,6 @@ const ArticleDetails = () => {
             dateOfPurchase: new Date().toISOString(),
             collectionMethod: collectionMethod,
             articles: [{ articleID: id }],
-
         };
         createOrder(orderData)
             .then(() => {
