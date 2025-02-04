@@ -157,6 +157,22 @@ const userArticles = asyncErrorWrapper(async (req,res,next) =>{
     }
     res.status(200).json({articles})
 })
+
+const userTopUp = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:userID} = req.params
+    const amount = req.body.amount;
+    const user = await User.findOne({where: {
+        userID : userID
+        }
+    });
+    if (!user){
+        next(new APIError(`User doesnt exists!`, 404));
+    }
+    user.wallet += amount;
+    await user.save();
+    res.status(200).json({user})
+})
+
 module.exports = {
-    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser
+    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser , userTopUp
 }

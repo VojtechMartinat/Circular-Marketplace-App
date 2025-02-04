@@ -1,7 +1,6 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const {Order, Article} = require('../models/initialise')
-
+const {Order, Article, User} = require('../models/initialise')
 
 /**
  * * Get all orders from the database
@@ -23,6 +22,7 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
     const {userID, paymentMethodID, dateOfPurchase, collectionMethod} = req.body;
     console.log(req.body)
     let sum = 0
+    let sellerID = null
     for (const x of req.body.articles){
         const article = await Article.findOne({
             where:{
@@ -43,12 +43,26 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
             return
         }
         sum += price
+        sellerID = article.userID;
     }
-    console.log(userID)
-    console.log(paymentMethodID)
-    console.log(dateOfPurchase)
-    console.log(collectionMethod)
-    console.log(sum)
+    if (userID === sellerID){
+        next(new APIError('User cant buy his own article!',401));
+    }
+    const buyer = await User.findOne({
+        where:{
+            userID: userID
+        }
+    });
+    const seller = await User.findOne({
+        where: {
+            userID: sellerID
+        }
+    });
+
+    if (buyer.wallet < sum){
+        next(new APIError('User doesnt have enough founds to buy the article!'));
+        return;
+    }
     const order = await Order.create(
         {
             userID : userID,
@@ -59,6 +73,10 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
             totalPrice : sum
         }
     )
+    buyer.wallet -= sum;
+    await buyer.save();
+    seller.wallet += sum;
+    await seller.save();
 
     for (const articles of req.body.articles) {
         console.log(articles)
