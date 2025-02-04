@@ -119,3 +119,175 @@
 .top-items .dropdown {
     text-align: center;
 }
+
+.topup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Larger modal */
+.topup-modal {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    width: 50%;
+    max-width: 600px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+/* Close button */
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 28px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: black;
+}
+
+/* Title */
+.topup-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+/* Instructional text */
+.topup-subtext {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Larger buttons */
+.topup-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.topup-options button {
+    padding: 15px;
+    font-size: 22px;
+    border: none;
+    background-color: #2d7cd7;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.topup-options button:hover {
+    background-color: #36e83e;
+}
+
+/* Custom top-up input section */
+.custom-topup {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.custom-topup input {
+    width: 60%;
+    padding: 12px;
+    font-size: 18px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.custom-topup button {
+    padding: 12px;
+    font-size: 18px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.custom-topup button:hover {
+    background-color: #43a047;
+}
+@media (max-width: 600px) {
+    .topup-modal {
+        width: 90%;
+        max-width: none;
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .topup-options {
+        gap: 10px;
+    }
+
+    .topup-options button {
+        font-size: 18px;
+        padding: 12px;
+    }
+
+    .custom-topup {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .custom-topup input {
+        width: 80%;
+    }
+
+    .custom-topup button {
+        width: 80%;
+    }
+}
+
+.topup-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.topup-container button {
+    background-color: #007BFF;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+
+.topup-container button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.topup-container button:active {
+    transform: scale(0.98);
+}
+
+
+@media (max-width: 600px) {
+    .topup-container button {
+        width: 80%;
+        font-size: 18px;
+    }
+}
