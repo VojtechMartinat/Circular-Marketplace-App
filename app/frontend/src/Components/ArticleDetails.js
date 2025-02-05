@@ -192,9 +192,12 @@ const ArticleDetails = () => {
             
 
             {/* Title and description */}
-            <div>
-                <h2 className="title">{article.articleTitle}</h2>
+            <div className='info'>
+                <h1 className="title" >{article.articleTitle}</h1>
+                <h2 className="price">£{article.price}</h2>
                 <p className="description">{article.description}</p>
+                
+
             </div>
 
             {/* Seller section */}
@@ -207,13 +210,13 @@ const ArticleDetails = () => {
                             ? `${articleUser.rating} (0 reviews)`
                             : '★★★★★ (0 reviews)'}
                     </p>
-                    <p>Cost : {article.price}</p>
                 </div>
                 <div className="seller-location">📍{articleUser?.location}</div>
             </div>
 
             {/* Shipping and Collection */}
             <div className="purchase-options">
+                <p>Choose one or both:</p>
                 {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
                         <button
                             type="button"

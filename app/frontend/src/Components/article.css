@@ -64,7 +64,7 @@
 }
 
 .react-multiple-carousel__arrow--left {
-  left: 60px; 
+  right: auto; 
 }
 
 .react-multiple-carousel__arrow--right {
@@ -96,9 +96,24 @@
   margin-top: 20px;
 }
 
+
+.info{
+  justify-content: center;
+  align-items: center;
+  
+}
 .title {
+  padding: auto;
+  padding-top: 1%;
   font-size: 24px;
   margin-bottom: 10px;
+}
+
+.price{
+  padding: auto;
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #393939;
 }
 
 .description {
@@ -142,7 +157,8 @@
 
 .purchase-options {
   display: flex;
-  justify-content: space-around;
+  align-items: flex-start;
+  justify-content:flex-start;
   margin-top: 40px;
 }
 
@@ -153,12 +169,15 @@
 }
 .purchase-options button {
   background-color: #666;
+  max-width: fit-content;
+  margin:1%;
 }
 
 .purchase-button {
   margin-top: 20px;
   display: flex;
   justify-content: center;
+  max-width: fit-content;
 }
 
 .purchase-button button {
@@ -168,6 +187,9 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  border-radius: 10px;
+  border-color: #393939;
+  border-style: double;
 }
 
 
