@@ -186,8 +186,9 @@ const Profile = () => {
 
                 <div className="dropdown" onClick={() => toggleDropdown('sold')}>
                     <h2>Articles Sold</h2>
+
                     {dropdowns.sold && (
-                        articles && articles.length > 0 ? (
+                        articles && articles.some(article => article.state === "sold") > 0 ? (
                             <div className="orders-gallery">
 
 
@@ -244,8 +245,11 @@ const Profile = () => {
 
                 <div className="dropdown" onClick={() => toggleDropdown('posted')}>
                     <h2>Articles Posted</h2>
+
                     {dropdowns.posted && (
-                        articles && articles.length > 0 ? (
+
+                        articles && articles.some(article => article.state === "posted") > 0 ? (
+
                             <div className="orders-gallery">
                                 {articles.map((article) =>
                                     article.orderID === null ? (
