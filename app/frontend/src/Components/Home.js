@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Link, redirect, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { getArticlePhotos, getArticles } from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
+import { useAuth } from '../Contexts/AuthContext.js';
+
 
 const Home = () => {
     const [articles, setArticles] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [startTime, setStartTime] = useState(null);
-    const navigate = useNavigate();
-    
+   
+
     useEffect(() => {
         getArticles()
             .then(async response => {
@@ -73,39 +75,52 @@ const Home = () => {
                     <ProductCard key={article.articleID} article={article} onClick={() => handleArticleClick(article.articleID)} />
                 ))}
             </div>
+            <BottomNav />
         </div>
     );
 }
 
 function Header({ handleInputChange, handleInputFocus }) {
-  const input = document.getElementById("search-bar")
-  const searchButton = document.getElementById("")
     return (
         <div className="header">
             <h1 className='title'>Circular Market System</h1>
             <input type="text" className="search-bar" onFocus={handleInputFocus} onChange={handleInputChange} placeholder="Search" />
+            <button className="search-button">🔍</button>
         </div>
     );
 }
 
 function ProductCard({ article, onClick }) {
-  const navigate = useNavigate()
     return (
-        <div className='product-card' onClick={() => navigate(`/articles/${article.articleID}`)}>
+        <div className='product-card' onClick={onClick}>
             {article.imageUrl ? (
                 <img src={article.imageUrl} alt={article.articleTitle} />
             ) : (
                 <div className="product-image-placeholder">🖼️</div>
             )}
             <div className='product-info'>
-                <p className='product-name'>{article.articleTitle}</p>
-                <p className='product-price'>Price: £{article.price}</p>
+                <Link to={`/articles/${article.articleID}`}>
+                    <p className='product-name'>
+                        {article.articleTitle}
+                    </p>
+                </Link>
+                <p className='product-price'>Price: {article.price}</p>
             </div>
             <button className='favorite-button'>❤</button>
         </div>
     );
 }
 
-
+function BottomNav() {
+    const { isLoggedIn, user } = useAuth();
+    const navigate = useNavigate();
+    return (
+        <div className="bottom-nav">
+            <button className="nav-button" onClick={() => navigate('/')}>🏠</button>
+            <button className="nav-button" onClick={() => navigate('/create-article')}>➕</button>
+            <button className="nav-button" onClick={() => navigate(isLoggedIn ? `/profile/${user.userID}` : "/login")}>👤</button>
+        </div>
+    );
+}
 
 export default Home;
