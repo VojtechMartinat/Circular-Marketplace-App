@@ -8,6 +8,7 @@ import { useAuth } from '../Contexts/AuthContext';
 import { getUser } from '../services/userService';
 import './article.css';
 import {createTaskLog} from "../services/logService";
+import ColorThief from 'colorthief';
 
 const ArticleDetails = () => {
     const { id } = useParams();
@@ -19,6 +20,7 @@ const ArticleDetails = () => {
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
     const [startTime, setStartTime] = useState(null);
+    const [backgroundGradient, setBackgroundGradient] = useState('linear-gradient(180deg, #f8f8f8, #e0e0e0)');
 
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
@@ -154,8 +156,16 @@ const ArticleDetails = () => {
         },
     };
 
+    const CustomLeftArrow = ({ onClick }) => (
+        <button onClick={onClick} className="custom-arrow left-arrow">←</button>
+      );
+      
+      const CustomRightArrow = ({ onClick }) => (
+        <button onClick={onClick} className="custom-arrow right-arrow">→</button>
+      );
+
     return (
-        <div className="app">
+        <div className="app" >
             {/* Header section */}
             <div className="header">
                 <button className="back-button" onClick={() => navigate('/')}>
@@ -166,7 +176,12 @@ const ArticleDetails = () => {
 
             {/* Carousel for images */}
             <div className="carousel-container">
-                <ReactMultiCarousel responsive={responsive} infinite autoPlay autoPlaySpeed={3000}>
+                <ReactMultiCarousel responsive={responsive} 
+                infinite 
+                autoPlay 
+                autoPlaySpeed={10000}
+                customLeftArrow={<CustomLeftArrow/>}
+                CustomRightArrow={<CustomRightArrow/>}>
                     {photos.map((photo, index) => (
                         <div key={index} className="carousel-image">
                             <img src={photo} alt={`Article ${index}`} />
@@ -174,9 +189,10 @@ const ArticleDetails = () => {
                     ))}
                 </ReactMultiCarousel>
             </div>
+            
 
             {/* Title and description */}
-            <div className="details">
+            <div>
                 <h2 className="title">{article.articleTitle}</h2>
                 <p className="description">{article.description}</p>
             </div>
