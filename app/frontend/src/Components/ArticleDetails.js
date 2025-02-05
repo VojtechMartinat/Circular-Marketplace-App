@@ -214,9 +214,10 @@ const ArticleDetails = () => {
                 <div className="seller-location">📍{articleUser?.location}</div>
             </div>
 
+            <p className='textchoose'>Choose one or both:</p>
+
             {/* Shipping and Collection */}
             <div className="purchase-options">
-                <p>Choose one or both:</p>
                 {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
                         <button
                             type="button"
