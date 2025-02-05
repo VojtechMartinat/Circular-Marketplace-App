@@ -3,11 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getArticlePhotos, getArticles } from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
+import { useAuth } from '../Contexts/AuthContext.js';
+
 
 const Home = () => {
     const [articles, setArticles] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [startTime, setStartTime] = useState(null);
+   
 
     useEffect(() => {
         getArticles()
@@ -109,12 +112,13 @@ function ProductCard({ article, onClick }) {
 }
 
 function BottomNav() {
+    const { isLoggedIn, user } = useAuth();
     const navigate = useNavigate();
     return (
         <div className="bottom-nav">
             <button className="nav-button" onClick={() => navigate('/')}>🏠</button>
-            <button className="nav-button" onClick={() => navigate('/CreateArticlePage')}>➕</button>
-            <button className="nav-button">👤</button>
+            <button className="nav-button" onClick={() => navigate('/create-article')}>➕</button>
+            <button className="nav-button" onClick={() => navigate(isLoggedIn ? `/profile/${user.userID}` : "/login")}>👤</button>
         </div>
     );
 }
