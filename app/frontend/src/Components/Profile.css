@@ -5,6 +5,7 @@
     bottom: 0; /* Starts from the bottom */
     left: 0; /* Align to the left (or adjust as needed) */
     min-height: 100vh; /* Allows it to grow when content expands */
+    padding-top: 20px;
 
 }
 
@@ -15,7 +16,7 @@
     padding: 20px;
     border-radius: 10px;
     max-width: 700px;
-    margin: 0 auto;
+    margin: 20px auto 0 auto;
 }
 
 /* Header */

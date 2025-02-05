@@ -100,12 +100,18 @@ const Profile = () => {
     });
 
     const toggleDropdown = (key) => {
-        setDropdowns((prev) => ({
-            ...prev,
-            [key]: !prev[key],
-        }));
+        setDropdowns((prev) => {
+            // Close all dropdowns and open the selected one
+            const newDropdowns = {
+                bought: false,
+                sold: false,
+                posted: false,
+                favourited: false,
+            };
+            newDropdowns[key] = !prev[key]; // Toggle the selected dropdown
+            return newDropdowns;
+        });
     };
-
     const handleChangeOrderStatus = async (orderID, collectionMethod) => {
         try {
             const newStatus = collectionMethod === 'delivery' ? 'shipped' : 'collected'
