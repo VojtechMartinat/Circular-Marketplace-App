@@ -90,19 +90,18 @@ function Header({ handleInputChange, handleInputFocus }) {
 }
 
 function ProductCard({ article, onClick }) {
+    const navigate = useNavigate()
     return (
-        <div className='product-card' onClick={onClick}>
+        <div className='product-card' onClick={() => navigate(`/articles/${article.articleID}`)}>
             {article.imageUrl ? (
                 <img src={article.imageUrl} alt={article.articleTitle} />
             ) : (
                 <div className="product-image-placeholder">🖼️</div>
             )}
             <div className='product-info'>
-                <Link to={`/articles/${article.articleID}`}>
                     <p className='product-name'>
                         {article.articleTitle}
                     </p>
-                </Link>
                 <p className='product-price'>Price: {article.price}</p>
             </div>
             <button className='favorite-button'>❤</button>
