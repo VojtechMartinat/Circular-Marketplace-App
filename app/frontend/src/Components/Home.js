@@ -82,9 +82,9 @@ const Home = () => {
 function Header({ handleInputChange, handleInputFocus }) {
     return (
         <div className="header">
-            <h1 className='title'>Circular Market System</h1>
+            <p className='title'>ReList</p>
             <input type="text" className="search-bar" onFocus={handleInputFocus} onChange={handleInputChange} placeholder="Search" />
-            <button className="search-button">🔍</button>
+            <button className="search-button">Search</button>
         </div>
     );
 }

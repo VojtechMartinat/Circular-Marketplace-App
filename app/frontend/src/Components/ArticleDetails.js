@@ -141,12 +141,12 @@ const ArticleDetails = () => {
     const responsive = {
         desktop: {
             breakpoint: { max: 3000, min: 1024 },
-            items: Math.min(photos.length, 3),
+            items: Math.min(photos.length, 1),
             slidesToSlide: 1,
         },
         tablet: {
             breakpoint: { max: 1024, min: 464 },
-            items: Math.min(photos.length, 2),
+            items: Math.min(photos.length, 1),
             slidesToSlide: 1,
         },
         mobile: {
