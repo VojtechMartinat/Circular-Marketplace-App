@@ -8,6 +8,8 @@ import { useAuth } from '../Contexts/AuthContext';
 import { getUser } from '../services/userService';
 import './article.css';
 import {createTaskLog} from "../services/logService";
+import {FaWallet} from "react-icons/fa";
+import {FaGear} from "react-icons/fa6";
 
 const ArticleDetails = () => {
     const { id } = useParams();
@@ -39,14 +41,27 @@ const ArticleDetails = () => {
 
         return (
             <div className="icons">
-                <button className="kebab-button" onClick={toggleMenu}>
-                    <span className="dot"></span>
-                    <span className="dot"></span>
-                    <span className="dot"></span>
-                </button>
+                <div className="top-items">
+                    <div className="dropdown">
+                        <h2 style={{
+                            display: "flex",
+                            alignItems: "center",
+                            textAlign: "left",
+                            paddingLeft: 5,
+                            gap: 10 // Adjust the gap as needed
+                        }}>
+                            <FaWallet size={30} style={{color: "black"}}/>
+                            {user?.wallet}£
+                        </h2>
+                    </div>
+                    <div className="dropdown">
+                        <FaGear size={30} onClick={toggleMenu} style={{color: 'black'}}/>
+                    </div>
+                </div>
+
                 {isOpen && (
                     <div className="menu">
-                        <div className="menu-item" onClick={() => handleSharing()}>Share</div>
+                        <div className="menu-item" onClick={handleSharing}>Share</div>
                     </div>
                 )}
             </div>

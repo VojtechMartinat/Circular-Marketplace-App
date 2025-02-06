@@ -58,11 +58,17 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
             userID: sellerID
         }
     });
+    if (collectionMethod === "delivery"){
+        sum += 2;
+    }
+
 
     if (buyer.wallet < sum){
         next(new APIError('User doesnt have enough founds to buy the article!'));
         return;
     }
+
+
     const order = await Order.create(
         {
             userID : userID,
@@ -73,11 +79,19 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
             totalPrice : sum
         }
     )
-    buyer.wallet -= sum;
-    await buyer.save();
-    seller.wallet += sum;
-    await seller.save();
-
+    console.log("sum: " + sum);
+    if (order.collectionMethod === "delivery"){
+        buyer.wallet -= sum;
+        await buyer.save();
+        sum -= 2;
+        seller.wallet += sum;
+        await seller.save();
+    }else {
+        buyer.wallet -= sum;
+        await buyer.save();
+        seller.wallet += sum;
+        await seller.save();
+    }
     for (const articles of req.body.articles) {
         console.log(articles)
         console.log(order.orderID)
