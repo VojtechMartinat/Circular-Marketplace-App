@@ -22,8 +22,13 @@ const getAllReviews = asyncErrorWrapper(async (req,res) =>{
  *  @param res Response sent to the client containing new review data
  * */
 const createReview = asyncErrorWrapper(async (req,res) =>{
-    const review = await Review.create(req.body)
-    res.status(201).json({review: review})
+    try {
+        const review = await Review.create(req.body)
+        res.status(201).json({review: review})
+    } catch (e){
+        res.status(400).json({error: e})
+    }
+
 })
 
 

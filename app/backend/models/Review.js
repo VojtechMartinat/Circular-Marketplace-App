@@ -17,8 +17,8 @@ module.exports = (sequelize) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 validate: {
-                    min: { arg: [1] },
-                    max: { arg: [5] }
+                    min: 1,
+                    max: 5
                 }
             },
             comment: {
@@ -34,8 +34,11 @@ module.exports = (sequelize) => {
             reviewer: {
                 type: DataTypes.UUID,
                 allowNull: false,
+            },
+            articleID: {
+                type: DataTypes.UUID,
+                allowNull: false,
             }
-
         },
         {
             sequelize,
