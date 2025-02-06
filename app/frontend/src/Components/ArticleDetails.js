@@ -180,7 +180,7 @@ const ArticleDetails = () => {
                 infinite 
                 autoPlay 
                 autoPlaySpeed={10000}
-                customLeftArrow={<CustomLeftArrow/>}
+                CustomLeftArrow={<CustomLeftArrow/>}
                 CustomRightArrow={<CustomRightArrow/>}>
                     {photos.map((photo, index) => (
                         <div key={index} className="carousel-image">

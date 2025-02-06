@@ -75,7 +75,7 @@
   height: 100%;
   max-width:fit-content;
   object-fit:contain;
-  background-color: #eb0000;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .image-placeholder {
