@@ -75,7 +75,6 @@ const Home = () => {
                     <ProductCard key={article.articleID} article={article} onClick={() => handleArticleClick(article.articleID)} />
                 ))}
             </div>
-            <BottomNav />
         </div>
     );
 }
@@ -111,16 +110,5 @@ function ProductCard({ article, onClick }) {
     );
 }
 
-function BottomNav() {
-    const { isLoggedIn, user } = useAuth();
-    const navigate = useNavigate();
-    return (
-        <div className="bottom-nav">
-            <button className="nav-button" onClick={() => navigate('/')}>🏠</button>
-            <button className="nav-button" onClick={() => navigate('/create-article')}>➕</button>
-            <button className="nav-button" onClick={() => navigate(isLoggedIn ? `/profile/${user.userID}` : "/login")}>👤</button>
-        </div>
-    );
-}
 
 export default Home;
