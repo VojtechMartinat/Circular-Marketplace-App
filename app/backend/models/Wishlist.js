@@ -18,7 +18,7 @@ module.exports = (sequelize) => {
                 unique: true,
             },
             userID: {
-                type: DataTypes.UUID,
+                type: DataTypes.STRING(30),
                 allowNull: false,
             },
             articleID: {

@@ -6,21 +6,12 @@ module.exports = (sequelize) => {
     User.init(
         {
             userID: {
-                type: DataTypes.UUID,
+                type: DataTypes.STRING(30),
                 allowNull: false,
                 unique: true,
                 primaryKey: true,
-                defaultValue : DataTypes.UUIDV4,
             },
             username: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            password: {
-                type: DataTypes.STRING,
-                allowNull: false,
-            },
-            email: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
@@ -31,11 +22,7 @@ module.exports = (sequelize) => {
             location: {
                 type: DataTypes.STRING,
                 allowNull: true,
-            },
-            rating: {
-                type: DataTypes.DOUBLE,
-                allowNull: true,
-            },
+            }
         },
         {
             sequelize,

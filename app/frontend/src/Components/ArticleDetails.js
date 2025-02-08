@@ -4,10 +4,9 @@ import ReactMultiCarousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { getArticle, getArticlePhotos } from '../services/articleService';
 import { createOrder } from '../services/orderService';
-import { useAuth } from '../Contexts/AuthContext';
+import { auth } from '../services/firebaseService';
 import { getUser } from '../services/userService';
 import './article.css';
-import {createTaskLog} from "../services/logService";
 
 const ArticleDetails = () => {
     const { id } = useParams();
@@ -15,10 +14,24 @@ const ArticleDetails = () => {
     const [article, setArticle] = useState(null);
     const [photos, setPhotos] = useState([]); // State for multiple photos
     const [articleUser, setArticleUser] = useState(null);
-    const { isLoggedIn, user } = useAuth();
+    const [user, setUser] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
-    const [startTime, setStartTime] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            if (currentUser) {
+                setUser(currentUser);
+                setIsLoggedIn(true);
+            } else {
+                setUser(null);
+                setIsLoggedIn(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
@@ -54,7 +67,6 @@ const ArticleDetails = () => {
     };
 
     useEffect(() => {
-        setStartTime(Date.now());
         getArticle(id).then((response) => {
             if (response) {
                 setArticle(response.article);
@@ -108,23 +120,14 @@ const ArticleDetails = () => {
         }
 
         const orderData = {
-            userID: user.userID,
+            userID: user.uid,
             paymentMethodID: '4d530d77-217e-4a89-952e-f4cee8e3fe5c',
             dateOfPurchase: new Date().toISOString(),
             collectionMethod: collectionMethod,
             articles: [{ articleID: id }],
-
         };
         createOrder(orderData)
             .then(() => {
-                const endTime = Date.now();
-                const timeTaken = (endTime - startTime)
-                const taskLogData = {
-                    timeTaken : timeTaken,
-                    taskID: 3
-                }
-                createTaskLog(taskLogData)
-
                 alert('Order created successfully!');
             })
             .catch((error) => {
@@ -132,10 +135,8 @@ const ArticleDetails = () => {
             });
     };
 
-    // If article or photos are not available, show loading
     if (!article || photos.length === 0) return <div>Loading...</div>;
 
-    // Carousel settings
     const responsive = {
         desktop: {
             breakpoint: { max: 3000, min: 1024 },
@@ -156,7 +157,6 @@ const ArticleDetails = () => {
 
     return (
         <div className="app">
-            {/* Header section */}
             <div className="header">
                 <button className="back-button" onClick={() => navigate('/')}>
                     ←
@@ -164,7 +164,6 @@ const ArticleDetails = () => {
                 <KebabMenu />
             </div>
 
-            {/* Carousel for images */}
             <div className="carousel-container">
                 <ReactMultiCarousel responsive={responsive} infinite autoPlay autoPlaySpeed={3000}>
                     {photos.map((photo, index) => (
@@ -175,13 +174,11 @@ const ArticleDetails = () => {
                 </ReactMultiCarousel>
             </div>
 
-            {/* Title and description */}
             <div className="details">
                 <h2 className="title">{article.articleTitle}</h2>
                 <p className="description">{article.description}</p>
             </div>
 
-            {/* Seller section */}
             <div className="seller-info">
                 <div className="seller-avatar">👤</div>
                 <div className="seller-details">
@@ -196,7 +193,6 @@ const ArticleDetails = () => {
                 <div className="seller-location">📍{articleUser?.location}</div>
             </div>
 
-            {/* Shipping and Collection */}
             <div className="purchase-options">
                 {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
                         <button
@@ -222,7 +218,6 @@ const ArticleDetails = () => {
                 ) : null}
             </div>
 
-            {/* Purchase Button */}
             <div className="purchase-button">
                 <button onClick={handleBuy}>Buy for {isShipping ? article.price + 2 : article.price}</button>
             </div>

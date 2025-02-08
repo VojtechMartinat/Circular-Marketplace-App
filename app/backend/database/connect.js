@@ -13,7 +13,7 @@ if (isTest) {
         logging: false,       });
 } else {
     sequelize = new Sequelize(
-        'devdb',
+        'postgres',
         process.env.DB_USER,
         process.env.DB_PASS,
         {

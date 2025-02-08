@@ -77,6 +77,7 @@ const getUser = asyncErrorWrapper(async (req,res,next) =>{
     })
     if (!user){
         next(new APIError(`No user with id : ${userID}`),404)
+        return
     }
     res.status(200).json({user})
 })
