@@ -17,7 +17,6 @@ async function loginUser(username, password) {
 
         const result = await response.json();
 
-        console.log(result);
 
         const users = result.users || result;
 

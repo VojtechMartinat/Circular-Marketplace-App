@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
-import {getUserArticles, getUserOrders} from "../services/userService";
+import {getUserArticles, getUserOrders, getUser} from "../services/userService";
 import {deleteArticle} from "../services/articleService";
-import {changeOrderStatus, getOrder} from "../services/orderService"
+import {changeOrderStatus, getOrder, getOrderArticlePhotos} from "../services/orderService"
 import {getArticlePhotos} from '../services/articleService';
 import { FaGear } from "react-icons/fa6";
 import './Profile.css';
@@ -14,6 +14,25 @@ const Profile = () => {
     const [articles, setArticles] = useState(null);
     const [orders, setOrders] = useState(null);
     const [orderDetails, setOrderDetails] = useState({});
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        if (id) {
+            const fetchUserDetails = async () => {
+                try {
+                    const userData = await getUser(id);
+                    setUser(userData);
+                    console.log("testg")
+                    console.log(userData);
+                } catch (error) {
+                    console.error("Error fetching user details:", error);
+                }
+            };
+
+            fetchUserDetails(); // Call the async function
+        }
+    }, [id]);
+
     useEffect(() => {
         getUserArticles(id).then(response => {
             if (response && response.articles) {
@@ -26,7 +45,6 @@ const Profile = () => {
 
     useEffect(() => {
         getUserOrders(id).then(response => {
-            console.log(response);
             if (response && response.orders) {
                 setOrders(response.orders);
             } else {
@@ -42,10 +60,7 @@ const Profile = () => {
                     const updatedArticles = await Promise.all(
                         articles.map(async (article) => {
                             if (article.orderID) {
-                                // Fetch the order details
                                 details[article.orderID] = await getOrder(article.orderID);
-
-                                // Fetch photos associated with the article
                                 const photosResponse = await getArticlePhotos(article.articleID);
                                 if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
                                     const photoData = photosResponse.photos[0].image.data;
@@ -78,6 +93,47 @@ const Profile = () => {
             fetchOrderDetails(); // Call the async function
         }
     }, [articles]);
+
+    useEffect(() => {
+        if (orders) {
+            const fetchOrderPhotos = async () => {
+                try {
+                    const updatedOrders = await Promise.all(
+                        orders.map(async (order) => {
+                            try {
+                                const photosResponse = await getOrderArticlePhotos(order.orderID);
+                                if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
+                                    const photoData = photosResponse.photos[0].image.data;
+                                    const uint8Array = new Uint8Array(photoData);
+                                    const blob = new Blob([uint8Array], { type: 'image/png' });
+                                    const reader = new FileReader();
+
+                                    return new Promise((resolve) => {
+                                        reader.onloadend = () => {
+                                            order.imageUrl = reader.result; // Attach image URL to order
+                                            resolve(order);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    });
+                                }
+                            } catch (error) {
+                                console.error(`Error fetching photos for order ${order.orderID}:`, error);
+                            }
+                            return order; // Return order in case no photos are found
+                        })
+                    );
+
+                    // Update the orders with photos
+                    setOrders(updatedOrders);
+                } catch (error) {
+                    console.error("Error fetching order photos:", error);
+                }
+            };
+
+            fetchOrderPhotos(); // Call the async function
+        }
+    }, [orders]);
+
 
 
     const handleDeleteArticle = async (articleID) => {
@@ -112,6 +168,7 @@ const Profile = () => {
             return newDropdowns;
         });
     };
+
     const handleChangeOrderStatus = async (orderID, collectionMethod) => {
         try {
             const newStatus = collectionMethod === 'delivery' ? 'shipped' : 'collected'
@@ -139,7 +196,7 @@ const Profile = () => {
         <div className="profile-back">
         <div className="profile-box">
             <header className="header2">
-                <b>Your Profile</b>
+                <b>Your Profile{user.name}</b>
             </header>
 
             <div className="dropdown-container">
@@ -168,6 +225,10 @@ const Profile = () => {
                             <div className="orders-gallery">
                                 {orders.map((order) => (
                                     <div key={order.orderID} className="order-box">
+<pre style={{color: "black"}}>
+  {JSON.stringify(order, null, 2)}
+</pre>
+
                                         {/* Render the order image */}
                                         {order.imageUrl ? (
                                             <img src={order.imageUrl} alt={order.orderID} className="order-image"/>

@@ -64,6 +64,42 @@ async function getOrderArticles(orderID) {
     }
 }
 
+export async function getOrderArticlePhotos(orderID) {
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    try {
+        const articleResponse = await fetch(`${url}orders/${orderID}/articles`, requestOptions);
+        if (!articleResponse.ok) {
+            throw new Error(`Failed to fetch article. Status: ${articleResponse.status}`);
+        }
+        console.log("TEST")
+
+        const articleData = await articleResponse.json();
+        if (!articleData || !articleData.articleID) {
+            throw new Error("Invalid article data received!");
+        }
+
+        const articleID = articleData.articleID; // Extract article ID
+
+        const photoResponse = await fetch(`${url}articles/${articleID}/photos`);
+        if (!photoResponse.ok) {
+            throw new Error(`Failed to fetch photos. Status: ${photoResponse.status}`);
+        }
+
+        return await photoResponse.json();
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+
+
 async function changeOrderStatus(orderID, newStatus){
     const orderData = new FormData();
     orderData.append("orderID",orderID);

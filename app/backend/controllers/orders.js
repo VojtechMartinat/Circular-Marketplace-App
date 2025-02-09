@@ -21,7 +21,6 @@ const getAllOrders = asyncErrorWrapper(async (req,res) =>{
  * */
 const createOrder= asyncErrorWrapper(async (req,res,next) =>{
     const {userID, paymentMethodID, dateOfPurchase, collectionMethod} = req.body;
-    console.log(req.body)
     let sum = 0
     for (const x of req.body.articles){
         const article = await Article.findOne({
