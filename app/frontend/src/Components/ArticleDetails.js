@@ -4,10 +4,11 @@ import ReactMultiCarousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { getArticle, getArticlePhotos } from '../services/articleService';
 import { createOrder } from '../services/orderService';
-import { auth } from '../services/firebaseService';
 import { getUser } from '../services/userService';
 import './article.css';
-
+import {FaWallet} from "react-icons/fa";
+import {FaGear} from "react-icons/fa6";
+import {auth} from "../services/firebaseService";
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -15,6 +16,7 @@ const ArticleDetails = () => {
     const [photos, setPhotos] = useState([]); // State for multiple photos
     const [articleUser, setArticleUser] = useState(null);
     const [user, setUser] = useState(null);
+    const [dbUser, setDbUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
@@ -32,6 +34,15 @@ const ArticleDetails = () => {
 
         return () => unsubscribe();
     }, []);
+    useEffect(() => {
+        if (user) {
+            getUser(user.uid).then((response) => {
+                if (response) {
+                    setDbUser(response.user);
+                }
+            });
+        }
+    }, [user]);
 
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
@@ -52,14 +63,27 @@ const ArticleDetails = () => {
 
         return (
             <div className="icons">
-                <button className="kebab-button" onClick={toggleMenu}>
-                    <span className="dot"></span>
-                    <span className="dot"></span>
-                    <span className="dot"></span>
-                </button>
+                <div className="top-items">
+                    <div className="dropdown">
+                        <h2 style={{
+                            display: "flex",
+                            alignItems: "center",
+                            textAlign: "left",
+                            paddingLeft: 5,
+                            gap: 10 // Adjust the gap as needed
+                        }}>
+                            <FaWallet size={30} style={{color: "black"}}/>
+                            {dbUser?.wallet}£
+                        </h2>
+                    </div>
+                    <div className="dropdown">
+                        <FaGear size={30} onClick={toggleMenu} style={{color: 'black'}}/>
+                    </div>
+                </div>
+
                 {isOpen && (
                     <div className="menu">
-                        <div className="menu-item" onClick={() => handleSharing()}>Share</div>
+                        <div className="menu-item" onClick={handleSharing}>Share</div>
                     </div>
                 )}
             </div>
@@ -109,6 +133,18 @@ const ArticleDetails = () => {
             alert('Please log in to buy an article');
             return;
         }
+
+        if (dbUser.userID === article.userID) {
+            alert('You cannot buy your own article');
+            return;
+        }
+
+        const totalPrice = isShipping ? article.price + 2 : article.price;
+        if (dbUser.wallet < totalPrice) {
+            alert('You do not have enough money to buy this article');
+            return;
+        }
+
         let collectionMethod = '';
         if (isShipping) {
             collectionMethod = 'delivery';
@@ -157,6 +193,7 @@ const ArticleDetails = () => {
 
     return (
         <div className="app">
+            {/* Header section */}
             <div className="header">
                 <button className="back-button" onClick={() => navigate('/')}>
                     ←
@@ -164,6 +201,7 @@ const ArticleDetails = () => {
                 <KebabMenu />
             </div>
 
+            {/* Carousel for images */}
             <div className="carousel-container">
                 <ReactMultiCarousel responsive={responsive} infinite autoPlay autoPlaySpeed={3000}>
                     {photos.map((photo, index) => (
@@ -174,25 +212,26 @@ const ArticleDetails = () => {
                 </ReactMultiCarousel>
             </div>
 
+            {/* Title and description */}
             <div className="details">
                 <h2 className="title">{article.articleTitle}</h2>
                 <p className="description">{article.description}</p>
             </div>
 
+            {/* Seller section */}
             <div className="seller-info">
                 <div className="seller-avatar">👤</div>
                 <div className="seller-details">
                     <p className="seller-name">{articleUser?.username}</p>
                     <p className="seller-rating">
-                        {articleUser?.rating
-                            ? `${articleUser.rating} (0 reviews)`
-                            : '★★★★★ (0 reviews)'}
+                        {'★★★★★ (0 reviews)'}
                     </p>
                     <p>Cost : {article.price}</p>
                 </div>
                 <div className="seller-location">📍{articleUser?.location}</div>
             </div>
 
+            {/* Shipping and Collection */}
             <div className="purchase-options">
                 {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
                         <button
@@ -218,6 +257,7 @@ const ArticleDetails = () => {
                 ) : null}
             </div>
 
+            {/* Purchase Button */}
             <div className="purchase-button">
                 <button onClick={handleBuy}>Buy for {isShipping ? article.price + 2 : article.price}</button>
             </div>
