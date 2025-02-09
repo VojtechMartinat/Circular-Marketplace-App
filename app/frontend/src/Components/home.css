@@ -85,9 +85,12 @@
   margin-top: 10px;
 }
 
-.product-name {
+.product-name  {
   font-size: 16px;
   font-weight: bold;
+
+  color: #333;
+  
 }
 
 .product-price {
