@@ -324,7 +324,6 @@ const Profile = () => {
                             <div className="topup-modal">
                                 <button className="close-button" onClick={() => setShowTopupOptions(false)}>✖</button>
 
-                                <h1 className="topup-title">Add money to your Wallet</h1>
                                 <p className="topup-subtext">Select an option below or enter a custom amount</p>
 
                                 <div className="topup-options">
