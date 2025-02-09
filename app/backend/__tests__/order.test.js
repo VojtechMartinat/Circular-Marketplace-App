@@ -109,7 +109,7 @@ describe('Order Controller Tests', () => {
 
         const res = await request(app).get(`/api/v1/orders/${res1.body.order.orderID}`);
         expect(res.statusCode).toBe(200);
-        expect(res.body.order.userID).toBe(1);
+        expect(res.body.order.userID).toBe('1');
     });
 
     test('POST /api/v1/orders - Should create a new order', async () => {

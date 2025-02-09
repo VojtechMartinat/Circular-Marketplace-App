@@ -80,7 +80,7 @@ describe('Article Controller Tests with Sequelize', () => {
 
         const res = await request(app).get(`/api/v1/articles/${newArticle2.articleID}`);
         expect(res.statusCode).toBe(200);
-        expect(res.body.article.userID).toBe(1);
+        expect(res.body.article.userID).toBe("1");
     });
 
 
