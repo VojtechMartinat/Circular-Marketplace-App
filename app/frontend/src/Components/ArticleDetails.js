@@ -4,23 +4,45 @@ import ReactMultiCarousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { getArticle, getArticlePhotos } from '../services/articleService';
 import { createOrder } from '../services/orderService';
-import { useAuth } from '../Contexts/AuthContext';
 import { getUser } from '../services/userService';
 import './article.css';
-import {createTaskLog} from "../services/logService";
 import {FaWallet} from "react-icons/fa";
 import {FaGear} from "react-icons/fa6";
-
+import {auth} from "../services/firebaseService";
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [article, setArticle] = useState(null);
     const [photos, setPhotos] = useState([]); // State for multiple photos
     const [articleUser, setArticleUser] = useState(null);
-    const { isLoggedIn, user } = useAuth();
+    const [user, setUser] = useState(null);
+    const [dbUser, setDbUser] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
-    const [startTime, setStartTime] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            if (currentUser) {
+                setUser(currentUser);
+                setIsLoggedIn(true);
+            } else {
+                setUser(null);
+                setIsLoggedIn(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+    useEffect(() => {
+        if (user) {
+            getUser(user.uid).then((response) => {
+                if (response) {
+                    setDbUser(response.user);
+                }
+            });
+        }
+    }, [user]);
 
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
@@ -51,7 +73,7 @@ const ArticleDetails = () => {
                             gap: 10 // Adjust the gap as needed
                         }}>
                             <FaWallet size={30} style={{color: "black"}}/>
-                            {user?.wallet}£
+                            {dbUser?.wallet}£
                         </h2>
                     </div>
                     <div className="dropdown">
@@ -69,7 +91,6 @@ const ArticleDetails = () => {
     };
 
     useEffect(() => {
-        setStartTime(Date.now());
         getArticle(id).then((response) => {
             if (response) {
                 setArticle(response.article);
@@ -113,13 +134,13 @@ const ArticleDetails = () => {
             return;
         }
 
-        if (user.userID === article.userID) {
+        if (dbUser.userID === article.userID) {
             alert('You cannot buy your own article');
             return;
         }
 
         const totalPrice = isShipping ? article.price + 2 : article.price;
-        if (user.wallet < totalPrice) {
+        if (dbUser.wallet < totalPrice) {
             alert('You do not have enough money to buy this article');
             return;
         }
@@ -135,7 +156,7 @@ const ArticleDetails = () => {
         }
 
         const orderData = {
-            userID: user.userID,
+            userID: user.uid,
             paymentMethodID: '4d530d77-217e-4a89-952e-f4cee8e3fe5c',
             dateOfPurchase: new Date().toISOString(),
             collectionMethod: collectionMethod,
@@ -143,14 +164,6 @@ const ArticleDetails = () => {
         };
         createOrder(orderData)
             .then(() => {
-                const endTime = Date.now();
-                const timeTaken = (endTime - startTime)
-                const taskLogData = {
-                    timeTaken : timeTaken,
-                    taskID: 3
-                }
-                createTaskLog(taskLogData)
-
                 alert('Order created successfully!');
             })
             .catch((error) => {
@@ -158,10 +171,8 @@ const ArticleDetails = () => {
             });
     };
 
-    // If article or photos are not available, show loading
     if (!article || photos.length === 0) return <div>Loading...</div>;
 
-    // Carousel settings
     const responsive = {
         desktop: {
             breakpoint: { max: 3000, min: 1024 },
@@ -213,9 +224,7 @@ const ArticleDetails = () => {
                 <div className="seller-details">
                     <p className="seller-name">{articleUser?.username}</p>
                     <p className="seller-rating">
-                        {articleUser?.rating
-                            ? `${articleUser.rating} (0 reviews)`
-                            : '★★★★★ (0 reviews)'}
+                        {'★★★★★ (0 reviews)'}
                     </p>
                     <p>Cost : {article.price}</p>
                 </div>

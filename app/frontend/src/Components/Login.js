@@ -1,51 +1,81 @@
-// Components/LoginPage.js
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../Contexts/AuthContext';
-import './Login.css'
-import { loginUser } from '../services/userService';
-import {createTaskLog} from "../services/logService";
-const LoginPage = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const { login } = useAuth();
-    const navigate = useNavigate();
-    const [startTime, setStartTime] = useState(null);
-    const [timeTaken, setTimeTaken] = useState(null);
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+} from "firebase/auth";
+import { auth } from "../services/firebaseService";
+import { createUser, getUser } from "../services/userService";
+import "./Login.css";
+import "./modal.css";
 
-    // Start the timer when the component mounts
-    useEffect(() => {
-        setStartTime(Date.now());
-    }, []);
+const LoginPage = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [username, setUsername] = useState("");
+    const [location, setLocation] = useState("");
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
         try {
-            const userData = await loginUser(username, password); 
-            login(userData);
-
-            // Calculate time taken
-            const endTime = Date.now();
-            const duration = endTime - startTime;
-            setTimeTaken(duration);
-
-            console.log(`Time taken to log in: ${duration} ms`);
-            const taskLogData = {
-                timeTaken : duration,
-                taskID: 1
-            }
-            await createTaskLog(taskLogData)
-
-            navigate('/'); // Redirect to Home page
+            const userCredential = await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+            console.log("User logged in:", userCredential.user);
+            navigate("/");
         } catch (error) {
-            console.error('Login failed:', error);
-            alert('Invalid username or password.');
+            console.error("Login failed:", error);
+            alert("Invalid email or password.");
         }
     };
 
-    const handleRegisterRedirect = () => {
-        navigate('/register'); 
+    const handleGoogleLogin = async () => {
+        const provider = new GoogleAuthProvider();
+
+        try {
+            const userCredential = await signInWithPopup(auth, provider);
+            const user = userCredential.user;
+
+            // Check if user exists in the database
+            try {
+                await getUser(user.uid);
+                navigate("/");
+            } catch (error) {
+                // Show modal to collect username and location
+                setShowModal(true);
+            }
+
+            alert("Google Sign-In successful!");
+        } catch (error) {
+            console.error("Google sign-in failed:", error);
+            alert("Google sign-in failed. Please try again.");
+        }
+    };
+
+    const handleSaveUser = async () => {
+        if (!username.trim() || !location.trim()) {
+            alert("Please enter both username and location.");
+            return;
+        }
+
+        const user = auth.currentUser;
+        const userData = {
+            userID: user.uid,
+            username,
+            email: user.email,
+            location,
+            wallet: 0,
+        };
+
+        await createUser(userData);
+        setShowModal(false);
+        navigate("/");
     };
 
     return (
@@ -56,10 +86,10 @@ const LoginPage = () => {
                     <div className='input-group'>
                         <input
                             className='input'
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder='Username'
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
                             required
                         />
                     </div>
@@ -73,13 +103,49 @@ const LoginPage = () => {
                             required
                         />
                     </div>
-                    <button type="submit" className='button'>Login</button>
+                    <button type="submit" className="button">
+                        Login
+                    </button>
                 </form>
-                {timeTaken !== null && (
-                    <p>Time taken to complete login: {timeTaken} ms</p>
-                )}
-                <p className='login-footer'>Don't have an account? <a href="#" onClick={handleRegisterRedirect}>Register</a></p>
+
+                {/* Google Login Button */}
+                <button onClick={handleGoogleLogin} className="google-login-button">
+                    Sign in with Google
+                </button>
+
+                <p className="login-footer">
+                    Don't have an account?{" "}
+                    <a href="#" onClick={() => navigate("/register")}>
+                        Register
+                    </a>
+                </p>
             </div>
+
+            {/* Custom Modal for User Input */}
+            {showModal && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <h3>Welcome! Let's set up your profile</h3>
+                        <input
+                            type="text"
+                            placeholder="Enter your username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="input"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Enter your location"
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
+                            className="input"
+                        />
+                        <button onClick={handleSaveUser} className="button">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

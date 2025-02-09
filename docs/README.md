@@ -204,8 +204,8 @@ git clone <repository-url>
 
 3. Set environment variables:
    ```bash
-   export DB_USER="<your-db-username>"
-   export DB_PASS="<your-db-password>"
+   export DB_USER=<your-db-username>
+   export DB_PASS=<your-db-password>
    ```
 
 4. **Launch the Backend**
@@ -245,7 +245,12 @@ git clone <repository-url>
 3. **Configure Backend URL**  
    Edit the backend URL in `src/Config/config.js` to point to your local backend (e.g., `http://localhost:8080/api/v1/`).
 
-4. **Launch the Frontend**
+4. **Set Environment Variables**  
+   ```bash
+   export REACT_APP_FIREBASE_API=<your-REACT-APP-FIREBASE-API>
+   export REACT_APP_FIREBASE_APP_ID=<your-REACT-APP-FIREBASE-APP-ID>
+   ```
+5. **Launch the Frontend**
    - **For Development and Testing:**  
      Start the frontend locally:
      ```bash

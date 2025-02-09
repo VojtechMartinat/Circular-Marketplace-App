@@ -72,9 +72,8 @@ describe('User Controller Tests', () => {
         const newUser = {
             userID: '3',
             username: 'mike_doe',
-            password: 'abcd1234',
-            email: 'mike@example.com',
-            wallet: 200.0
+            wallet: 200.0,
+            location: 'Bristol'
         };
 
         const res = await request(app)
@@ -83,7 +82,6 @@ describe('User Controller Tests', () => {
 
         expect(res.statusCode).toBe(201);
         expect(res.body.user.username).toBe('mike_doe');
-        expect(res.body.user.email).toBe('mike@example.com');
     });
 
     test('GET /api/v1/users/:id - Should return 404 if user is not found', async () => {

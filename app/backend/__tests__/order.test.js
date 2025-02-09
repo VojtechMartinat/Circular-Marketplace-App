@@ -112,7 +112,7 @@ describe('Order Controller Tests', () => {
 
         const res = await request(app).get(`/api/v1/orders/${res1.body.order.orderID}`);
         expect(res.statusCode).toBe(200);
-        expect(res.body.order.userID).toBe(2);
+        expect(res.body.order.userID).toBe('2');
     });
 
     test('POST /api/v1/orders - Should create a new order', async () => {
@@ -131,7 +131,6 @@ describe('Order Controller Tests', () => {
 
     test('GET /api/v1/orders/:id - Should return error  if order is not found', async () => {
         const res = await request(app).get('/api/v1/orders/9999');  // Non-existent ID
-        console.log(res.body);
         expect(res.statusCode).toBe(500);
         expect(res.body.error).toBe('No order with id : 9999');
     });
