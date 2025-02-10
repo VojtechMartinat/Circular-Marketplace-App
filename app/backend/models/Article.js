@@ -32,10 +32,7 @@ Article.init(
             type: DataTypes.DOUBLE,
             allowNull: false,
         },
-        dateAdded: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
+
         state: {
             type: DataTypes.ENUM('uploaded','sold','archived','collected')
         },

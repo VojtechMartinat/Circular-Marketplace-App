@@ -39,10 +39,7 @@ module.exports = (sequelize) => {
                 type: DataTypes.UUID,
                 allowNull: false,
             },
-            dateCreated: {
-                type: DataTypes.DATE,
-                allowNull: false,
-            }
+
         },
         {
             sequelize,
