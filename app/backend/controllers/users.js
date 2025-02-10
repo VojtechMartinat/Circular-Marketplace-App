@@ -1,6 +1,6 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const {User, Article, Order} = require('../models/initialise')
+const {User, Article, Order, Review} = require('../models/initialise')
 
 
 
@@ -165,19 +165,31 @@ const userArticles = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const userRating = asyncErrorWrapper(async (req,res,next) =>{
     const {id:userID} = req.params
-    const review = await Review.findAll({
+    const reviews = await Review.findAll({
         where:{
             userID: userID
         }
     });
-    if (!review){
+    if (!reviews){
         next(new APIError(`No reviews with user id : ${userID}`),404)
     }
-    const ratings = review.map(review => review.rating)
+    const ratings = reviews.map(reviews => reviews.rating)
     const totalRating = ratings.reduce((acc, rating) => acc + rating, 0);
-    const averageRating = totalRating / review.length;
+    const averageRating = totalRating / reviews.length;
     res.status(200).json({averageRating})
 })
+const userWrittenReviews = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:userID} = req.params
+    const reviews = await Review.findAll({
+        where:{
+            reviewer: userID
+        }
+    });
+    if (!reviews){
+        next(new APIError(`No written reviews with user id : ${userID}`),404)
+    }
+    res.status(200).json({reviews})
+})
 module.exports = {
-    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser, userRating
+    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser, userRating, userWrittenReviews
 }
