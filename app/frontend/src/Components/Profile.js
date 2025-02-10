@@ -22,7 +22,6 @@ const Profile = () => {
                 try {
                     const userData = await getUser(id);
                     setUser(userData);
-                    console.log("testg")
                     console.log(userData);
                 } catch (error) {
                     console.error("Error fetching user details:", error);
@@ -196,7 +195,7 @@ const Profile = () => {
         <div className="profile-back">
         <div className="profile-box">
             <header className="header2">
-                <b>Your Profile{user.name}</b>
+                <b>{user ? <p>Hi {user.user.username}!</p> : <p>Loading...</p>}</b>
             </header>
 
             <div className="dropdown-container">
