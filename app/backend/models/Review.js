@@ -38,6 +38,10 @@ module.exports = (sequelize) => {
             articleID: {
                 type: DataTypes.UUID,
                 allowNull: false,
+            },
+            dateCreated: {
+                type: DataTypes.DATE,
+                allowNull: false,
             }
         },
         {
