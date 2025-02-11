@@ -10,7 +10,6 @@ const Home = () => {
     useEffect(() => {
         getArticles()
             .then(async response => {
-                console.log('Fetched articles:', response);
                 if (response && response.article) {
                     const articlesWithPhotos = await Promise.all(response.article.map(async (article) => {
                         const photosResponse = await getArticlePhotos(article.articleID);

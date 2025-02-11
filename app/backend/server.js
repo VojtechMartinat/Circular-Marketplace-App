@@ -13,7 +13,6 @@ const errorHandler = require('../backend/middleware/errorHandler');  // Import e
 const cors = require('cors');
 connection.sync().then(r => console.log("Success")).catch((error) => {console.log(error)})
 
-//middleware
 app.use(express.json())
 
 app.use(bodyParser.json({limit: "10000mb"}));

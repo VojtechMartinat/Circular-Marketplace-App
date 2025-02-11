@@ -66,25 +66,25 @@ async function getOrderArticles(orderID) {
 
 export async function getOrderArticlePhotos(orderID) {
     const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
     };
 
     try {
         const articleResponse = await fetch(`${url}orders/${orderID}/articles`, requestOptions);
+
+        console.log(articleResponse.json())
+
         if (!articleResponse.ok) {
             throw new Error(`Failed to fetch article. Status: ${articleResponse.status}`);
         }
-        console.log("TEST")
 
         const articleData = await articleResponse.json();
-        if (!articleData || !articleData.articleID) {
+        if (!articleData || !articleData.article || !articleData.article.articleID) {
             throw new Error("Invalid article data received!");
         }
 
-        const articleID = articleData.articleID; // Extract article ID
+        const articleID = articleData.article.articleID;
 
         const photoResponse = await fetch(`${url}articles/${articleID}/photos`);
         if (!photoResponse.ok) {
@@ -97,6 +97,7 @@ export async function getOrderArticlePhotos(orderID) {
         throw error;
     }
 }
+
 
 
 

@@ -22,7 +22,6 @@ const Profile = () => {
                 try {
                     const userData = await getUser(id);
                     setUser(userData);
-                    console.log(userData);
                 } catch (error) {
                     console.error("Error fetching user details:", error);
                 }
@@ -44,6 +43,7 @@ const Profile = () => {
 
     useEffect(() => {
         getUserOrders(id).then(response => {
+
             if (response && response.orders) {
                 setOrders(response.orders);
             } else {
@@ -91,47 +91,52 @@ const Profile = () => {
 
             fetchOrderDetails(); // Call the async function
         }
-    }, [articles]);
+    }, []);
 
     useEffect(() => {
-        if (orders) {
-            const fetchOrderPhotos = async () => {
-                try {
-                    const updatedOrders = await Promise.all(
-                        orders.map(async (order) => {
-                            try {
-                                const photosResponse = await getOrderArticlePhotos(order.orderID);
-                                if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
-                                    const photoData = photosResponse.photos[0].image.data;
-                                    const uint8Array = new Uint8Array(photoData);
-                                    const blob = new Blob([uint8Array], { type: 'image/png' });
-                                    const reader = new FileReader();
+        const fetchOrderPhotos = async () => {
+            try {
+                if (!orders || orders.length === 0) return;
 
-                                    return new Promise((resolve) => {
-                                        reader.onloadend = () => {
-                                            order.imageUrl = reader.result; // Attach image URL to order
-                                            resolve(order);
-                                        };
-                                        reader.readAsDataURL(blob);
-                                    });
-                                }
-                            } catch (error) {
-                                console.error(`Error fetching photos for order ${order.orderID}:`, error);
+                const updatedOrders = await Promise.all(
+                    orders.map(async (order) => {
+                        try {
+                            const photosResponse = await getOrderArticlePhotos(order.orderID);
+                            console.log("Fetching photos for order:", order.orderID);
+
+                            if (photosResponse?.photos?.[0]) {
+                                const photoData = photosResponse.photos[0].image.data;
+                                const uint8Array = new Uint8Array(photoData);
+                                const blob = new Blob([uint8Array], { type: 'image/png' });
+                                const reader = new FileReader();
+
+                                return new Promise((resolve) => {
+                                    reader.onloadend = () => {
+                                        order.imageUrl = reader.result; // Attach image URL to order
+                                        resolve(order);
+                                    };
+                                    reader.readAsDataURL(blob);
+                                });
                             }
-                            return order; // Return order in case no photos are found
-                        })
-                    );
+                        } catch (error) {
+                            console.error(`Error fetching photos for order ${order.orderID}:`, error);
+                        }
+                        return order; // Return order if no photos are found
+                    })
+                );
 
-                    // Update the orders with photos
-                    setOrders(updatedOrders);
-                } catch (error) {
-                    console.error("Error fetching order photos:", error);
-                }
-            };
+                setOrders(updatedOrders);
+            } catch (error) {
+                console.error("Error fetching order photos:", error);
+            }
+        };
 
-            fetchOrderPhotos(); // Call the async function
-        }
-    }, [orders]);
+        // Run immediately and then every 30 seconds
+        fetchOrderPhotos();
+        const interval = setInterval(fetchOrderPhotos, 30000);
+
+        return () => clearInterval(interval); // Cleanup interval on unmount
+    }, []); // ✅ Empty dependency array ensures it runs only on mount
 
 
 

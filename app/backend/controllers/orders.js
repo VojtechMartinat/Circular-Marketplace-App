@@ -9,7 +9,7 @@ const {Order, Article} = require('../models/initialise')
  * @param res Response sent to the client containing data about all orders
  * */
 const getAllOrders = asyncErrorWrapper(async (req,res) =>{
-    const order = Order.findAll()
+    const order = await Order.findAll()
     res.status(200).json({order})
 })
 
@@ -81,6 +81,8 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
  * @param res Response sent to the client containing order data
  * */
 const getOrder = asyncErrorWrapper(async (req,res,next) =>{
+    console.log("orderID")
+
     const {id:orderID} = req.params
     const order = await Order.findOne({
         where:{
@@ -92,6 +94,25 @@ const getOrder = asyncErrorWrapper(async (req,res,next) =>{
     }
     res.status(200).json({order})
 })
+
+
+const getOrderArticles = asyncErrorWrapper(async (req, res, next) => {
+    const { id: orderID } = req.params;
+
+    const order = await Order.findOne({ where: { orderID } });
+    if (!order) {
+        return next(new APIError(`No order with id: ${orderID}`, 404));
+    }
+
+    const articles = await Article.findAll({ where: { orderID } });
+
+    if (!articles || articles.length === 0) {
+        return next(new APIError(`No articles found for order ID: ${orderID}`, 404));
+    }
+
+    res.status(200).json({ articles });
+});
+
 
 
 /**
@@ -133,5 +154,5 @@ const deleteOrder = asyncErrorWrapper(async (req,res,next) =>{
 })
 
 module.exports = {
-    getAllOrders,createOrder,getOrder,updateOrder,deleteOrder
+    getAllOrders,createOrder,getOrder,updateOrder,deleteOrder, getOrderArticles
 }
