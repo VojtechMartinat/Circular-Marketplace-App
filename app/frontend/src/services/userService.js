@@ -1,14 +1,12 @@
 import {url} from "../Config/config"
 
-// services/userService.js
 async function loginUser(username, password) {
     const requestOptions = {
-        method: 'GET', // Use GET to fetch all users
+        method: 'GET',
         headers: { 'Content-Type': 'application/json' },
     };
 
     try {
-        // Fetch all users from the API
         const response = await fetch(`${url}users`, requestOptions);
 
         if (!response.ok) {
@@ -24,14 +22,12 @@ async function loginUser(username, password) {
             throw new Error('Unexpected response format, users is not an array');
         }
 
-        // Find the user that matches the username and password
         const user = users.find((user) => user.username === username && user.password === password);
 
         if (!user) {
             throw new Error('Invalid username or password');
         }
 
-        // Return the user data if a match is found
         return {
             userID: user.userID,
             username: user.username,
