@@ -58,8 +58,10 @@ const Profile = () => {
                     const details = {};
                     const updatedArticles = await Promise.all(
                         articles.map(async (article) => {
+
                             if (article.orderID) {
                                 details[article.orderID] = await getOrder(article.orderID);
+                            }
                                 const photosResponse = await getArticlePhotos(article.articleID);
                                 if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
                                     const photoData = photosResponse.photos[0].image.data;
@@ -75,7 +77,7 @@ const Profile = () => {
                                         reader.readAsDataURL(blob);
                                     });
                                 }
-                            }
+
                             return article; // Return article in case no photos are found
                         })
                     );
@@ -100,7 +102,6 @@ const Profile = () => {
 
                 const updatedOrders = await Promise.all(
                     orders.map(async (order) => {
-                        console.log("TEST")
 
                         try {
 
@@ -140,7 +141,7 @@ const Profile = () => {
         const interval = setInterval(fetchOrderPhotos, 30000);
 
         return () => clearInterval(interval); // Cleanup interval on unmount
-    }, []); // ✅ Empty dependency array ensures it runs only on mount
+    }, [articles]); // ✅ Empty dependency array ensures it runs only on mount
 
 
 
@@ -320,14 +321,11 @@ const Profile = () => {
                     <h2>Articles Posted</h2>
 
                     {dropdowns.posted && (
-
-                        articles && articles.some(article => article.state === "posted") > 0 ? (
-
+                        articles && articles.some(article => article.state === "uploaded") ? (
                             <div className="orders-gallery">
                                 {articles.map((article) =>
                                     article.orderID === null ? (
                                         <div key={article.articleID} className="order-box">
-                                            {/* Render the article image */}
                                             {article.imageUrl ? (
                                                 <img src={article.imageUrl} alt={article.articleTitle}
                                                      className="order-image"/>
@@ -356,6 +354,7 @@ const Profile = () => {
                             <p>No articles found</p>
                         )
                     )}
+
                 </div>
 
             </div>
