@@ -91,7 +91,7 @@ const Profile = () => {
 
             fetchOrderDetails(); // Call the async function
         }
-    }, []);
+    }, [articles]);
 
     useEffect(() => {
         const fetchOrderPhotos = async () => {
@@ -100,9 +100,13 @@ const Profile = () => {
 
                 const updatedOrders = await Promise.all(
                     orders.map(async (order) => {
+                        console.log("TEST")
+
                         try {
+
+
                             const photosResponse = await getOrderArticlePhotos(order.orderID);
-                            console.log("Fetching photos for order:", order.orderID);
+
 
                             if (photosResponse?.photos?.[0]) {
                                 const photoData = photosResponse.photos[0].image.data;
@@ -229,9 +233,7 @@ const Profile = () => {
                             <div className="orders-gallery">
                                 {orders.map((order) => (
                                     <div key={order.orderID} className="order-box">
-<pre style={{color: "black"}}>
-  {JSON.stringify(order, null, 2)}
-</pre>
+
 
                                         {/* Render the order image */}
                                         {order.imageUrl ? (

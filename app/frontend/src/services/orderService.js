@@ -73,25 +73,24 @@ export async function getOrderArticlePhotos(orderID) {
     try {
         const articleResponse = await fetch(`${url}orders/${orderID}/articles`, requestOptions);
 
-        console.log(articleResponse.json())
 
         if (!articleResponse.ok) {
+
             throw new Error(`Failed to fetch article. Status: ${articleResponse.status}`);
         }
-
         const articleData = await articleResponse.json();
-        if (!articleData || !articleData.article || !articleData.article.articleID) {
-            throw new Error("Invalid article data received!");
-        }
 
-        const articleID = articleData.article.articleID;
+
+        const articleID = articleData.articles[0].articleID;
 
         const photoResponse = await fetch(`${url}articles/${articleID}/photos`);
         if (!photoResponse.ok) {
             throw new Error(`Failed to fetch photos. Status: ${photoResponse.status}`);
         }
 
-        return await photoResponse.json();
+        const clonedResponse = photoResponse.clone();
+        return await clonedResponse.json();
+
     } catch (error) {
         console.error('Error:', error);
         throw error;
