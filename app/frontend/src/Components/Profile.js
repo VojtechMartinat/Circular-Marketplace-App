@@ -27,7 +27,7 @@ const Profile = () => {
                 }
             };
 
-            fetchUserDetails(); // Call the async function
+            fetchUserDetails();
         }
     }, [id]);
 
@@ -71,27 +71,25 @@ const Profile = () => {
 
                                     return new Promise((resolve) => {
                                         reader.onloadend = () => {
-                                            article.imageUrl = reader.result; // Add image URL to article
+                                            article.imageUrl = reader.result;
                                             resolve(article);
                                         };
                                         reader.readAsDataURL(blob);
                                     });
                                 }
 
-                            return article; // Return article in case no photos are found
+                            return article;
                         })
                     );
 
-                    // Update the articles with photos
                     setArticles(updatedArticles);
-                    // Set the fetched order details
                     setOrderDetails(details);
                 } catch (error) {
                     console.log("Error fetching order details or photos:", error);
                 }
             };
 
-            fetchOrderDetails(); // Call the async function
+            fetchOrderDetails();
         }
     }, [articles]);
 
@@ -117,7 +115,7 @@ const Profile = () => {
 
                                 return new Promise((resolve) => {
                                     reader.onloadend = () => {
-                                        order.imageUrl = reader.result; // Attach image URL to order
+                                        order.imageUrl = reader.result;
                                         resolve(order);
                                     };
                                     reader.readAsDataURL(blob);
@@ -126,7 +124,7 @@ const Profile = () => {
                         } catch (error) {
                             console.error(`Error fetching photos for order ${order.orderID}:`, error);
                         }
-                        return order; // Return order if no photos are found
+                        return order;
                     })
                 );
 
@@ -136,18 +134,17 @@ const Profile = () => {
             }
         };
 
-        // Run immediately and then every 30 seconds
         fetchOrderPhotos();
         const interval = setInterval(fetchOrderPhotos, 30000);
 
-        return () => clearInterval(interval); // Cleanup interval on unmount
-    }, [articles]); // ✅ Empty dependency array ensures it runs only on mount
+        return () => clearInterval(interval);
+    }, [articles]);
 
 
 
     const handleDeleteArticle = async (articleID) => {
         try {
-            await deleteArticle(articleID); // Call the service function to delete the article
+            await deleteArticle(articleID);
             setArticles(prevArticles => prevArticles.filter(article => article.articleID !== articleID)); // Update state
             alert("Article deleted successfully.");
             window.location.reload();
@@ -166,14 +163,14 @@ const Profile = () => {
 
     const toggleDropdown = (key) => {
         setDropdowns((prev) => {
-            // Close all dropdowns and open the selected one
+
             const newDropdowns = {
                 bought: false,
                 sold: false,
                 posted: false,
                 favourited: false,
             };
-            newDropdowns[key] = !prev[key]; // Toggle the selected dropdown
+            newDropdowns[key] = !prev[key];
             return newDropdowns;
         });
     };
@@ -236,7 +233,6 @@ const Profile = () => {
                                     <div key={order.orderID} className="order-box">
 
 
-                                        {/* Render the order image */}
                                         {order.imageUrl ? (
                                             <img src={order.imageUrl} alt={order.orderID} className="order-image"/>
                                         ) : (
@@ -326,6 +322,8 @@ const Profile = () => {
                                 {articles.map((article) =>
                                     article.orderID === null ? (
                                         <div key={article.articleID} className="order-box">
+
+
                                             {article.imageUrl ? (
                                                 <img src={article.imageUrl} alt={article.articleTitle}
                                                      className="order-image"/>
