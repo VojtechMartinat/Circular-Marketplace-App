@@ -9,7 +9,7 @@ const {Order, Article} = require('../models/initialise')
  * @param res Response sent to the client containing data about all orders
  * */
 const getAllOrders = asyncErrorWrapper(async (req,res) =>{
-    const order = await Order.findAll()
+    const order = Order.findAll()
     res.status(200).json({order})
 })
 
@@ -21,7 +21,9 @@ const getAllOrders = asyncErrorWrapper(async (req,res) =>{
  * */
 const createOrder= asyncErrorWrapper(async (req,res,next) =>{
     const {userID, paymentMethodID, dateOfPurchase, collectionMethod} = req.body;
+    console.log(req.body)
     let sum = 0
+    let sellerID = null
     for (const x of req.body.articles){
         const article = await Article.findOne({
             where:{
@@ -42,12 +44,32 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
             return
         }
         sum += price
+        sellerID = article.userID;
     }
-    console.log(userID)
-    console.log(paymentMethodID)
-    console.log(dateOfPurchase)
-    console.log(collectionMethod)
-    console.log(sum)
+    if (userID === sellerID){
+        next(new APIError('User cant buy his own article!',401));
+    }
+    const buyer = await User.findOne({
+        where:{
+            userID: userID
+        }
+    });
+    const seller = await User.findOne({
+        where: {
+            userID: sellerID
+        }
+    });
+    if (collectionMethod === "delivery"){
+        sum += 2;
+    }
+
+
+    if (buyer.wallet < sum){
+        next(new APIError('User doesnt have enough founds to buy the article!'));
+        return;
+    }
+
+
     const order = await Order.create(
         {
             userID : userID,
@@ -58,7 +80,19 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
             totalPrice : sum
         }
     )
-
+    console.log("sum: " + sum);
+    if (order.collectionMethod === "delivery"){
+        buyer.wallet -= sum;
+        await buyer.save();
+        sum -= 2;
+        seller.wallet += sum;
+        await seller.save();
+    }else {
+        buyer.wallet -= sum;
+        await buyer.save();
+        seller.wallet += sum;
+        await seller.save();
+    }
     for (const articles of req.body.articles) {
         console.log(articles)
         console.log(order.orderID)
@@ -81,18 +115,17 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
  * @param res Response sent to the client containing order data
  * */
 const getOrder = asyncErrorWrapper(async (req,res,next) =>{
-    console.log("orderID")
-
     const {id:orderID} = req.params
     const order = await Order.findOne({
         where:{
             orderID: orderID
         }
     })
-    if (!order){
-        next(new APIError(`No order with id : ${orderID}`),404)
+    if (order){
+        res.status(200).json({order})
+
     }
-    res.status(200).json({order})
+    next(new APIError(`No order with id : ${orderID}`),404)
 })
 
 

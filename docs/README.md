@@ -6,7 +6,7 @@
 - [Features](#features)
 - [Project Goals](#project-goals)
 - [User Stories](#user-stories)
-- [Stakeholders](#Stakeholders)
+- [Stakeholders](#stakeholders)
 - [Documentation](#documentation)
 - [License](#license)
 - [Setup and Deployment](#setup-and-deployment)
@@ -70,17 +70,54 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 | Lukasz Krepa      | [zr23182@bristol.ac.uk](mailto:zr23182@bristol.ac.uk) |
 | Karena Ho         | [iv23220@bristol.ac.uk](mailto:iv23220@bristol.ac.uk) |
 | Vojtech Martinat  | [os23060@bristol.ac.uk](mailto:os23060@bristol.ac.uk) |  
-| Herman Tsoi       | [ju22521@bristol.ac.uk](mailto:ju22521@bristol.ac.uk) |    
+| Herman Tsoi       | [ju22521@bristol.ac.uk](mailto:ju22521@bristol.ac.uk) | 
+| Jagannath Sankar  | [yi23615@bristol.ac.uk](mailto:yi23615@bristol.ac.uk) | 
 
 ## Project Structure
-Main files and directories in dev branch:
-  * Directories:
-    * Tech Stack (Tech Stack Table, Architecture Chart are included)
-    * UI Design (includes a graph provided by our client)
-    * MeetingNotes
-  * Files:
-    * README.md
-    * LICENSE
+<pre>
+2024-CircularMarketplaces
+.
+├── .github/
+├── app/
+│   ├── backend/
+│   │   ├── __tests__/               # Contains backend test files
+│   │   ├── config/           
+│   │   ├── controllers/             # Handles application logic
+│   │   ├── databse/
+│   │   ├── errors/
+│   │   ├── middleware/
+│   │   ├── models/                  # Defines database schemas and interactions
+│   │   ├── routes/                  # Maps API endpoints to controllers
+│   │   ├── .babelrc
+│   │   ├── jest.config.js
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   └── server.js
+│   ├── frontend/
+│   │   ├── public/
+│   │   │   ├── favicon2.ico
+│   │   │   ├── index.html
+│   │   │   ├── logo192.png
+│   │   │   ├── logo512.png
+│   │   │   ├── manifest.json
+│   │   │   └── robots.txt                      
+│   │   └── src/                     
+│   │       ├── Components/          # Reusable UI elements
+│   │       ├── Config/
+│   │       ├── Contexts/            # Global state management files
+│   │       ├── services/            # API call functions
+│   │       ├── App.js               # Main React app component 
+│   │       ├── App.test.js          # Tests for App.js
+│   │       ├── index.css            
+│   │       ├── index.js
+│   │       ├── logo.svg
+│   │       ├── reportWebVitals.js
+│   │       └── setupTests.js
+│   ├── README.md
+│   ├── package-lock.json
+│   └── package.json
+└── docs/
+  </pre>
 ## Links
 Main Kanban
 
@@ -167,8 +204,8 @@ git clone <repository-url>
 
 3. Set environment variables:
    ```bash
-   export DB_USER="<your-db-username>"
-   export DB_PASS="<your-db-password>"
+   export DB_USER=<your-db-username>
+   export DB_PASS=<your-db-password>
    ```
 
 4. **Launch the Backend**
@@ -208,7 +245,12 @@ git clone <repository-url>
 3. **Configure Backend URL**  
    Edit the backend URL in `src/Config/config.js` to point to your local backend (e.g., `http://localhost:8080/api/v1/`).
 
-4. **Launch the Frontend**
+4. **Set Environment Variables**  
+   ```bash
+   export REACT_APP_FIREBASE_API=<your-REACT-APP-FIREBASE-API>
+   export REACT_APP_FIREBASE_APP_ID=<your-REACT-APP-FIREBASE-APP-ID>
+   ```
+5. **Launch the Frontend**
    - **For Development and Testing:**  
      Start the frontend locally:
      ```bash

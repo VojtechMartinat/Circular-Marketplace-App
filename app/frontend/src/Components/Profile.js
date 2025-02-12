@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
-import {getUserArticles, getUserOrders, getUser} from "../services/userService";
+import {getUser, getUserArticles, getUserOrders, addMoney} from "../services/userService";
 import {deleteArticle} from "../services/articleService";
 import {changeOrderStatus, getOrder, getOrderArticlePhotos} from "../services/orderService"
 import {getArticlePhotos} from '../services/articleService';
 import { FaGear } from "react-icons/fa6";
 import './Profile.css';
 import {FaWallet} from "react-icons/fa";
+import {auth} from "../services/firebaseService";
 
 
 const Profile = () => {
@@ -15,6 +16,9 @@ const Profile = () => {
     const [orders, setOrders] = useState(null);
     const [orderDetails, setOrderDetails] = useState({});
     const [user, setUser] = useState(null);
+    const [dbUser, setDbUser] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [topupAmount, setTopupAmount] = useState(0);
 
     useEffect(() => {
         if (id) {
@@ -32,6 +36,39 @@ const Profile = () => {
     }, [id]);
 
     useEffect(() => {
+        getUser(id).then(response => {
+            if (response){
+                setUser(response.user);
+            } else {
+                console.log("error getting the user data");
+            }
+        })
+    }, [id]);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            if (currentUser) {
+                setUser(currentUser);
+                setIsLoggedIn(true);
+            } else {
+                setUser(null);
+                setIsLoggedIn(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+    useEffect(() => {
+        if (user) {
+            getUser(user.uid).then((response) => {
+                if (response) {
+                    setDbUser(response.user);
+                }
+            });
+        }
+    }, [user]);
+
+    useEffect(() => {
         getUserArticles(id).then(response => {
             if (response && response.articles) {
                 setArticles(response.articles);
@@ -43,7 +80,7 @@ const Profile = () => {
 
     useEffect(() => {
         getUserOrders(id).then(response => {
-
+            console.log(response);
             if (response && response.orders) {
                 setOrders(response.orders);
             } else {
@@ -61,7 +98,8 @@ const Profile = () => {
 
                             if (article.orderID) {
                                 details[article.orderID] = await getOrder(article.orderID);
-                            }
+
+                                // Fetch photos associated with the article
                                 const photosResponse = await getArticlePhotos(article.articleID);
                                 if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
                                     const photoData = photosResponse.photos[0].image.data;
@@ -71,18 +109,20 @@ const Profile = () => {
 
                                     return new Promise((resolve) => {
                                         reader.onloadend = () => {
-                                            article.imageUrl = reader.result;
+                                            article.imageUrl = reader.result; // Add image URL to article
                                             resolve(article);
                                         };
                                         reader.readAsDataURL(blob);
                                     });
                                 }
-
-                            return article;
+                            }
+                            return article; // Return article in case no photos are found
                         })
                     );
 
+                    // Update the articles with photos
                     setArticles(updatedArticles);
+                    // Set the fetched order details
                     setOrderDetails(details);
                 } catch (error) {
                     console.log("Error fetching order details or photos:", error);
@@ -154,6 +194,25 @@ const Profile = () => {
         }
     };
 
+    const handleTopup = async (amount) => {
+        if (amount <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+        if (amount > 500) {
+            alert("Please enter a smaller amount. The limit is 500");
+            return;
+        }
+        try {
+            await addMoney(id, amount);
+            alert("Top-up successful.");
+            window.location.reload();
+        } catch (error) {
+            console.error("Error topping up:", error);
+            alert("Failed to top up.");
+        }
+    };
+
     const [dropdowns, setDropdowns] = useState({
         bought: false,
         sold: false,
@@ -197,26 +256,32 @@ const Profile = () => {
             alert("Failed to change the status.");
         }
     }
-
+    const [showTopupOptions, setShowTopupOptions] = useState(false);
     return (
         <div className="profile-back">
         <div className="profile-box">
             <header className="header2">
-                <b>{user ? <p>Hi {user.user.username}!</p> : <p>Loading...</p>}</b>
+                <b>{user ? <p>Hi {dbUser.username}!</p> : <p>Loading...</p>}</b>
             </header>
 
             <div className="dropdown-container">
 
                 <div className="top-items">
                     <div className="dropdown" onClick={() => toggleDropdown('wallet')}>
-                        <h2 style={{display: "flex", alignItems: "center", textAlign: "left", paddingLeft: 20, gap: 20}}>
+                        <h2 style={{
+                            display: "flex",
+                            alignItems: "center",
+                            textAlign: "left",
+                            paddingLeft: 20,
+                            gap: 20
+                        }}>
                             <FaWallet size={30} style={{color: "black"}}/>
-                            0£
+                            {user?.wallet}£
                         </h2>
 
                     </div>
                     <div className="dropdown" onClick={() => toggleDropdown('settings')}>
-                        <FaGear size={30} style={{ color: 'black' }} />
+                        <FaGear size={30} style={{color: 'black'}}/>
                     </div>
                 </div>
 
@@ -231,8 +296,6 @@ const Profile = () => {
                             <div className="orders-gallery">
                                 {orders.map((order) => (
                                     <div key={order.orderID} className="order-box">
-
-
                                         {order.imageUrl ? (
                                             <img src={order.imageUrl} alt={order.orderID} className="order-image"/>
                                         ) : (
@@ -256,7 +319,6 @@ const Profile = () => {
 
                 <div className="dropdown" onClick={() => toggleDropdown('sold')}>
                     <h2>Articles Sold</h2>
-
                     {dropdowns.sold && (
                         articles && articles.some(article => article.state === "sold") > 0 ? (
                             <div className="orders-gallery">
@@ -315,7 +377,6 @@ const Profile = () => {
 
                 <div className="dropdown" onClick={() => toggleDropdown('posted')}>
                     <h2>Articles Posted</h2>
-
                     {dropdowns.posted && (
                         articles && articles.some(article => article.state === "uploaded") ? (
                             <div className="orders-gallery">
@@ -354,6 +415,36 @@ const Profile = () => {
                     )}
 
                 </div>
+                <div className="topup-container">
+                    <button onClick={() => setShowTopupOptions(true)}>Add Money</button>
+
+                    {showTopupOptions && (
+                        <div className="topup-overlay">
+                            <div className="topup-modal">
+                                <button className="close-button" onClick={() => setShowTopupOptions(false)}>✖</button>
+
+                                <p className="topup-subtext">Select an option below or enter a custom amount</p>
+
+                                <div className="topup-options">
+                                    <button onClick={() => handleTopup(5)}>5£</button>
+                                    <button onClick={() => handleTopup(10)}>10£</button>
+                                    <button onClick={() => handleTopup(20)}>20£</button>
+
+                                    <div className="custom-topup">
+                                        <input
+                                            type="number"
+                                            value={topupAmount === 0 ? "" : topupAmount}
+                                            onChange={(e) => setTopupAmount(Number(e.target.value) || 0)}
+                                            placeholder="Enter custom amount"
+                                        />
+                                        <button onClick={() => handleTopup(topupAmount)}>Add Money</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
 
             </div>
 
