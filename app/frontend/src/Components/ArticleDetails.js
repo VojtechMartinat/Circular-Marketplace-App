@@ -5,7 +5,7 @@ import 'react-multi-carousel/lib/styles.css';
 import { getArticle, getArticlePhotos } from '../services/articleService';
 import { createOrder } from '../services/orderService';
 import { useAuth } from '../Contexts/AuthContext';
-import { getUser } from '../services/userService';
+import {getUser, getUserRating} from '../services/userService';
 import './article.css';
 
 const ArticleDetails = () => {
@@ -15,7 +15,8 @@ const ArticleDetails = () => {
     const [photos, setPhotos] = useState([]); // State for multiple photos
     const [articleUser, setArticleUser] = useState(null);
     const { isLoggedIn, user } = useAuth();
-
+    const [rating, setRating] = useState(null);
+    const [reviewAmount, setReviewAmount] = useState(null);
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
 
@@ -78,6 +79,48 @@ const ArticleDetails = () => {
             }
         });
     }, [id]);
+
+    useEffect(() => {
+        if (article && article.userID) {
+            getUserRating(article.userID).then((response) => {
+                if (response) {
+                    setRating(response.averageRating);
+                    setReviewAmount(response.amount);
+                }
+            });
+        }
+        console.log(rating)
+    }, [article]);
+
+    const StarRating = ({ rating, totalStars = 5 }) => {
+        return (
+            <div style={{ display: "flex", gap: "2px" }}>
+                {Array.from({ length: totalStars }, (_, index) => {
+                    const fillPercentage = Math.max(0, Math.min(1, rating - index)); // 1 for full, 0.5 for half, etc.
+                    return (
+                        <span key={index} style={{ position: "relative", fontSize: "20px" }}>
+                        <span style={{ color: "gray" }}>★</span> {/* Background star */}
+                            <span
+                                style={{
+                                    color: "gold",
+                                    position: "absolute",
+                                    left: 0,
+                                    width: `${fillPercentage * 100}%`, // Dynamic width
+                                    overflow: "hidden",
+                                    display: "inline-block",
+                                }}
+                            >
+                            ★
+                        </span> {/* Foreground star (partially filled) */}
+                    </span>
+                    );
+                })}
+            </div>
+        );
+    };
+
+
+
 
     const arrayBufferToBase64 = (array) => {
         let binary = '';
@@ -163,9 +206,11 @@ const ArticleDetails = () => {
                 <div className="seller-details">
                     <p className="seller-name">{articleUser?.username}</p>
                     <p className="seller-rating">
-                        {articleUser?.rating
-                            ? `${articleUser.rating} (0 reviews)`
-                            : '★★★★★ (0 reviews)'}
+                        {rating
+                            ? <>
+                                <StarRating rating={rating} /> {reviewAmount} reviews
+                            </>
+                            : 'no reviews yet'}
                     </p>
                 </div>
                 <div className="seller-location">📍{articleUser?.location}</div>

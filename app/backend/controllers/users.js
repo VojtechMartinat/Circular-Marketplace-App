@@ -176,7 +176,7 @@ const userRating = asyncErrorWrapper(async (req,res,next) =>{
     const ratings = reviews.map(reviews => reviews.rating)
     const totalRating = ratings.reduce((acc, rating) => acc + rating, 0);
     const averageRating = totalRating / reviews.length;
-    res.status(200).json({averageRating})
+    res.status(200).json({averageRating,amount:reviews.length})
 })
 const userWrittenReviews = asyncErrorWrapper(async (req,res,next) =>{
     const {id:userID} = req.params
