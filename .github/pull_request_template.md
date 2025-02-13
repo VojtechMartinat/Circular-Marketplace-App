@@ -30,7 +30,3 @@ _Put an `x` in the boxes that apply. These can also be filled out after creation
 - [ ] My changes generate no new warnings or errors
 - [ ] I have added necessary tests for the changes
 - [ ] All existing tests pass
-
-## Additional Notes
-
-Any additional notes that you feel might be helpful upon review by the maintainers can be added here.
