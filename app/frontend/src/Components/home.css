@@ -55,9 +55,15 @@
   flex-grow: 0;
   padding: 10px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr); /* Default: 4 columns */
   gap: 10px;
   background-color: #d3d3d3;
+}
+/* When the screen is smaller than 900px, show only 2 columns */
+@media (max-width: 900px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .product-card {

@@ -22,28 +22,28 @@ const Tag = TagModel(sequelize);
 const Task = TaskModel(sequelize);
 const TaskLog = TaskLogModel(sequelize);
 
-User.hasMany(Wishlist, {foreignKey: 'userID'});
-Wishlist.belongsTo(User, {foreignKey: 'userID'});
+User.hasMany(Wishlist, {foreignKey: 'userID', onDelete: 'CASCADE'});
+Wishlist.belongsTo(User, {foreignKey: 'userID', onDelete: 'CASCADE'});
 
-Article.hasMany(Wishlist, {foreignKey: 'articleID'});
-Wishlist.belongsTo(Article, {foreignKey: 'articleID'});
+Article.hasMany(Wishlist, {foreignKey: 'articleID', onDelete: 'CASCADE'});
+Wishlist.belongsTo(Article, {foreignKey: 'articleID', onDelete: 'CASCADE'});
 
-Order.hasMany(Article, { foreignKey: 'orderID' });
-Article.belongsTo(Order, { foreignKey: 'orderID' });
+Order.hasMany(Article, { foreignKey: 'orderID' , onDelete: 'CASCADE'});
+Article.belongsTo(Order, { foreignKey: 'orderID' , onDelete: 'CASCADE'});
 
-User.hasMany(Order, { foreignKey: 'userID' });
-Order.belongsTo(User, { foreignKey: 'userID' });
+User.hasMany(Order, { foreignKey: 'userID', onDelete: 'CASCADE' });
+Order.belongsTo(User, { foreignKey: 'userID' , onDelete: 'CASCADE'});
 
-Order.belongsTo(PaymentCard, { foreignKey: 'paymentMethodID' });
+Order.belongsTo(PaymentCard, { foreignKey: 'paymentMethodID' , onDelete: 'CASCADE'});
 
-User.hasMany(Article, { foreignKey: 'userID' });
-Article.belongsTo(User, { foreignKey: 'userID' });
+User.hasMany(Article, { foreignKey: 'userID' , onDelete: 'CASCADE'});
+Article.belongsTo(User, { foreignKey: 'userID' , onDelete: 'CASCADE'});
 
-Article.hasMany(Photo, {foreignKey: 'articleID' });
-Photo.belongsTo(Article, { foreignKey: 'articleID' });
+Article.hasMany(Photo, {foreignKey: 'articleID' , onDelete: 'CASCADE'});
+Photo.belongsTo(Article, { foreignKey: 'articleID' , onDelete: 'CASCADE'});
 
-User.hasMany(PaymentCard, { foreignKey: 'userID' });
-PaymentCard.belongsTo(User, { foreignKey: 'userID' });
+User.hasMany(PaymentCard, { foreignKey: 'userID' , onDelete: 'CASCADE'});
+PaymentCard.belongsTo(User, { foreignKey: 'userID' , onDelete: 'CASCADE'});
 
 TaskLog.belongsTo(Task, {foreignKey: 'taskID'})
 Task.hasMany(TaskLog,{foreignKey: 'taskID'})

@@ -43,11 +43,11 @@ describe('ArticleDetails Component', () => {
     });
 
     test('renders all expected elements', async () => {
-            render(
-                <MemoryRouter>
-                    <ArticleDetails />
-                </MemoryRouter>
-            );
+        render(
+            <MemoryRouter>
+                <ArticleDetails />
+            </MemoryRouter>
+        );
 
         // Check if the article title is rendered
         const title = await screen.findByRole('heading', { name: /test article/i });
@@ -58,15 +58,11 @@ describe('ArticleDetails Component', () => {
         expect(description).toBeInTheDocument();
 
         // Check if the price is rendered
-        const price = await screen.findByText(/price: \$100/i);
+        const price = await screen.findByText(/cost : 100/i);
         expect(price).toBeInTheDocument();
 
-        // Check if the state is rendered
-        const state = await screen.findByText(/status: available/i);
-        expect(state).toBeInTheDocument();
-
         // Check if the "Buy" button is rendered
-        const buyButton = await screen.findByRole('button', { name: /buy/i });
+        const buyButton = await screen.findByRole('button', { name: /buy for 100/i });
         expect(buyButton).toBeInTheDocument();
     });
 });

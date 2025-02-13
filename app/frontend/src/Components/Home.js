@@ -84,7 +84,6 @@ function Header({ handleInputChange, handleInputFocus }) {
         <div className="header">
             <p className='title'>ReList</p>
             <input type="text" className="search-bar" onFocus={handleInputFocus} onChange={handleInputChange} placeholder="Search" />
-            <button className="search-button">Search</button>
         </div>
     );
 }

@@ -4,23 +4,56 @@ import ReactMultiCarousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { getArticle, getArticlePhotos } from '../services/articleService';
 import { createOrder } from '../services/orderService';
-import { useAuth } from '../Contexts/AuthContext';
 import { getUser } from '../services/userService';
 import './article.css';
+<<<<<<< HEAD
 import {createTaskLog} from "../services/logService";
 import ColorThief from 'colorthief';
 
+=======
+import {FaWallet} from "react-icons/fa";
+import {FaGear} from "react-icons/fa6";
+import {auth} from "../services/firebaseService";
+>>>>>>> 316217d69af8f087dd54237fa897780380abbbb1
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [article, setArticle] = useState(null);
     const [photos, setPhotos] = useState([]); // State for multiple photos
     const [articleUser, setArticleUser] = useState(null);
-    const { isLoggedIn, user } = useAuth();
+    const [user, setUser] = useState(null);
+    const [dbUser, setDbUser] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
+<<<<<<< HEAD
     const [startTime, setStartTime] = useState(null);
     const [backgroundGradient, setBackgroundGradient] = useState('linear-gradient(180deg, #f8f8f8, #e0e0e0)');
+=======
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            if (currentUser) {
+                setUser(currentUser);
+                setIsLoggedIn(true);
+            } else {
+                setUser(null);
+                setIsLoggedIn(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+    useEffect(() => {
+        if (user) {
+            getUser(user.uid).then((response) => {
+                if (response) {
+                    setDbUser(response.user);
+                }
+            });
+        }
+    }, [user]);
+>>>>>>> 316217d69af8f087dd54237fa897780380abbbb1
 
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
@@ -41,14 +74,27 @@ const ArticleDetails = () => {
 
         return (
             <div className="icons">
-                <button className="kebab-button" onClick={toggleMenu}>
-                    <span className="dot"></span>
-                    <span className="dot"></span>
-                    <span className="dot"></span>
-                </button>
+                <div className="top-items">
+                    <div className="dropdown">
+                        <h2 style={{
+                            display: "flex",
+                            alignItems: "center",
+                            textAlign: "left",
+                            paddingLeft: 5,
+                            gap: 10 // Adjust the gap as needed
+                        }}>
+                            <FaWallet size={30} style={{color: "black"}}/>
+                            {dbUser?.wallet}£
+                        </h2>
+                    </div>
+                    <div className="dropdown">
+                        <FaGear size={30} onClick={toggleMenu} style={{color: 'black'}}/>
+                    </div>
+                </div>
+
                 {isOpen && (
                     <div className="menu">
-                        <div className="menu-item" onClick={() => handleSharing()}>Share</div>
+                        <div className="menu-item" onClick={handleSharing}>Share</div>
                     </div>
                 )}
             </div>
@@ -56,7 +102,6 @@ const ArticleDetails = () => {
     };
 
     useEffect(() => {
-        setStartTime(Date.now());
         getArticle(id).then((response) => {
             if (response) {
                 setArticle(response.article);
@@ -99,6 +144,18 @@ const ArticleDetails = () => {
             alert('Please log in to buy an article');
             return;
         }
+
+        if (dbUser.userID === article.userID) {
+            alert('You cannot buy your own article');
+            return;
+        }
+
+        const totalPrice = isShipping ? article.price + 2 : article.price;
+        if (dbUser.wallet < totalPrice) {
+            alert('You do not have enough money to buy this article');
+            return;
+        }
+
         let collectionMethod = '';
         if (isShipping) {
             collectionMethod = 'delivery';
@@ -110,23 +167,14 @@ const ArticleDetails = () => {
         }
 
         const orderData = {
-            userID: user.userID,
+            userID: user.uid,
             paymentMethodID: '4d530d77-217e-4a89-952e-f4cee8e3fe5c',
             dateOfPurchase: new Date().toISOString(),
             collectionMethod: collectionMethod,
             articles: [{ articleID: id }],
-
         };
         createOrder(orderData)
             .then(() => {
-                const endTime = Date.now();
-                const timeTaken = (endTime - startTime)
-                const taskLogData = {
-                    timeTaken : timeTaken,
-                    taskID: 3
-                }
-                createTaskLog(taskLogData)
-
                 alert('Order created successfully!');
             })
             .catch((error) => {
@@ -134,10 +182,8 @@ const ArticleDetails = () => {
             });
     };
 
-    // If article or photos are not available, show loading
     if (!article || photos.length === 0) return <div>Loading...</div>;
 
-    // Carousel settings
     const responsive = {
         desktop: {
             breakpoint: { max: 3000, min: 1024 },
@@ -206,9 +252,7 @@ const ArticleDetails = () => {
                 <div className="seller-details">
                     <p className="seller-name">{articleUser?.username}</p>
                     <p className="seller-rating">
-                        {articleUser?.rating
-                            ? `${articleUser.rating} (0 reviews)`
-                            : '★★★★★ (0 reviews)'}
+                        {'★★★★★ (0 reviews)'}
                     </p>
                 </div>
                 <div className="seller-location">📍{articleUser?.location}</div>
