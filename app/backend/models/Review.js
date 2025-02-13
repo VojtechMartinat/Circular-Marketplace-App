@@ -28,11 +28,11 @@ module.exports = (sequelize) => {
                 }
             },
             userID: {
-                type: DataTypes.UUID,
+                type: DataTypes.STRING(30),
                 allowNull: false,
             },
             reviewer: {
-                type: DataTypes.UUID,
+                type: DataTypes.STRING(30),
                 allowNull: false,
             },
             articleID: {
