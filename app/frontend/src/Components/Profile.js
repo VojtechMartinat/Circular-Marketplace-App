@@ -261,7 +261,7 @@ const Profile = () => {
         <div className="profile-back">
         <div className="profile-box">
             <header className="header2">
-                <b>{user ? <p>Hi {dbUser.username}!</p> : <p>Loading...</p>}</b>
+                <b>{user ? <p>Hi !</p> : <p>Loading...</p>}</b>
             </header>
 
             <div className="dropdown-container">
