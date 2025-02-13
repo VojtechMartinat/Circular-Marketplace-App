@@ -10,8 +10,12 @@ const {Review} = require('../models/initialise')
  * @param res Response sent to the client containing data about all reviews
  * */
 const getAllReviews = asyncErrorWrapper(async (req,res) =>{
-    const review =  await Review.findAll()
-    res.status(200).json({review})
+    try {const review =  await Review.findAll();
+        res.status(200).json({review});
+    } catch (error) {
+        res.status(404).json({ error: error.message });
+    }
+
 
 })
 
