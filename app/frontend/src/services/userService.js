@@ -136,6 +136,25 @@ async function getUser(userID){
     }
 }
 
+async function addMoney(userID,amount){
+    const  requestOptions = {
+        method: 'POST',
+        headers : {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount: amount })
+    }
+    try{
+        const response = await fetch(`${url}users/${userID}/topup`,requestOptions)
+        if (!response.ok){
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json()
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
 async function getUserRating(userID){
     const requestOptions = {
         method: 'GET',
@@ -156,4 +175,4 @@ async function getUserRating(userID){
     }
 }
 
-export {createUser,getUserArticles,getUserOrders,loginUser,getUser,getUserRating}
+export {createUser,getUserArticles,getUserOrders,loginUser,getUser,getUserRating, addMoney}

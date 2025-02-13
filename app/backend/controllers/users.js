@@ -58,7 +58,6 @@ const loginUser = asyncErrorWrapper(async (req, res, next) => {
  *  @param res Response sent to the client containing new user data
 * */
 const createUser = asyncErrorWrapper(async (req,res) =>{
-    console.log("User data received:", req.body);
     const user = await User.create(req.body)
     res.status(201).json({user})
 })
@@ -78,6 +77,7 @@ const getUser = asyncErrorWrapper(async (req,res,next) =>{
     })
     if (!user){
         next(new APIError(`No user with id : ${userID}`),404)
+        return
     }
     res.status(200).json({user})
 })
@@ -190,6 +190,26 @@ const userWrittenReviews = asyncErrorWrapper(async (req,res,next) =>{
     }
     res.status(200).json({reviews})
 })
+
+const userTopUp = asyncErrorWrapper(async (req,res,next) =>{
+    try {
+        const {id:userID} = req.params
+        const amount = req.body.amount;
+        const user = await User.findOne({where: {
+                userID : userID
+            }
+        });
+        if (!user){
+            next(new APIError(`User doesnt exists!`, 404));
+        }
+        user.wallet += amount;
+        await user.save();
+        res.status(200).json({user})
+    } catch (error){
+        console.log(error)
+    }
+})
+
 module.exports = {
-    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser, userRating, userWrittenReviews
+    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser, userRating, userWrittenReviews, userTopUp
 }

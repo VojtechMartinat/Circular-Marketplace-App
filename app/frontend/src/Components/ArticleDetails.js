@@ -7,14 +7,43 @@ import { createOrder } from '../services/orderService';
 import { useAuth } from '../Contexts/AuthContext';
 import {getUser, getUserRating} from '../services/userService';
 import './article.css';
-
+import {FaWallet} from "react-icons/fa";
+import {FaGear} from "react-icons/fa6";
+import {auth} from "../services/firebaseService";
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [article, setArticle] = useState(null);
     const [photos, setPhotos] = useState([]); // State for multiple photos
     const [articleUser, setArticleUser] = useState(null);
-    const { isLoggedIn, user } = useAuth();
+    const [user, setUser] = useState(null);
+    const [dbUser, setDbUser] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isShipping, setIsShipping] = useState(false);
+    const [isCollection, setIsCollection] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            if (currentUser) {
+                setUser(currentUser);
+                setIsLoggedIn(true);
+            } else {
+                setUser(null);
+                setIsLoggedIn(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+    useEffect(() => {
+        if (user) {
+            getUser(user.uid).then((response) => {
+                if (response) {
+                    setDbUser(response.user);
+                }
+            });
+        }
+    }, [user]);
     const [rating, setRating] = useState(null);
     const [reviewAmount, setReviewAmount] = useState(null);
     const KebabMenu = () => {
@@ -36,14 +65,27 @@ const ArticleDetails = () => {
 
         return (
             <div className="icons">
-                <button className="kebab-button" onClick={toggleMenu}>
-                    <span className="dot"></span>
-                    <span className="dot"></span>
-                    <span className="dot"></span>
-                </button>
+                <div className="top-items">
+                    <div className="dropdown">
+                        <h2 style={{
+                            display: "flex",
+                            alignItems: "center",
+                            textAlign: "left",
+                            paddingLeft: 5,
+                            gap: 10 // Adjust the gap as needed
+                        }}>
+                            <FaWallet size={30} style={{color: "black"}}/>
+                            {dbUser?.wallet}£
+                        </h2>
+                    </div>
+                    <div className="dropdown">
+                        <FaGear size={30} onClick={toggleMenu} style={{color: 'black'}}/>
+                    </div>
+                </div>
+
                 {isOpen && (
                     <div className="menu">
-                        <div className="menu-item" onClick={() => handleSharing()}>Share</div>
+                        <div className="menu-item" onClick={handleSharing}>Share</div>
                     </div>
                 )}
             </div>
@@ -135,11 +177,33 @@ const ArticleDetails = () => {
             alert('Please log in to buy an article');
             return;
         }
+
+        if (dbUser.userID === article.userID) {
+            alert('You cannot buy your own article');
+            return;
+        }
+
+        const totalPrice = isShipping ? article.price + 2 : article.price;
+        if (dbUser.wallet < totalPrice) {
+            alert('You do not have enough money to buy this article');
+            return;
+        }
+
+        let collectionMethod = '';
+        if (isShipping) {
+            collectionMethod = 'delivery';
+        } else if (isCollection) {
+            collectionMethod = 'collection';
+        } else {
+            alert('Please select a collection method');
+            return;
+        }
+
         const orderData = {
-            userID: user.userID,
+            userID: user.uid,
             paymentMethodID: '4d530d77-217e-4a89-952e-f4cee8e3fe5c',
             dateOfPurchase: new Date().toISOString(),
-            collectionMethod: 'collection',
+            collectionMethod: collectionMethod,
             articles: [{ articleID: id }],
         };
         createOrder(orderData)
@@ -151,10 +215,8 @@ const ArticleDetails = () => {
             });
     };
 
-    // If article or photos are not available, show loading
     if (!article || photos.length === 0) return <div>Loading...</div>;
 
-    // Carousel settings
     const responsive = {
         desktop: {
             breakpoint: { max: 3000, min: 1024 },
@@ -212,23 +274,40 @@ const ArticleDetails = () => {
                             </>
                             : 'no reviews yet'}
                     </p>
+                    <p>Cost : {article.price}</p>
                 </div>
                 <div className="seller-location">📍{articleUser?.location}</div>
             </div>
 
             {/* Shipping and Collection */}
             <div className="purchase-options">
-                <div className="option shipping">
-                    <p>Shipping</p>
-                </div>
-                <div className="option collection">
-                    <p>Collection</p>
-                </div>
+                {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
+                        <button
+                            type="button"
+                            className={`option-button ${isShipping ? 'selected' : ''}`}
+                            onClick={() => {
+                                setIsShipping(!isShipping);
+                                if (!isShipping) setIsCollection(false);
+                            }}>
+                            <p>Shipping</p>
+                        </button>
+                ) : null}
+                {article.shippingType === 'collection' || article.shippingType === 'both' ? (
+                        <button
+                            type="button"
+                            className={`option-button ${isCollection ? 'selected' : ''}`}
+                            onClick={() => {
+                                setIsCollection(!isCollection);
+                                if (!isCollection) setIsShipping(false);
+                            }}>
+                            <p>Collection</p>
+                        </button>
+                ) : null}
             </div>
 
             {/* Purchase Button */}
             <div className="purchase-button">
-                <button onClick={handleBuy}>Buy</button>
+                <button onClick={handleBuy}>Buy for {isShipping ? article.price + 2 : article.price}</button>
             </div>
         </div>
     );

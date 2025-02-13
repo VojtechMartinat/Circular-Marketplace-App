@@ -20,8 +20,14 @@ const getAllArticles = asyncErrorWrapper(async (req,res) =>{
  * @param res Response sent to the client containing new article data
  * */
 const createArticle= asyncErrorWrapper(async (req,res) =>{
-    const article = await Article.create(req.body)
-    res.status(201).json({article: article})
+    try {
+        const article = await Article.create(req.body)
+        res.status(201).json({article: article})
+    } catch (error) {
+        console.log(error.message)
+        res.status(400).json({error: error.message})
+    }
+
 })
 
 
