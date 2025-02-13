@@ -178,6 +178,12 @@ const userRating = asyncErrorWrapper(async (req,res,next) =>{
     const averageRating = totalRating / reviews.length;
     res.status(200).json({averageRating,amount:reviews.length})
 })
+
+/**
+ * * Get review written by a user from a database
+ * @param req Request from the client (req.params should contain a valid userID)
+ * @param res Response sent to the client containing user written reviews
+ * */
 const userWrittenReviews = asyncErrorWrapper(async (req,res,next) =>{
     const {id:userID} = req.params
     const reviews = await Review.findAll({
