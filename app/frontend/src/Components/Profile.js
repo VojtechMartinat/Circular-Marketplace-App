@@ -32,8 +32,6 @@ const Profile = () => {
                 setUser(null);  // Reset user to null
             }
         });
-
-        // Cleanup the subscription
         return () => unsubscribe();
     }, []);
 
@@ -48,35 +46,30 @@ const Profile = () => {
         });
     }, [user]);
 
-
     useEffect(() => {
+        if (dbUser){
+            getUserArticles(dbUser.userID).then(response => {
+                if (response && response.articles) {
+                    setArticles(response.articles);
+                } else {
 
-        console.log("User",user)
-        console.log("logged",isLoggedIn)
-
-    }, []);
-
-
-
-    useEffect(() => {
-        getUserArticles(dbUser.userID).then(response => {
-            if (response && response.articles) {
-                setArticles(response.articles);
-            } else {
-
-                console.log("error");
-            }
-        });
+                    console.log("error");
+                }
+            });
+        }
     }, [dbUser]);
 
     useEffect(() => {
-        getUserOrders(dbUser.userID).then(response => {
-            if (response && response.orders) {
-                setOrders(response.orders);
-            } else {
-                console.log("error");
-            }
-        });
+        if (dbUser){
+            getUserOrders(dbUser.userID).then(response => {
+                if (response && response.orders) {
+                    setOrders(response.orders);
+                } else {
+                    console.log("error");
+                }
+            });
+        }
+
     }, [dbUser]);
     useEffect(() => {
         if (articles) {
@@ -266,7 +259,7 @@ const Profile = () => {
                             gap: 20
                         }}>
                             <FaWallet size={30} style={{color: "black"}}/>
-                            {user?.wallet}£
+                            {dbUser?.wallet}£
                         </h2>
 
                     </div>
