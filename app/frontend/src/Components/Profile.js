@@ -21,73 +21,63 @@ const Profile = () => {
     const [topupAmount, setTopupAmount] = useState(0);
 
     useEffect(() => {
-        if (id) {
-            const fetchUserDetails = async () => {
-                try {
-                    const userData = await getUser(id);
-                    setUser(userData);
-                } catch (error) {
-                    console.error("Error fetching user details:", error);
-                }
-            };
-
-            fetchUserDetails();
-        }
-    }, [id]);
-
-    useEffect(() => {
-        getUser(id).then(response => {
-            if (response){
-                setUser(response.user);
-            } else {
-                console.log("error getting the user data");
-            }
-        })
-    }, [id]);
-
-    useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             if (currentUser) {
-                setUser(currentUser);
+                console.log("User authenticated:", currentUser);
                 setIsLoggedIn(true);
+                setUser(currentUser);  // Set user state here
             } else {
-                setUser(null);
+                console.log("No user authenticated");
                 setIsLoggedIn(false);
+                setUser(null);  // Reset user to null
             }
         });
 
+        // Cleanup the subscription
         return () => unsubscribe();
     }, []);
-    useEffect(() => {
-        if (user) {
-            getUser(user.uid).then((response) => {
-                if (response) {
-                    setDbUser(response.user);
-                }
-            });
-        }
-    }, [user]);
 
     useEffect(() => {
-        getUserArticles(id).then(response => {
+        if (!user) return;
+        console.log("USER", user)
+        getUser(user.uid).then((response) => {
+            if (response) {
+                setDbUser(response.user);
+                console.log(response.user);
+            }
+        });
+    }, [user]);
+
+
+    useEffect(() => {
+
+        console.log("User",user)
+        console.log("logged",isLoggedIn)
+
+    }, []);
+
+
+
+    useEffect(() => {
+        getUserArticles(dbUser.userID).then(response => {
             if (response && response.articles) {
                 setArticles(response.articles);
             } else {
+
                 console.log("error");
             }
         });
-    }, [id]);
+    }, [dbUser]);
 
     useEffect(() => {
-        getUserOrders(id).then(response => {
-            console.log(response);
+        getUserOrders(dbUser.userID).then(response => {
             if (response && response.orders) {
                 setOrders(response.orders);
             } else {
                 console.log("error");
             }
         });
-    }, [id]);
+    }, [dbUser]);
     useEffect(() => {
         if (articles) {
             const fetchOrderDetails = async () => {
