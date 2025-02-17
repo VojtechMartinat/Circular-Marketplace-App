@@ -34,6 +34,22 @@ async function getArticles() {
     }
 }
 
+async function getUnsoldArticles() {
+    try {
+        const response = await fetch(`${url}articles/unsold`);
+        const data = await response.json();
+
+        if (!data) {
+            throw new Error("No articles found or data missing!");
+        }
+
+        return data;
+    } catch (error) {
+        console.log('Error fetching articles:', error);
+        throw error;
+    }
+}
+
 async function getArticle(articleID) {
     try {
         const response = await fetch(`${url}articles/${articleID}`);
@@ -66,6 +82,22 @@ async function getArticlePhotos(articleID) {
     }
 }
 
+async function getArticlePhoto(articleID) {
+    try {
+        const response = await fetch(`${url}articles/${articleID}/photo`);
+        const data = await response.json();
+
+        if (!data) {
+            throw new Error("No photos found or data missing!");
+        }
+
+        return data;
+    } catch (error) {
+        console.log('Error fetching articles:', error);
+        throw error;
+    }
+}
+
 async function deleteArticle(articleID) {
     const requestOptions = {
         method: 'DELETE',
@@ -85,4 +117,4 @@ async function deleteArticle(articleID) {
     }
 }
 
-export { createArticle, getArticles, getArticle, getArticlePhotos, deleteArticle };
+export { createArticle, getArticles, getArticle, getArticlePhotos, getArticlePhoto, deleteArticle, getUnsoldArticles };
