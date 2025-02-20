@@ -6,15 +6,11 @@ import { getArticle, getArticlePhotos } from '../services/articleService';
 import { createOrder } from '../services/orderService';
 import { getUser } from '../services/userService';
 import './article.css';
-<<<<<<< HEAD
 import {createTaskLog} from "../services/logService";
 import ColorThief from 'colorthief';
-
-=======
 import {FaWallet} from "react-icons/fa";
 import {FaGear} from "react-icons/fa6";
 import {auth} from "../services/firebaseService";
->>>>>>> 316217d69af8f087dd54237fa897780380abbbb1
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -26,10 +22,8 @@ const ArticleDetails = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
-<<<<<<< HEAD
     const [startTime, setStartTime] = useState(null);
     const [backgroundGradient, setBackgroundGradient] = useState('linear-gradient(180deg, #f8f8f8, #e0e0e0)');
-=======
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -53,8 +47,6 @@ const ArticleDetails = () => {
             });
         }
     }, [user]);
->>>>>>> 316217d69af8f087dd54237fa897780380abbbb1
-
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
 
