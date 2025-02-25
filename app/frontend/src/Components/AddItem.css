@@ -39,9 +39,9 @@
   box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   width: auto;
-  margin: auto;
+  margin-top: 1%;
 }
 
 .ai-suggest-button:hover {
@@ -63,6 +63,14 @@ h1 {
   display: flex;
   gap: 10px;
   margin: 20px 0;
+  flex-direction: row;
+}
+
+.photo-section label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
 }
 
 .photo-box {
