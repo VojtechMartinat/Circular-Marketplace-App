@@ -164,6 +164,7 @@ function AddItem() {
                     <label>Price (£)</label>
                     <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Enter price" />
                 </div>
+                <div className="choice"><label>Choose one or both:</label></div>
                 <div className="shipping-options">
                     <button type="button" className={`option-button ${isShipping ? 'selected' : ''}`} onClick={() => setIsShipping(!isShipping)}>Shipping</button>
                     <button type="button" className={`option-button ${isCollection ? 'selected' : ''}`} onClick={() => setIsCollection(!isCollection)}>Collection</button>

@@ -111,8 +111,17 @@ h1 {
   display: block;
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 5px;
+  margin: 0.3%;
 }
+
+.choice{
+  margin-top: 1%;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: 2%;
+}
+
 
 input[type="text"], textarea, input[type="number"]{
   width: 100%;
