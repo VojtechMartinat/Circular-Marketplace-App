@@ -147,10 +147,11 @@ function AddItem() {
                 </button>
             </header>
             <form onSubmit={handleSubmit} className="form-container">
-            <div className="photo-section">
-                    <label>Add Images</label>
+                <div className='input-group'>
+                <label>Add Images</label>
+                <div className="photo-section">
                     {Array.from({ length: maxImages }, (_, index) => renderPhotoBox(index))}
-                </div>
+                </div></div>
                 <div className="input-group">
                     <label>Title</label>
                     <input type="text" value={articleTitle} onChange={(e) => setArticleTitle(e.target.value)} placeholder="Enter title" />

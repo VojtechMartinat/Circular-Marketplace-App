@@ -1,3 +1,7 @@
+* {
+  font-family: Arial, sans-serif; /* Change to your preferred font */
+}
+
 .add-item {
   background-color: #f8f9fa;
   color: #333;
@@ -63,7 +67,6 @@ h1 {
   display: flex;
   gap: 10px;
   margin: 20px 0;
-  flex-direction: row;
 }
 
 .photo-section label {
@@ -100,7 +103,8 @@ h1 {
 
 /* Input groups */
 .input-group {
-  margin: 15px 0;
+  margin-left: 2%;
+  margin-right: 2%;
 }
 
 .input-group label {
@@ -162,7 +166,7 @@ input[type="text"], textarea {
   border: none;
   width: 100%;
   cursor: pointer;
-  margin-top: 20px;
+  margin: 10%;
   transition: 0.3s;
 }
 
