@@ -23,11 +23,10 @@ const Profile = () => {
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             if (currentUser) {
-                console.log("User authenticated:", currentUser);
+
                 setIsLoggedIn(true);
                 setUser(currentUser);  // Set user state here
             } else {
-                console.log("No user authenticated");
                 setIsLoggedIn(false);
                 setUser(null);  // Reset user to null
             }
@@ -37,11 +36,9 @@ const Profile = () => {
 
     useEffect(() => {
         if (!user) return;
-        console.log("USER", user)
         getUser(user.uid).then((response) => {
             if (response) {
                 setDbUser(response.user);
-                console.log(response.user);
             }
         });
     }, [user]);
@@ -52,7 +49,6 @@ const Profile = () => {
                 if (response && response.articles) {
                     setArticles(response.articles);
                 } else {
-
                     console.log("error");
                 }
             });
@@ -67,10 +63,11 @@ const Profile = () => {
                 } else {
                     console.log("error");
                 }
-            });
+            }
+            );
         }
-
     }, [dbUser]);
+
     useEffect(() => {
         if (articles) {
             const fetchOrderDetails = async () => {
@@ -81,6 +78,7 @@ const Profile = () => {
 
                             if (article.orderID) {
                                 details[article.orderID] = await getOrder(article.orderID);
+                            }
 
                                 // Fetch photos associated with the article
                                 const photosResponse = await getArticlePhotos(article.articleID);
@@ -98,7 +96,7 @@ const Profile = () => {
                                         reader.readAsDataURL(blob);
                                     });
                                 }
-                            }
+
                             return article; // Return article in case no photos are found
                         })
                     );
@@ -120,13 +118,10 @@ const Profile = () => {
         const fetchOrderPhotos = async () => {
             try {
                 if (!orders || orders.length === 0) return;
-
                 const updatedOrders = await Promise.all(
                     orders.map(async (order) => {
 
                         try {
-
-
                             const photosResponse = await getOrderArticlePhotos(order.orderID);
 
 
@@ -244,7 +239,7 @@ const Profile = () => {
         <div className="profile-back">
         <div className="profile-box">
             <header className="header2">
-                <b>{user ? <p>Hi !</p> : <p>Loading...</p>}</b>
+                <b>{dbUser ? <p>Hi {dbUser.username}!</p> : <p>Loading...</p>}</b>
             </header>
 
             <div className="dropdown-container">
@@ -366,7 +361,6 @@ const Profile = () => {
                                 {articles.map((article) =>
                                     article.orderID === null ? (
                                         <div key={article.articleID} className="order-box">
-
 
                                             {article.imageUrl ? (
                                                 <img src={article.imageUrl} alt={article.articleTitle}

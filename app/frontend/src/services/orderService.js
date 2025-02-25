@@ -72,7 +72,7 @@ export async function getOrderArticlePhotos(orderID) {
 
     try {
         const articleResponse = await fetch(`${url}orders/${orderID}/articles`, requestOptions);
-
+        console.log(articleResponse);
 
         if (!articleResponse.ok) {
 
@@ -96,9 +96,6 @@ export async function getOrderArticlePhotos(orderID) {
         throw error;
     }
 }
-
-
-
 
 async function changeOrderStatus(orderID, newStatus){
     const orderData = new FormData();

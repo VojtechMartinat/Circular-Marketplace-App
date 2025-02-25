@@ -130,8 +130,8 @@ const getOrder = asyncErrorWrapper(async (req,res,next) =>{
 
 
 const getOrderArticles = asyncErrorWrapper(async (req, res, next) => {
+    console.log("TEST");
     const { id: orderID } = req.params;
-
     const order = await Order.findOne({ where: { orderID } });
     if (!order) {
         return next(new APIError(`No order with id: ${orderID}`, 404));
