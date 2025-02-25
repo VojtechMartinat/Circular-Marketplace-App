@@ -6,7 +6,7 @@ Briefly describe the purpose of this pull request and the changes to the code ba
 
 ## Changes
 
-List the types of changes that your code introduces to MCA. _Put an `x` in all boxes that apply._
+List the types of changes that your code introduces to the Circular Marketplace Project. _Put an `x` in all boxes that apply._
 
 - [ ] Bugfix (non-breaking change which fixes an issue)
 - [ ] New Feature (non-breaking change which adds functionality)
@@ -30,7 +30,3 @@ _Put an `x` in the boxes that apply. These can also be filled out after creation
 - [ ] My changes generate no new warnings or errors
 - [ ] I have added necessary tests for the changes
 - [ ] All existing tests pass
-
-## Additional Notes
-
-Any additional notes that you feel might be helpful upon review by the maintainers can be added here.
