@@ -236,15 +236,21 @@ const Profile = () => {
     }
     const [showTopupOptions, setShowTopupOptions] = useState(false);
     return (
+
+
         <div className="profile-back">
+            {dbUser && (dbUser.userID = user.uid)  ?
+
         <div className="profile-box">
             <header className="header2">
                 <b>{dbUser ? <p>Hi {dbUser.username}!</p> : <p>Loading...</p>}</b>
+
+
             </header>
 
             <div className="dropdown-container">
 
-                <div className="top-items">
+            <div className="top-items">
                     <div className="dropdown" onClick={() => toggleDropdown('wallet')}>
                         <h2 style={{
                             display: "flex",
@@ -426,7 +432,11 @@ const Profile = () => {
             </div>
 
         </div>
-
+                : dbUser ? (
+                    <p>ERROR USERS NOT MATCHING</p>
+                ) : (
+                    <p>Loading</p>
+                )}
         </div>
     )
         ;
