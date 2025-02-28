@@ -15,7 +15,7 @@ Article.init(
             defaultValue : DataTypes.UUIDV4
         },
         userID: {
-            type: DataTypes.UUID,
+            type: DataTypes.STRING(30),
             allowNull: false,
         },
         orderID: {
@@ -39,6 +39,11 @@ Article.init(
         state: {
             type: DataTypes.ENUM('uploaded','sold','archived','collected')
         },
+        shippingType: {
+            type: DataTypes.ENUM('shipping', 'collection', 'both'),
+            allowNull: false,
+            defaultValue: 'both'
+        }
     },
     {
         sequelize,

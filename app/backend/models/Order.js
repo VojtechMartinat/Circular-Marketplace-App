@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
                 defaultValue : DataTypes.UUIDV4,
             },
             userID: {
-                type: DataTypes.UUID,
+                type: DataTypes.STRING(30),
                 allowNull: false,
             },
             paymentMethodID: {

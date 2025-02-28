@@ -13,15 +13,29 @@ const getAllArticles = asyncErrorWrapper(async (req,res) =>{
     res.status(200).json({article})
 })
 
-
+const getUnsoldArticles = asyncErrorWrapper(async (req,res) =>{
+    try {
+        const article = await Article.findAll({where:{ state: "uploaded"}}); // Fetch only unsold articles
+        res.status(200).json({article});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
+    }
+})
 /**
  * * Create a new Article and save it in the database
  * @param req Request from the client (req.body should contain article data)
  * @param res Response sent to the client containing new article data
  * */
 const createArticle= asyncErrorWrapper(async (req,res) =>{
-    const article = await Article.create(req.body)
-    res.status(201).json({article: article})
+    try {
+        const article = await Article.create(req.body)
+        res.status(201).json({article: article})
+    } catch (error) {
+        console.log(error.message)
+        res.status(400).json({error: error.message})
+    }
+
 })
 
 
@@ -96,7 +110,19 @@ const articlePhotos = asyncErrorWrapper(async (req,res,next) =>{
     res.status(200).json({photos})
 
 })
+const articlePhoto = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:articleID} = req.params
+    const photo = await Photo.findOne({
+        where: {
+            articleID: articleID
+        }
+    });
+    if (!photo) {
+        next(new APIError(`No photo with article id: ${articleID}`), 404);
+    }
+    res.status(200).json({photo});
+})
 
 module.exports = {
-    getAllArticles,createArticle,getArticle,updateArticle,deleteArticle, articlePhotos
+    getAllArticles,createArticle,getArticle,updateArticle,deleteArticle, articlePhotos, getUnsoldArticles, articlePhoto
 }

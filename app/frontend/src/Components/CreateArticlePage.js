@@ -1,114 +1,207 @@
-
-import React, { useState, useEffect } from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createArticle } from '../services/articleService';
-import { useAuth } from '../Contexts/AuthContext';
-import Axios from "axios";
+import { createPhoto } from '../services/photoService';
+import './AddItem.css';
+import { auth } from '../services/firebaseService';
+import { urlGateway } from '../Config/config';
+import axios from 'axios';
 
-const CreateArticlePage = () => {
+function AddItem() {
+    const [user, setUser] = useState(null);
+    const [price, setPrice] = useState('');
+    const [isShipping, setIsShipping] = useState(false);
+    const [isCollection, setIsCollection] = useState(true);
     const [articleTitle, setArticleTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [price, setPrice] = useState('');
-    const { isLoggedIn, user } = useAuth(); // Access logged-in user data
-
-
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setImage(file);
-        }
-    };
-    const [image, setImage] = useState(null);
-
+    const [images, setImages] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-
+    const maxImages = 5;
 
     useEffect(() => {
-        if (!isLoggedIn) {
-            navigate('/login'); // Redirect to login page
-        }
-    }, [isLoggedIn, navigate]);
-    const [articleID, setArticleID] = useState("")
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            if (!currentUser) {
+                navigate('/login');
+            } else {
+                setUser(currentUser);
+            }
+        });
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        if (!articleTitle || !description || !price || !image) {
-            alert("Please fill in all fields and upload an image");
+        return () => unsubscribe();
+    }, [navigate]);
+
+    const handleImageChange = (event, index) => {
+        const file = event.target.files[0];
+        if (file) {
+            const newImages = [...images];
+            newImages[index] = file;
+            setImages(newImages);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!articleTitle || !description || !price || images.length === 0) {
+            alert("Please fill in all fields and upload an image.");
             return;
         }
-        const articleData = new FormData();
-        const currentDate = new Date().toISOString();
-        articleData.append('userID', user.userID);
-        articleData.append('articleTitle', articleTitle);
-        articleData.append('description', description);
-        articleData.append('price', parseFloat(price));
-        articleData.append('dateAdded', currentDate);
-        articleData.append('state','uploaded')
-        Axios.post('http://34.251.202.114:8080/api/v1/articles', articleData, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }).then((res) => {
-            console.log('Response: ',res)
-            console.log('Article ID:', res.data.article.articleID);
-            setArticleID(res.data.article.articleID)
-            const photoData = new FormData();
-            if (!image){
-                console.log("No image uploaded")
-            }
-            console.log(image)
-            photoData.append('articleID', res.data.article.articleID);
-            photoData.append('image', image);
 
-            Axios.post('http://34.251.202.114:8080/api/v1/photos', photoData, {
-                headers: {
-                    'Content-Header': 'value',
-                },
-            }).then(res => {
-                console.log(res.data)
-            });
-        }).catch((err) => {console.log(err)})
-        navigate('/');
+        try {
+            const articleData = new FormData();
+            const currentDate = new Date().toISOString();
+            articleData.append('userID', user.uid);
+            articleData.append('articleTitle', articleTitle);
+            articleData.append('description', description);
+            articleData.append('price', parseFloat(price));
+            articleData.append('dateAdded', currentDate);
+            articleData.append('state', 'uploaded');
+            const shippingType = isShipping ? (isCollection ? "both" : "shipping") : "collection";
+            articleData.append('shippingType', shippingType);
+
+            createArticle(articleData).then((res) => {
+                for (let i = 0; i < images.length; i++) {
+                    const photoData = new FormData();
+                    photoData.append('articleID', res.data.article.articleID);
+                    photoData.append('image', images[i]);
+                    if (!images[i]) {
+                        break;
+                    }
+                    createPhoto(photoData).then(res => {
+                    }).catch(err => {
+                            throw new Error(err)
+                        }
+                    )
+                }
+            }).catch((err) => {
+                console.log(err)
+                alert("Error creating an article!")
+            })
+
+            navigate('/');
+        } catch (error) {
+            console.error('Error creating article and uploading photo:', error);
+            alert('Failed to create article or upload photo');
+        }
     };
+
+    const handleAISuggest = async () => {
+        if (images.length === 0) {
+            alert("Please upload an image first.");
+            return;
+        }
+
+        setIsLoading(true);
+
+        const file = images[0];
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64Image = reader.result.split(',')[1]; // Get base64 part of the image
+            try {
+                const response = await axios.post(`${urlGateway}` + '/describe', {
+                    image: base64Image
+                });
+                const aiResponse = response.data;
+                setDescription(aiResponse.description);
+                setArticleTitle(aiResponse.topic);
+                setPrice(aiResponse.price);
+            } catch (error) {
+                console.error('Error calling AI suggest API:', error);
+                alert('Failed to get AI suggestion');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const renderPhotoBox = (index) => {
+        return (
+            <div className="photo-box" key={index}>
+                {images[index] ? (
+                    <img src={URL.createObjectURL(images[index])} alt={`Uploaded ${index}`} className="image-preview" />
+                ) : (
+                    index === images.length && images.length < maxImages && (
+                        <label htmlFor={`image-upload-${index}`} className="upload-label">+</label>
+                    )
+                )}
+                <input
+                    type="file"
+                    accept="image/*"
+                    id={`image-upload-${index}`}
+                    onChange={(e) => handleImageChange(e, index)}
+                    style={{ display: 'none' }}
+                />
+            </div>
+        );
+    };
+
     return (
-        <div>
-            <h1>Create New Article</h1>
+        <div className="add-item">
+            <header className="header">
+                <button className="back-button" onClick={() => navigate('/')}>←</button>
+                <h1>Add</h1>
+                <button className="ai-suggest-button" onClick={handleAISuggest} disabled={isLoading}>
+                    {isLoading ? 'Loading...' : 'AI-Suggest'}
+                </button>
+            </header>
+
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Article Title:</label>
+                <div className="photo-section">
+                    {Array.from({ length: maxImages }, (_, index) => renderPhotoBox(index))}
+                </div>
+
+                <div className="input-group">
+                    <label>Title</label>
                     <input
                         type="text"
+                        placeholder="Add a title "
                         value={articleTitle}
-                        onChange={(e) => setArticleTitle(e.target.value)}
-                    />
+                        onChange={(e) => setArticleTitle(e.target.value)} />
                 </div>
-                <div>
-                    <label>Description:</label>
+
+                <div className="input-group">
+                    <label>Description</label>
                     <input
                         type="text"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
                 </div>
-                <div>
-                    <label>Price:</label>
+
+                <div className="input-group">
+                    <label>Price</label>
                     <input
-                        type="number"
+                        type="text"
                         value={price}
                         onChange={(e) => setPrice(e.target.value)}
+                        placeholder="£ Free or enter amount"
                     />
                 </div>
-                <div>
-                    <label>Image:</label>
-                    <input
-                        type="file"
-                        onChange={handleImageChange}
-                    />
+                <div className="shipping-options">
+                    <button
+                        type="button"
+                        className={`option-button ${isShipping ? 'selected' : ''}`}
+                        onClick={() => setIsShipping(!isShipping)}>
+                        Shipping
+                    </button>
+                    <button
+                        type="button"
+                        className={`option-button ${isCollection ? 'selected' : ''}`}
+                        onClick={() => setIsCollection(!isCollection)}>
+                        Collection
+                    </button>
+                    <div className="cost-info">Cost: £2.00</div>
                 </div>
-                <button type="submit">Create Article</button>
+
+                <button className="publish-button">
+                    Publish for £{price ? parseFloat(price) + 0.2 : 0}<br />
+                    <span className="subtext">Including shipping & buyer protection</span>
+                </button>
             </form>
         </div>
     );
-};
+}
 
-export default CreateArticlePage;
+export default AddItem;

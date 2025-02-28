@@ -10,8 +10,15 @@ module.exports = (sequelize) => {
 
     Wishlist.init(
         {
+            id: {
+                type: DataTypes.UUID, // Use UUID for unique identification
+                defaultValue: DataTypes.UUIDV4, // Automatically generate UUIDs
+                primaryKey: true, // Mark this as the primary key
+                allowNull: false,
+                unique: true,
+            },
             userID: {
-                type: DataTypes.UUID,
+                type: DataTypes.STRING(30),
                 allowNull: false,
             },
             articleID: {

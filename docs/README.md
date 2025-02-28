@@ -6,7 +6,7 @@
 - [Features](#features)
 - [Project Goals](#project-goals)
 - [User Stories](#user-stories)
-- [Stakeholders](#Stakeholders)
+- [Stakeholders](#stakeholders)
 - [Documentation](#documentation)
 - [License](#license)
 - [Setup and Deployment](#setup-and-deployment)
@@ -70,17 +70,54 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 | Lukasz Krepa      | [zr23182@bristol.ac.uk](mailto:zr23182@bristol.ac.uk) |
 | Karena Ho         | [iv23220@bristol.ac.uk](mailto:iv23220@bristol.ac.uk) |
 | Vojtech Martinat  | [os23060@bristol.ac.uk](mailto:os23060@bristol.ac.uk) |  
-| Herman Tsoi       | [ju22521@bristol.ac.uk](mailto:ju22521@bristol.ac.uk) |    
+| Herman Tsoi       | [ju22521@bristol.ac.uk](mailto:ju22521@bristol.ac.uk) | 
+| Jagannath Sankar  | [yi23615@bristol.ac.uk](mailto:yi23615@bristol.ac.uk) | 
 
 ## Project Structure
-Main files and directories in dev branch:
-  * Directories:
-    * Tech Stack (Tech Stack Table, Architecture Chart are included)
-    * UI Design (includes a graph provided by our client)
-    * MeetingNotes
-  * Files:
-    * README.md
-    * LICENSE
+<pre>
+2024-CircularMarketplaces
+.
+├── .github/
+├── app/
+│   ├── backend/
+│   │   ├── __tests__/               # Contains backend test files
+│   │   ├── config/           
+│   │   ├── controllers/             # Handles application logic
+│   │   ├── databse/
+│   │   ├── errors/
+│   │   ├── middleware/
+│   │   ├── models/                  # Defines database schemas and interactions
+│   │   ├── routes/                  # Maps API endpoints to controllers
+│   │   ├── .babelrc
+│   │   ├── jest.config.js
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   └── server.js
+│   ├── frontend/
+│   │   ├── public/
+│   │   │   ├── favicon2.ico
+│   │   │   ├── index.html
+│   │   │   ├── logo192.png
+│   │   │   ├── logo512.png
+│   │   │   ├── manifest.json
+│   │   │   └── robots.txt                      
+│   │   └── src/                     
+│   │       ├── Components/          # Reusable UI elements
+│   │       ├── Config/
+│   │       ├── Contexts/            # Global state management files
+│   │       ├── services/            # API call functions
+│   │       ├── App.js               # Main React app component 
+│   │       ├── App.test.js          # Tests for App.js
+│   │       ├── index.css            
+│   │       ├── index.js
+│   │       ├── logo.svg
+│   │       ├── reportWebVitals.js
+│   │       └── setupTests.js
+│   ├── README.md
+│   ├── package-lock.json
+│   └── package.json
+└── docs/
+  </pre>
 ## Links
 Main Kanban
 
@@ -93,3 +130,145 @@ https://github.com/orgs/spe-uob/projects/215
 
 ## Technology Stack Diagram
 ![Architecture](Architecture_Diagram.drawio.png)
+
+
+# Project Setup Guide
+
+## 1. Install Git (if not already installed)
+
+- **For Ubuntu/Linux:**
+  ```bash
+  sudo apt update
+  sudo apt install git
+  ```
+
+- **For macOS:**
+  ```bash
+  brew install git
+  ```
+
+- **For Windows:**
+  [Download and install Git](https://git-scm.com/download/win).
+
+---
+
+## 2. Install Node.js 18 (if not already installed)
+
+- **For Ubuntu/Linux:**
+  ```bash
+  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  ```
+
+- **For macOS:**
+  Install via Homebrew:
+  ```bash
+  brew install node@18
+  ```
+
+- **For Windows:**
+  [Download Node.js 18.x installer](https://nodejs.org/en/download/).
+
+---
+
+## 3. Initialize Git Repository
+
+1. Navigate to your project folder.
+2. Run:
+   ```bash
+   git init
+   ```
+
+---
+
+## 4. Clone Repository
+
+To clone a Git repository:
+```bash
+git clone <repository-url>
+```
+
+---
+
+## 5. Backend Setup
+
+1. Navigate to the backend folder:
+   ```bash
+   cd app/backend
+   ```
+
+2. Install required packages (with `sudo` to install `nodemon` and `pm2` globally):
+   ```bash
+   sudo npm install
+   ```
+
+3. Set environment variables:
+   ```bash
+   export DB_USER=<your-db-username>
+   export DB_PASS=<your-db-password>
+   ```
+
+4. **Launch the Backend**
+   - **For Development and Production:**  
+     Start the server with PM2:
+     ```bash
+     pm2 start server.js
+     ```
+   - **Stop the Backend:**  
+     Stop all PM2 processes:
+     ```bash
+     pm2 stop all
+     ```
+
+   - **For Testing:**  
+     Use `nodemon` to automatically restart the server on code changes:
+     ```bash
+     nodemon
+     ```
+   - **Stop Testing:**  
+     Press `Ctrl + C` to stop.
+
+---
+
+## 6. Frontend Setup
+
+1. Navigate to the frontend folder:
+   ```bash
+   cd app/frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. **Configure Backend URL**  
+   Edit the backend URL in `src/Config/config.js` to point to your local backend (e.g., `http://localhost:8080/api/v1/`).
+
+4. **Set Environment Variables**  
+   ```bash
+   export REACT_APP_FIREBASE_API=<your-REACT-APP-FIREBASE-API>
+   export REACT_APP_FIREBASE_APP_ID=<your-REACT-APP-FIREBASE-APP-ID>
+   ```
+5. **Launch the Frontend**
+   - **For Development and Testing:**  
+     Start the frontend locally:
+     ```bash
+     npm start
+     ```
+
+   - **For Production:**  
+     Build the frontend and run it using PM2:
+     ```bash
+     npm run build
+     pm2 start npm --name "react-dev" -- start
+     ```
+
+   - **Stop the Frontend:**  
+     Stop the PM2 process:
+     ```bash
+     pm2 stop all
+     ```
+
+---
+

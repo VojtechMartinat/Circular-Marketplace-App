@@ -26,16 +26,15 @@ jobs:
 
       - name: Deploy to EC2
         env:
-          HOST: 34.251.202.114
+          HOST: 54.246.255.142
         run: |
-         # Checking if key is correct
-           base64 ~/.ssh/id_rsa.pem | head -c 100
           ssh -i ~/.ssh/id_rsa.pem ec2-user@$HOST -o StrictHostKeyChecking=no << 'EOF'
             cd /home/ec2-user/  # Navigate to your app's directory on the EC2 instance
             git fetch origin dev  # Fetch the latest changes on the dev branch
             git reset --hard origin/dev  # Reset to the latest commit on dev branch
-            cd app/backend
+            cd app/frontend
             npm install  # Install dependencies
             sudo npm install -g pm2  # Install pm2 globally if it's not already installed
-            pm2 stop server.js || true  # Stop the server if it’s running, ignoring errors if it’s not
-            pm2 start server.js  # Start the server from app/backend/server.js
+            pm2 kill  # Stop the server if it’s running, ignoring errors if it’s not
+            npm run build
+            pm2 start npm --name "react-dev" -- start

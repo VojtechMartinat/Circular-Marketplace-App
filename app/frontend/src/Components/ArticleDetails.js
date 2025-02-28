@@ -1,33 +1,121 @@
 import React, { useEffect, useState } from 'react';
-import {useNavigate, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import ReactMultiCarousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 import { getArticle, getArticlePhotos } from '../services/articleService';
-import {createOrder} from "../services/orderService";
-import Axios from "axios";
-import {useAuth} from "../Contexts/AuthContext";
-
+import { createOrder } from '../services/orderService';
+import { getUser } from '../services/userService';
+import './article.css';
+import {FaWallet} from "react-icons/fa";
+import {FaGear} from "react-icons/fa6";
+import {auth} from "../services/firebaseService";
 const ArticleDetails = () => {
     const { id } = useParams();
-    const [article, setArticle] = useState(null);
-    const [imageUrl, setImageUrl] = useState(null); // State to store image URL
-    const { isLoggedIn, user } = useAuth(); // Access logged-in user data
     const navigate = useNavigate();
+    const [article, setArticle] = useState(null);
+    const [photos, setPhotos] = useState([]); // State for multiple photos
+    const [articleUser, setArticleUser] = useState(null);
+    const [user, setUser] = useState(null);
+    const [dbUser, setDbUser] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isShipping, setIsShipping] = useState(false);
+    const [isCollection, setIsCollection] = useState(false);
+
     useEffect(() => {
-        getArticle(id).then(response => {
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            if (currentUser) {
+                setUser(currentUser);
+                setIsLoggedIn(true);
+            } else {
+                setUser(null);
+                setIsLoggedIn(false);
+            }
+        });
+
+        return () => unsubscribe();
+    }, []);
+    useEffect(() => {
+        if (user) {
+            getUser(user.uid).then((response) => {
+                if (response) {
+                    setDbUser(response.user);
+                }
+            });
+        }
+    }, [user]);
+
+    const KebabMenu = () => {
+        const [isOpen, setIsOpen] = useState(false);
+
+        const toggleMenu = () => {
+            setIsOpen(!isOpen);
+        };
+
+        const handleSharing = () => {
+            const currentUrl = window.location.href
+            navigator.clipboard.writeText(currentUrl)
+                .then(() => {alert('Article copied to the clipboard!')})
+                .catch((error) => {
+                    console.error('Error copying text: ',error)
+                })
+            setIsOpen(false);
+        };
+
+        return (
+            <div className="icons">
+                <div className="top-items">
+                    <div className="dropdown">
+                        <h2 style={{
+                            display: "flex",
+                            alignItems: "center",
+                            textAlign: "left",
+                            paddingLeft: 5,
+                            gap: 10 // Adjust the gap as needed
+                        }}>
+                            <FaWallet size={30} style={{color: "black"}}/>
+                            {dbUser?.wallet}£
+                        </h2>
+                    </div>
+                    <div className="dropdown">
+                        <FaGear size={30} onClick={toggleMenu} style={{color: 'black'}}/>
+                    </div>
+                </div>
+
+                {isOpen && (
+                    <div className="menu">
+                        <div className="menu-item" onClick={handleSharing}>Share</div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    useEffect(() => {
+        getArticle(id).then((response) => {
             if (response) {
                 setArticle(response.article);
             }
         });
     }, [id]);
 
+    useEffect(() => {
+        if (article && article.userID) {
+            getUser(article.userID).then((response) => {
+                if (response) {
+                    setArticleUser(response.user);
+                }
+            });
+        }
+    }, [article]);
 
     useEffect(() => {
-        getArticlePhotos(id).then(response => {
-            console.log("Article photos response:", response);
-            if (response && response.photos && response.photos[0]) {
-                const imageData = response.photos[0].image.data; // Assuming this is an array of bytes
-                const base64data = arrayBufferToBase64(imageData);
-                console.log(base64data);
-                setImageUrl(base64data);
+        getArticlePhotos(id).then((response) => {
+            if (response && response.photos) {
+                const images = response.photos.map((photo) => {
+                    const imageData = arrayBufferToBase64(photo.image.data);
+                    return imageData;
+                });
+                setPhotos(images);
             }
         });
     }, [id]);
@@ -41,51 +129,138 @@ const ArticleDetails = () => {
     };
 
     const handleBuy = async () => {
-        if (!isLoggedIn){
-            alert("Please log in to buy an article");
+        if (!isLoggedIn) {
+            alert('Please log in to buy an article');
             return;
         }
-        try {
-            const orderData = {
-                userID: user.userID,
-                paymentMethodID : "4d530d77-217e-4a89-952e-f4cee8e3fe5c",
-                dateOfPurchase : new Date().toISOString(),
-                collectionMethod : "collection",
-                articles:[
-                    { articleID: id }
-                ]
-            };
-            Axios.post('http://34.251.202.114:8080/api/v1/orders', orderData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }).then((res) => {
-                console.log('Response: ',res)
-                console.log('Order ID:', res.data.order.orderID);
-                alert('Order created successfully');
-            }).catch((error) => {
-                console.error('Error creating order:', error);
-                alert('Failed to create order')
-            })
 
-
-        } catch (error) {
-            console.error('Error creating order:', error);
-            alert('Failed to create order');
+        if (dbUser.userID === article.userID) {
+            alert('You cannot buy your own article');
+            return;
         }
+
+        const totalPrice = isShipping ? article.price + 2 : article.price;
+        if (dbUser.wallet < totalPrice) {
+            alert('You do not have enough money to buy this article');
+            return;
+        }
+
+        let collectionMethod = '';
+        if (isShipping) {
+            collectionMethod = 'delivery';
+        } else if (isCollection) {
+            collectionMethod = 'collection';
+        } else {
+            alert('Please select a collection method');
+            return;
+        }
+
+        const orderData = {
+            userID: user.uid,
+            paymentMethodID: '4d530d77-217e-4a89-952e-f4cee8e3fe5c',
+            dateOfPurchase: new Date().toISOString(),
+            collectionMethod: collectionMethod,
+            articles: [{ articleID: id }],
+        };
+        createOrder(orderData)
+            .then(() => {
+                alert('Order created successfully!');
+            })
+            .catch((error) => {
+                alert(`Error: ${error}`);
+            });
     };
 
-    // If article or imageUrl is not available, show loading
-    if (!article) return <div>Loading...</div>;
+    if (!article || photos.length === 0) return <div>Loading...</div>;
+
+    const responsive = {
+        desktop: {
+            breakpoint: { max: 3000, min: 1024 },
+            items: Math.min(photos.length, 3),
+            slidesToSlide: 1,
+        },
+        tablet: {
+            breakpoint: { max: 1024, min: 464 },
+            items: Math.min(photos.length, 2),
+            slidesToSlide: 1,
+        },
+        mobile: {
+            breakpoint: { max: 464, min: 0 },
+            items: 1,
+            slidesToSlide: 1,
+        },
+    };
 
     return (
-        <div>
-            <h1>{article.articleTitle}</h1>
-            <img src={imageUrl} alt={"cat"}/>
-            <p>{article.description}</p>
-            <p>Price: ${article.price}</p>
-            <p>Status: {article.state}</p>
-            <button onClick={handleBuy}>Buy</button>
+        <div className="app">
+            {/* Header section */}
+            <div className="header">
+                <button className="back-button" onClick={() => navigate('/')}>
+                    ←
+                </button>
+                <KebabMenu />
+            </div>
+
+            {/* Carousel for images */}
+            <div className="carousel-container">
+                <ReactMultiCarousel responsive={responsive} infinite autoPlay autoPlaySpeed={3000}>
+                    {photos.map((photo, index) => (
+                        <div key={index} className="carousel-image">
+                            <img src={photo} alt={`Article ${index}`} />
+                        </div>
+                    ))}
+                </ReactMultiCarousel>
+            </div>
+
+            {/* Title and description */}
+            <div className="details">
+                <h2 className="title">{article.articleTitle}</h2>
+                <p className="description">{article.description}</p>
+            </div>
+
+            {/* Seller section */}
+            <div className="seller-info">
+                <div className="seller-avatar">👤</div>
+                <div className="seller-details">
+                    <p className="seller-name">{articleUser?.username}</p>
+                    <p className="seller-rating">
+                        {'★★★★★ (0 reviews)'}
+                    </p>
+                    <p>Cost : {article.price}</p>
+                </div>
+                <div className="seller-location">📍{articleUser?.location}</div>
+            </div>
+
+            {/* Shipping and Collection */}
+            <div className="purchase-options">
+                {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
+                        <button
+                            type="button"
+                            className={`option-button ${isShipping ? 'selected' : ''}`}
+                            onClick={() => {
+                                setIsShipping(!isShipping);
+                                if (!isShipping) setIsCollection(false);
+                            }}>
+                            <p>Shipping</p>
+                        </button>
+                ) : null}
+                {article.shippingType === 'collection' || article.shippingType === 'both' ? (
+                        <button
+                            type="button"
+                            className={`option-button ${isCollection ? 'selected' : ''}`}
+                            onClick={() => {
+                                setIsCollection(!isCollection);
+                                if (!isCollection) setIsShipping(false);
+                            }}>
+                            <p>Collection</p>
+                        </button>
+                ) : null}
+            </div>
+
+            {/* Purchase Button */}
+            <div className="purchase-button">
+                <button onClick={handleBuy}>Buy for {isShipping ? article.price + 2 : article.price}</button>
+            </div>
         </div>
     );
 };
