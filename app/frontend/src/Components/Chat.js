@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {createMessage, getChats, getMessages} from '../services/messageService';
 import { getUser } from '../services/userService';
 import {auth} from "../services/firebaseService";
@@ -8,8 +8,8 @@ import { useParams } from 'react-router-dom';
 export const ChatsPage = () => {
     const [chats, setChats] = useState([]);
     const [user, setUser] = useState(null);
-    const [dbUser, setDbUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -19,20 +19,12 @@ export const ChatsPage = () => {
             } else {
                 setUser(null);
                 setIsLoggedIn(false);
+                navigate('/login');
             }
         });
 
         return () => unsubscribe();
-    }, []);
-    useEffect(() => {
-        if (user) {
-            getUser(user.uid).then((response) => {
-                if (response) {
-                    setDbUser(response.user);
-                }
-            });
-        }
-    }, [user]);
+    }, [navigate]);
 
     useEffect(() => {
         const fetchChats = async () => {
@@ -47,6 +39,10 @@ export const ChatsPage = () => {
         };
         fetchChats();
     }, [user]);
+
+    if (!isLoggedIn) {
+        navigate('/login');
+    }
 
     return (
         <div className="p-4">
@@ -72,9 +68,9 @@ export const ChatWindow = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [user, setUser] = useState(null);
-    const [dbUser, setDbUser] = useState(null);
     const [chatUser, setChatUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -84,21 +80,13 @@ export const ChatWindow = () => {
             } else {
                 setUser(null);
                 setIsLoggedIn(false);
+                navigate('/login');
             }
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [navigate]);
 
-    useEffect(() => {
-        if (user) {
-            getUser(user.uid).then((response) => {
-                if (response) {
-                    setDbUser(response.user);
-                }
-            });
-        }
-    }, [user]);
     useEffect(() => {
         if (receiverID) {
             getUser(receiverID).then((response) => {
@@ -124,6 +112,10 @@ export const ChatWindow = () => {
             fetchChat();
         }
     }, [receiverID, user]);
+
+    if (!isLoggedIn) {
+        navigate('/login');
+    }
 
     const handleSend = async () => {
         if (!newMessage.trim()) return;
