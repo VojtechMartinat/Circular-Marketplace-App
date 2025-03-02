@@ -2,8 +2,15 @@ const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
 const {Message} = require('../models/initialise')
 const {Op} = require("sequelize");
+const uuidValidate = require('uuid-validate');
 
-
+const validateUUID = (id, next) => {
+    if (!uuidValidate(id)) {
+        next(new APIError(`Invalid UUID: ${id}`, 400));
+        return false;
+    }
+    return true;
+};
 
 
 /**
@@ -42,6 +49,7 @@ const createMessage = asyncErrorWrapper(async (req,res) =>{
  * */
 const getMessage = asyncErrorWrapper(async (req,res,next) =>{
     const {id:messageID} = req.params
+    if (!validateUUID(messageID, next)) return;
     const message = await Message.findOne({
         where:{
             messageID: messageID
@@ -83,8 +91,8 @@ const updateMessage = asyncErrorWrapper(async (req,res,next) =>{
 const deleteMessage = asyncErrorWrapper(async (req,res,next) =>{
     const {id:messageID} = req.params
     const message = await Message.destroy({
-        where:{
-            messageID:messageID
+        where: {
+            messageID: messageID
         }
     });
     if (!message){
@@ -111,7 +119,6 @@ const getMessages = asyncErrorWrapper(async (req, res, next) => {
 
     res.status(200).json({ messages });
 });
-
 
 module.exports = {
     getAllMessages,createMessage,getMessage,updateMessage,deleteMessage, getMessages
