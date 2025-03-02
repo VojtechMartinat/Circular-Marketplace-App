@@ -1,6 +1,7 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const {User, Article, Order} = require('../models/initialise')
+const {User, Article, Order, Message} = require('../models/initialise')
+const {Op} = require("sequelize");
 
 
 
@@ -177,6 +178,39 @@ const userTopUp = asyncErrorWrapper(async (req,res,next) =>{
     }
 })
 
+const getInteractedUsers = asyncErrorWrapper(async (req, res, next) => {
+    const { id:userID } = req.params;
+
+    const messages = await Message.findAll({
+        where: {
+            [Op.or]: [
+                { senderID: userID },
+                { receiverID: userID },
+            ],
+        }
+    });
+
+    const interactedUserIDs = new Set();
+
+    messages.forEach((message) => {
+        // Add sender and receiver to the set
+        if (message.senderID !== userID) interactedUserIDs.add(message.senderID);
+        if (message.receiverID !== userID) interactedUserIDs.add(message.receiverID);
+    });
+
+    const userIdsArray = Array.from(interactedUserIDs);
+
+    if (userIdsArray.length === 0) {
+        next(new APIError(`No users found that user with ID: ${userID} has interacted with`), 404);
+        return;
+    }
+
+    // Return the list of interacted user IDs
+    res.status(200).json({ interactedUserIDs: userIdsArray });
+});
+
+
+
 module.exports = {
-    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser , userTopUp
+    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser , userTopUp, getInteractedUsers
 }
