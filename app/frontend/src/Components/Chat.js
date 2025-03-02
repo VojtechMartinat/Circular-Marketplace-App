@@ -9,6 +9,7 @@ export const ChatsPage = () => {
     const [chats, setChats] = useState([]);
     const [user, setUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userNames, setUserNames] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -26,6 +27,9 @@ export const ChatsPage = () => {
         return () => unsubscribe();
     }, [navigate]);
 
+    if (!isLoggedIn) {
+        navigate('/login');
+    }
     useEffect(() => {
         const fetchChats = async () => {
             if (user) {
@@ -40,9 +44,16 @@ export const ChatsPage = () => {
         fetchChats();
     }, [user]);
 
-    if (!isLoggedIn) {
-        navigate('/login');
-    }
+    useEffect(() => {
+        if (chats && chats.length > 0) {
+            chats.forEach(async (chat) => {
+                const response = await getUser(chat);
+                if (response) {
+                    setUserNames((prevUserNames) => ({ ...prevUserNames, [chat]: response.user.username }));
+                }
+            });
+        }
+    }, [chats]);
 
     return (
         <div className="p-4">
@@ -51,7 +62,7 @@ export const ChatsPage = () => {
                 chats.map((chat, index) => (
                     <div key={chat} className="mb-2">
                         <Link to={`/chat/${chat}`} className="block p-2 border rounded shadow hover:bg-gray-100">
-                            Chat with User {chat}
+                            Chat with {userNames[chat] || 'User'}
                         </Link>
                     </div>
                 ))
@@ -62,9 +73,10 @@ export const ChatsPage = () => {
     );
 };
 
+
 // ChatWindow Component for individual chat
 export const ChatWindow = () => {
-    const {receiverID} = useParams();  // Use the useParams hook to get receiverID
+    const { receiverID } = useParams();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [user, setUser] = useState(null);
@@ -87,6 +99,10 @@ export const ChatWindow = () => {
         return () => unsubscribe();
     }, [navigate]);
 
+    if (!isLoggedIn) {
+        navigate('/login');
+    }
+
     useEffect(() => {
         if (receiverID) {
             getUser(receiverID).then((response) => {
@@ -97,25 +113,19 @@ export const ChatWindow = () => {
         }
     }, [receiverID]);
 
-
     useEffect(() => {
         const fetchChat = async () => {
-            try {
-                const chatMessages = await getMessages(user.uid, receiverID);
-                setMessages(chatMessages.messages);
-            } catch (error) {
-                console.error('Error loading chat:', error);
+            if (user && receiverID) {
+                try {
+                    const chatMessages = await getMessages(user.uid, receiverID);
+                    setMessages(chatMessages.messages);
+                } catch (error) {
+                    console.error('Error loading chat:', error);
+                }
             }
         };
-
-        if (user && receiverID) {
-            fetchChat();
-        }
+        fetchChat();
     }, [receiverID, user]);
-
-    if (!isLoggedIn) {
-        navigate('/login');
-    }
 
     const handleSend = async () => {
         if (!newMessage.trim()) return;
@@ -134,7 +144,7 @@ export const ChatWindow = () => {
     return (
         <div className="chat-window">
             <div className="chat-container">
-                <h2 className="chat-header">Chat with {chatUser?.username}</h2>
+                <h2 className="chat-header">Chat with {chatUser?.username || 'User'}</h2>
                 <div className="message-container">
                     {messages && messages.length > 0 ? (
                         messages.map((msg, index) => (
