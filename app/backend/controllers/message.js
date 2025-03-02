@@ -24,8 +24,14 @@ const getAllMessages = asyncErrorWrapper(async (req,res) =>{
  *  @param res Response sent to the client containing new user data
  * */
 const createMessage = asyncErrorWrapper(async (req,res) =>{
-    const message = await Message.create(req.body)
-    res.status(201).json({message})
+    try{
+        const message = await Message.create(req.body)
+        res.status(201).json({message})
+    } catch (error) {
+        console.error('Error creating message:', error);
+        res.status(400).json({error})
+    }
+
 })
 
 

@@ -46,6 +46,15 @@
     cursor: pointer;
 }
 
+.icon{
+    background-color: #fff;
+    border: 1px solid #000; /* Black border */
+    padding: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+
 /* Optionally, change the text color to make it consistent */
 .dropdown h2 {
     color: #000000;

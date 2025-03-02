@@ -56,8 +56,6 @@ User.hasMany(Message, { foreignKey: 'receiverID', onDelete: 'CASCADE' });
 Message.belongsTo(User, { as: 'Sender', foreignKey: 'senderID' });
 Message.belongsTo(User, { as: 'Receiver', foreignKey: 'receiverID' });
 
-Article.hasMany(Message, { foreignKey: 'articleID', onDelete: 'CASCADE' });
-Message.belongsTo(Article, { foreignKey: 'articleID' });
 module.exports = {
     User,
     Article,

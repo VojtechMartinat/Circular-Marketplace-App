@@ -74,6 +74,27 @@ async function getMessages(senderID, receiverID) {
     }
 }
 
+async function getChats(userId) {
+    if (!userId) {
+        throw new Error("UserId is required!");
+    }
+
+    try {
+        const response = await fetch(`${url}users/${userId}/chats`);
+        console.log(response)
+        const data = await response.json();
+
+        if (!data) {
+            throw new Error("No messages found between these users!");
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Error fetching messages between users:', error);
+        throw error;
+    }
+}
+
 async function updateMessage(messageID, updatedData) {
     if (!messageID || !updatedData) {
         throw new Error("Message ID and updated data are required!");
@@ -114,4 +135,4 @@ async function deleteMessage(messageID) {
     }
 }
 
-export { createMessage, getAllMessages, getMessage, getMessages, updateMessage, deleteMessage };
+export { createMessage, getAllMessages, getMessage, getMessages, updateMessage, deleteMessage,getChats};
