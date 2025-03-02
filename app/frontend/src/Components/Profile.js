@@ -7,6 +7,8 @@ import {getArticlePhotos} from '../services/articleService';
 import { FaGear } from "react-icons/fa6";
 import './Profile.css';
 import {FaWallet} from "react-icons/fa";
+import { publishReview } from "../services/articleService";
+
 
 
 const Profile = () => {
@@ -16,6 +18,12 @@ const Profile = () => {
     const [orderDetails, setOrderDetails] = useState({});
     const [user, setUser] = useState(null);
     const [topupAmount, setTopupAmount] = useState(0);
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [selectedArticleID, setSelectedArticleID] = useState(null);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+    // const [isModalOpen, setIsModalOpen] = useState(false);
+
     useEffect(() => {
         getUser(id).then(response => {
             if (response){
@@ -122,6 +130,30 @@ const Profile = () => {
         }
     };
 
+    const handleReviewClick = (articleID) => {
+        setSelectedArticleID(articleID);
+        setShowReviewModal(true);
+    };
+
+    async function handleSubmitReview(articleID) {
+        const reviewData = {
+            articleID,
+            rating,
+            comment,
+        };
+
+        try {
+            const result = await publishReview(reviewData);
+            console.log("Review submitted successfully:", result);
+            setRating(0);
+            setComment("");
+            setShowReviewModal(false);
+        } catch (error) {
+            console.error("Failed to submit review:", error);
+        }
+    }
+
+
     const [dropdowns, setDropdowns] = useState({
         bought: false,
         sold: false,
@@ -209,6 +241,11 @@ const Profile = () => {
                                             <p><strong>Price:</strong> ${order.totalPrice}</p>
                                             <p><strong>Shipping Method:</strong> {order.collectionMethod}</p>
                                             <p><strong>Status:</strong> {order.orderStatus}</p>
+
+                                            {/* Show Review Button if status is "shipped" or "collected" */}
+                                            {(order.orderStatus === "shipped" || order.orderStatus === "collected") && (
+                                                <button onClick={() => handleReviewClick(order.articleID)}>Write a Review</button>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -344,6 +381,39 @@ const Profile = () => {
                             </div>
                         </div>
                     )}
+                    {showReviewModal && (
+                        <div className="modal-overlay">
+                            <div className="modal">
+                                <h2>Write a Review</h2>
+                                <p>Rate this product:</p>
+
+                                {/* Rating Input */}
+                                <div className="rating-stars">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <span
+                                            key={star}
+                                            onClick={() => setRating(star)}
+                                            style={{ cursor: "pointer", fontSize: "24px", color: star <= rating ? "gold" : "gray" }}
+                                        >
+                                            ★
+                                        </span>
+                                    ))}
+                                </div>
+
+                                {/* Comment Input */}
+                                <textarea
+                                    placeholder="Write your review here..."
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                />
+
+                                {/* Submit & Close Buttons */}
+                                <button onClick={() => handleSubmitReview(selectedArticleID)}>Submit Review</button>
+                                <button onClick={() => setShowReviewModal(false)}>Cancel</button>
+                            </div>
+                        </div>
+                    )}
+
                 </div>
 
 

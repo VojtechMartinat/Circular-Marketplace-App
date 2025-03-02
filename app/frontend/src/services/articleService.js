@@ -85,4 +85,34 @@ async function deleteArticle(articleID) {
     }
 }
 
-export { createArticle, getArticles, getArticle, getArticlePhotos, deleteArticle };
+async function publishReview(reviewData) {
+    if (!reviewData) {
+        throw new Error("Review data missing!");
+    }
+
+    try {
+        const response = await fetch(`${url}reviews`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(reviewData),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!data) {
+            throw new Error("No review data returned!");
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Error submitting review:", error);
+        throw error;
+    }
+}
+export { createArticle, getArticles, getArticle, getArticlePhotos, deleteArticle, publishReview };
