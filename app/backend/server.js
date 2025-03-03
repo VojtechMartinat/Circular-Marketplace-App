@@ -10,6 +10,7 @@ const photos = require('./routes/Photo')
 const tags = require('./routes/Tag')
 const wishlists = require('./routes/Wishlist')
 const tasklog = require('./routes/TaskLog')
+const messages = require('./routes/Message')
 const errorHandler = require('../backend/middleware/errorHandler');  // Import error handler
 const cors = require('cors');
 connection.sync().then(r => console.log("Success")).catch((error) => {console.log(error)})
@@ -30,6 +31,7 @@ app.use('/api/v1/photos', photos);
 app.use('/api/v1/tags', tags);
 app.use('/api/v1/wishlists', wishlists);
 app.use('/api/v1/tasklog',tasklog)
+app.use('/api/v1/messages', messages)
 app.use(errorHandler);
 
 const port = 8080;

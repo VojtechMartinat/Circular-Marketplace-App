@@ -1,24 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
 import {getUser, getUserArticles, getUserOrders, addMoney} from "../services/userService";
-import {deleteArticle} from "../services/articleService";
 import {changeOrderStatus, getOrder, getOrderArticlePhotos} from "../services/orderService"
+import {deleteArticle, getArticle, getArticleByOrderId} from "../services/articleService";
 import {getArticlePhotos} from '../services/articleService';
 import { FaGear } from "react-icons/fa6";
 import './Profile.css';
 import {FaWallet} from "react-icons/fa";
 import {auth} from "../services/firebaseService";
 
+import { FaMessage } from "react-icons/fa6";
 
 const Profile = () => {
     const { id } = useParams();
     const [articles, setArticles] = useState(null);
     const [orders, setOrders] = useState(null);
-    const [orderDetails, setOrderDetails] = useState({});
+    const [orderDetails, setOrderDetails] = useState({}); // State to store order details for each user article
     const [user, setUser] = useState(null);
     const [dbUser, setDbUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [topupAmount, setTopupAmount] = useState(0);
+    const [boughtArticles, setBoughtArticles] = useState({});
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -75,11 +77,9 @@ const Profile = () => {
                     const details = {};
                     const updatedArticles = await Promise.all(
                         articles.map(async (article) => {
-
                             if (article.orderID) {
                                 details[article.orderID] = await getOrder(article.orderID);
                             }
-
                                 // Fetch photos associated with the article
                                 const photosResponse = await getArticlePhotos(article.articleID);
                                 if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
@@ -158,11 +158,26 @@ const Profile = () => {
         return () => clearInterval(interval);
     }, [articles]);
 
+    useEffect(() => {
+        if (orders) {
+            const fetchUserIDs = async () => {
+                const userIDMap = {};
+                for (const order of orders) {
+                    const article = await getArticleByOrderId(order.orderID);
+                    if (article) {
+                        userIDMap[order.orderID] = article.article;
+                    }
+                }
+                setBoughtArticles(userIDMap);
+            };
+            fetchUserIDs();
+        }
+    }, [orders]);
 
 
     const handleDeleteArticle = async (articleID) => {
         try {
-            await deleteArticle(articleID);
+            await deleteArticle(articleID); // Call the service function to delete the article
             setArticles(prevArticles => prevArticles.filter(article => article.articleID !== articleID)); // Update state
             alert("Article deleted successfully.");
             window.location.reload();
@@ -264,6 +279,11 @@ const Profile = () => {
                         </h2>
 
                     </div>
+                    <div className="icon">
+                        <Link to="/chats">
+                            <FaMessage size={30} style={{color: 'black'}}/>
+                        </Link>
+                    </div>
                     <div className="dropdown" onClick={() => toggleDropdown('settings')}>
                         <FaGear size={30} style={{color: 'black'}}/>
                     </div>
@@ -290,8 +310,17 @@ const Profile = () => {
                                             <p><strong>Price:</strong> ${order.totalPrice}</p>
                                             <p><strong>Shipping Method:</strong> {order.collectionMethod}</p>
                                             <p><strong>Status:</strong> {order.orderStatus}</p>
+
+                                        </div>
+                                        <div className="icon">
+                                            {console.log(boughtArticles[order.orderID])}
+                                            <Link
+                                                to={`/chat/${boughtArticles[order.orderID].userID}`}>
+                                                <FaMessage size={30} style={{color: 'black'}}/>
+                                            </Link>
                                         </div>
                                     </div>
+
                                 ))}
                             </div>
                         ) : (
@@ -332,6 +361,7 @@ const Profile = () => {
                                                         Method:</strong> {orderDetails[article.orderID]?.order.collectionMethod}
                                                     </p>
                                                 )}
+
                                                 {orderDetails[article.orderID] && orderDetails[article.orderID].order &&
                                                     orderDetails[article.orderID].order.orderStatus !== 'collected' &&
                                                     orderDetails[article.orderID].order.orderStatus !== 'shipped' && (
@@ -346,6 +376,12 @@ const Profile = () => {
                                                                 : 'collected'}
                                                         </button>
                                                     )}
+                                                <div className="icon">
+                                                    <Link
+                                                        to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}>
+                                                    <FaMessage size={30} style={{color: 'black'}}/>
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
                                     ) : null;

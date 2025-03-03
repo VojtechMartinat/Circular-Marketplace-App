@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getArticlePhotos, getArticles } from '../services/articleService';
+import { getArticlePhoto, getUnsoldArticles } from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
+import { useAuth } from '../Contexts/AuthContext.js';
+
 
 const Home = () => {
     const [articles, setArticles] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [startTime, setStartTime] = useState(null);
+   
 
     useEffect(() => {
-        getArticles()
+        getUnsoldArticles()
             .then(async response => {
                 if (response && response.article) {
                     const articlesWithPhotos = await Promise.all(response.article.map(async (article) => {
-                        const photosResponse = await getArticlePhotos(article.articleID);
-                        if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
-                            const photoData = photosResponse.photos[0].image.data;
+                        const photosResponse = await getArticlePhoto(article.articleID);
+                        console.log('Fetched photos:', photosResponse);
+                        if (photosResponse && photosResponse.photo){
+                            const photoData = photosResponse.photo.image.data;
                             const uint8Array = new Uint8Array(photoData);
                             const blob = new Blob([uint8Array], { type: 'image/png' });
                             const reader = new FileReader();
@@ -71,7 +75,6 @@ const Home = () => {
                     <ProductCard key={article.articleID} article={article} onClick={() => handleArticleClick(article.articleID)} />
                 ))}
             </div>
-            <BottomNav />
         </div>
     );
 }
@@ -79,28 +82,26 @@ const Home = () => {
 function Header({ handleInputChange, handleInputFocus }) {
     return (
         <div className="header">
-            <h1 className='title'>Circular Market System</h1>
+            <p className='title'>ReList</p>
             <input type="text" className="search-bar" onFocus={handleInputFocus} onChange={handleInputChange} placeholder="Search" />
-            <button className="search-button">🔍</button>
         </div>
     );
 }
 
 function ProductCard({ article, onClick }) {
+    const navigate = useNavigate()
     return (
-        <div className='product-card' onClick={onClick}>
+        <div className='product-card' onClick={() => navigate(`/articles/${article.articleID}`)}>
             {article.imageUrl ? (
                 <img src={article.imageUrl} alt={article.articleTitle} />
             ) : (
                 <div className="product-image-placeholder">🖼️</div>
             )}
             <div className='product-info'>
-                <Link to={`/articles/${article.articleID}`}>
                     <p className='product-name'>
                         {article.articleTitle}
                     </p>
-                </Link>
-                <p className='product-price'>Price: {article.price}</p>
+                <p className='product-price'>Price: £{article.price}</p>
             </div>
             <button className='favorite-button'>❤</button>
         </div>

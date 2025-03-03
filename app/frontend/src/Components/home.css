@@ -15,7 +15,7 @@
 }
 
 .title {
-  font-size: 36px;
+  font-size: 100px;
   font-weight: bold;
   color: #333;
   margin-bottom: 10px;
@@ -27,16 +27,28 @@
 .search-button {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 21px;
+  padding-left: 2%;
+  padding-right: 2%;
   margin-right: 10px;
+  max-width:fit-content;
+  background-color: #333;
 }
 
 .search-bar {
-  flex-grow: 1;
-  padding: 8px;
-  border-radius: 20px;
-  border: none;
-  background-color: #e6e6e6;
+  height: 50px;
+  width: 50px;
+  border-style: none;
+  padding: 10px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  outline: none;
+  border-radius: 25px;
+  transition: all .5s ease-in-out;
+  background-color: #fff;
+  padding-right: 40px;
+  color:#fff;
+  font-family: Arial;
 }
 
 .product-grid {
@@ -62,6 +74,7 @@
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  cursor:pointer;
 }
 .product-card img {
   width: 100%;
@@ -86,10 +99,8 @@
 }
 
 .product-name  {
-  font-size: 16px;
-  font-weight: bold;
-
   color: #333;
+  font-weight: bold;
   
 }
 

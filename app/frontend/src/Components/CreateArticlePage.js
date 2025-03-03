@@ -138,68 +138,41 @@ function AddItem() {
     };
 
     return (
-        <div className="add-item">
-            <header className="header">
-                <button className="back-button" onClick={() => navigate('/')}>←</button>
-                <h1>Add</h1>
-                <button className="ai-suggest-button" onClick={handleAISuggest} disabled={isLoading}>
-                    {isLoading ? 'Loading...' : 'AI-Suggest'}
-                </button>
-            </header>
-
-            <form onSubmit={handleSubmit}>
-                <div className="photo-section">
-                    {Array.from({ length: maxImages }, (_, index) => renderPhotoBox(index))}
-                </div>
-
-                <div className="input-group">
-                    <label>Title</label>
-                    <input
-                        type="text"
-                        placeholder="Add a title "
-                        value={articleTitle}
-                        onChange={(e) => setArticleTitle(e.target.value)} />
-                </div>
-
-                <div className="input-group">
-                    <label>Description</label>
-                    <input
-                        type="text"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                    />
-                </div>
-
-                <div className="input-group">
-                    <label>Price</label>
-                    <input
-                        type="text"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        placeholder="£ Free or enter amount"
-                    />
-                </div>
-                <div className="shipping-options">
-                    <button
-                        type="button"
-                        className={`option-button ${isShipping ? 'selected' : ''}`}
-                        onClick={() => setIsShipping(!isShipping)}>
-                        Shipping
+        <div className='background'>
+            <div className="add-item-container">
+                <header className="header">
+                    <button className="back-button" onClick={() => navigate('/')}>←</button>
+                    <h1>Add Item</h1>
+                    <button className="ai-suggest-button" onClick={handleAISuggest} disabled={isLoading}>
+                        {isLoading ? 'Loading...' : 'AI-Suggest'}
                     </button>
-                    <button
-                        type="button"
-                        className={`option-button ${isCollection ? 'selected' : ''}`}
-                        onClick={() => setIsCollection(!isCollection)}>
-                        Collection
-                    </button>
-                    <div className="cost-info">Cost: £2.00</div>
-                </div>
-
-                <button className="publish-button">
-                    Publish for £{price ? parseFloat(price) + 0.2 : 0}<br />
-                    <span className="subtext">Including shipping & buyer protection</span>
-                </button>
-            </form>
+                </header>
+                <form onSubmit={handleSubmit} className="form-container">
+                    <div className='input-group'>
+                    <label>Add Images</label>
+                    <div className="photo-section">
+                        {Array.from({ length: maxImages }, (_, index) => renderPhotoBox(index))}
+                    </div></div>
+                    <div className="input-group">
+                        <label>Title</label>
+                        <input type="text" value={articleTitle} onChange={(e) => setArticleTitle(e.target.value)} placeholder="Enter title" />
+                    </div>
+                    <div className="input-group">
+                        <label>Description</label>
+                        <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Enter description"></textarea>
+                    </div>
+                    <div className="input-group">
+                        <label>Price (£)</label>
+                        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Enter price" />
+                    </div>
+                    <div className="choice"><label>Choose one or both:</label></div>
+                    <div className="shipping-options">
+                        <button type="button" className={`option-button ${isShipping ? 'selected' : ''}`} onClick={() => setIsShipping(!isShipping)}>Shipping</button>
+                        <button type="button" className={`option-button ${isCollection ? 'selected' : ''}`} onClick={() => setIsCollection(!isCollection)}>Collection</button>
+                    </div>
+                    <button className="submit-button" type="submit">Publish for £{price ? (parseFloat(price) + 0.2).toFixed(2) : "0.00"}</button>
+                </form>
+            </div>
         </div>
     );
 }
