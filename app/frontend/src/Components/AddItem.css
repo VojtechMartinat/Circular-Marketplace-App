@@ -8,7 +8,7 @@
   font-family: 'Poppins', sans-serif;
   padding: 1.5%;
   border-radius: 10px;
-  max-width: 400px;
+  max-width: 30%;
   margin: auto;
   margin-top: 1%;
   margin-bottom: 1%;
@@ -16,9 +16,11 @@
   text-align: center;
 }
 
-.background{
+.background {
   background-image: linear-gradient(#48A9FE, #0BEEF9);
-  padding: 0.001%;
+  min-height: 100vh; 
+  width: 100%;
+  position: absolute;
 }
 
 /* Header */
