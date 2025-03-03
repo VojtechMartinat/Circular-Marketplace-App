@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const {getAllUsers, createUser, getUser, updateUser, deleteUser, userArticles, userOrders, loginUser, userRating,
-    userWrittenReviews, userTopUp
+    userWrittenReviews, userTopUp, getInteractedUsers
 } = require('../controllers/users');
 
 router.route('/').get(getAllUsers).post(createUser);
@@ -12,4 +12,5 @@ router.route('/:id/articles').get(userArticles);
 router.route('/:id/rating').get(userRating);
 router.route('/:id/reviews').get(userWrittenReviews)
 router.route('/:id/topup').post(userTopUp);
+router.route('/:id/chats').get(getInteractedUsers);
 module.exports = router;

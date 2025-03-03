@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
 import {getUser, getUserArticles, getUserOrders, addMoney} from "../services/userService";
-import {deleteArticle} from "../services/articleService";
+import {deleteArticle, getArticle, getArticleByOrderId} from "../services/articleService";
 import {changeOrderStatus, getOrder} from "../services/orderService"
 import {getArticlePhotos} from '../services/articleService';
 import { FaGear } from "react-icons/fa6";
@@ -10,14 +10,16 @@ import {FaWallet} from "react-icons/fa";
 import { publishReview } from "../services/articleService";
 
 
+import { FaMessage } from "react-icons/fa6";
 
 const Profile = () => {
     const { id } = useParams();
     const [articles, setArticles] = useState(null);
     const [orders, setOrders] = useState(null);
-    const [orderDetails, setOrderDetails] = useState({});
+    const [orderDetails, setOrderDetails] = useState({}); // State to store order details for each user article
     const [user, setUser] = useState(null);
     const [topupAmount, setTopupAmount] = useState(0);
+    const [boughtArticles, setBoughtArticles] = useState({});
     const [showReviewModal, setShowReviewModal] = useState(false);
     const [selectedArticleID, setSelectedArticleID] = useState(null);
     const [rating, setRating] = useState(0);
@@ -69,7 +71,7 @@ const Profile = () => {
                                 if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
                                     const photoData = photosResponse.photos[0].image.data;
                                     const uint8Array = new Uint8Array(photoData);
-                                    const blob = new Blob([uint8Array], {type: 'image/png'});
+                                    const blob = new Blob([uint8Array], { type: 'image/png' });
                                     const reader = new FileReader();
 
                                     return new Promise((resolve) => {
@@ -98,6 +100,21 @@ const Profile = () => {
         }
     }, [articles]);
 
+    useEffect(() => {
+        if (orders) {
+            const fetchUserIDs = async () => {
+                const userIDMap = {};
+                for (const order of orders) {
+                    const article = await getArticleByOrderId(order.orderID);
+                    if (article) {
+                        userIDMap[order.orderID] = article.article;
+                    }
+                }
+                setBoughtArticles(userIDMap);
+            };
+            fetchUserIDs();
+        }
+    }, [orders]);
 
     const handleDeleteArticle = async (articleID) => {
         try {
@@ -214,6 +231,11 @@ const Profile = () => {
                         </h2>
 
                     </div>
+                    <div className="icon">
+                        <Link to="/chats">
+                            <FaMessage size={30} style={{color: 'black'}}/>
+                        </Link>
+                    </div>
                     <div className="dropdown" onClick={() => toggleDropdown('settings')}>
                         <FaGear size={30} style={{color: 'black'}}/>
                     </div>
@@ -246,6 +268,13 @@ const Profile = () => {
                                             {(order.orderStatus === "shipped" || order.orderStatus === "collected") && (
                                                 <button onClick={() => handleReviewClick(orderDetails[order.orderID])}>Write a Review</button>
                                             )}
+                                        </div>
+                                        <div className="icon">
+                                            {console.log(boughtArticles[order.orderID])}
+                                            <Link
+                                                to={`/chat/${boughtArticles[order.orderID].userID}`}>
+                                                <FaMessage size={30} style={{color: 'black'}}/>
+                                            </Link>
                                         </div>
                                     </div>
                                 ))}
@@ -302,6 +331,12 @@ const Profile = () => {
                                                                 : 'collected'}
                                                         </button>
                                                     )}
+                                                <div className="icon">
+                                                    <Link
+                                                        to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}>
+                                                    <FaMessage size={30} style={{color: 'black'}}/>
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
                                     ) : null;
