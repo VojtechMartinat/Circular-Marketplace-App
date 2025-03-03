@@ -11,8 +11,21 @@
   display: flex;
   align-items: center;
   margin-bottom: 20px;
+  justify-content: space-between;
   
 }
+
+.kebab{
+  display: flex;
+  background: none;
+  border: none;
+  font-size: 20px;
+  padding:10px 20px; 
+  text-align: center;
+  justify-content:flex-end;
+  max-width: fit-content;
+  margin-top: auto;
+  margin-bottom: auto;}
 
 .back-button {
   display: flex;
@@ -223,8 +236,10 @@
 }
 
 .icons {
-  position: relative; /* Make sure the menu is positioned relative to this container */
+  justify-content: flex-end; 
 }
+
+
 
 .menu {
   position: absolute; /* Position it absolutely */

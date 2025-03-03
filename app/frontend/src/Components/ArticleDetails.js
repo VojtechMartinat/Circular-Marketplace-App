@@ -209,7 +209,8 @@ const ArticleDetails = () => {
                 <button className="back-button" onClick={() => navigate('/')}>
                 ← 
                 </button>
-                <KebabMenu />
+                
+                    <KebabMenu className='kebab'></KebabMenu>
             </div>
 
             {/* Carousel for images */}
