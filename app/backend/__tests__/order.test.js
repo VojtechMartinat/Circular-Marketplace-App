@@ -200,4 +200,23 @@ describe('Order Controller Tests', () => {
         expect(res2.statusCode).toBe(500);
 
     });
-});
+
+        test('Should return articles for a valid order ID', async () => {
+            const order = await request(app).post('/api/v1/orders').send({
+                userID: 2,
+                paymentMethodID: 1,
+                dateOfPurchase: '2024-10-01',
+                collectionMethod: 'delivery',
+                orderStatus: 'confirmed',
+                articles: [{ articleID: '1' }],
+            })
+            console.log(order.body.order.orderID)
+            const res = await request(app).get(`/api/v1/orders/${order.body.order.orderID}/articles`);
+
+            expect(res.statusCode).toBe(200);
+            expect(res.body.articles).toHaveLength(1);
+            expect(res.body.articles[0].articleTitle).toBe('Table');
+        });
+
+
+    });
