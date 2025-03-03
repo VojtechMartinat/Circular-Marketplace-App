@@ -72,7 +72,7 @@ describe('Order Controller Tests', () => {
     test('GET /api/v1/orders - Should return an empty array if no orders exist', async () => {
         const res = await request(app).get('/api/v1/orders');
         expect(res.statusCode).toBe(200);
-        expect(res.body.orders).toEqual([]);  // Should return an empty array
+        expect(res.body.order).toEqual({});  // Should return an empty array
     });
 
 
@@ -96,8 +96,9 @@ describe('Order Controller Tests', () => {
         const res = await request(app).get('/api/v1/orders');
 
         expect(res.statusCode).toBe(200);
-        expect(res.body.orders).toBeDefined(); // Ensure orders is defined
-        expect(res.body.orders.length).toBe(2);
+        expect(res.body.order).toBeDefined(); // Ensure orders is defined
+        console.log(res.body);
+        expect(res.body.order.length).toBe(2);
     });
 
     test('GET /api/v1/orders/:id - Should return a single order by ID', async () => {

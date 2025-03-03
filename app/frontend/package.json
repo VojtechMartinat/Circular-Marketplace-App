@@ -4,6 +4,9 @@
   "private": true,
   "proxy": "http://localhost:8080",
   "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
+    },
     "transform": {
       "^.+\\.[tj]sx?$": "jest-esm-transformer"
     },

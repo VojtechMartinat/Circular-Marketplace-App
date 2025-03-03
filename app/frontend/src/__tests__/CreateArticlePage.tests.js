@@ -23,19 +23,19 @@ describe('CreateArticle Component', () => {
             </MemoryRouter>
         );
 
-        const title = await screen.findByRole('heading', { name: /Create New Article/i });
+        const title = await screen.findByRole('button', { name: /AI-Suggest/i });
         expect(title).toBeInTheDocument();
 
-        const title2 = await screen.findByText(/Article Title:/i);
+        const title2 = await screen.findByText(/Title/i);
         expect(title2).toBeInTheDocument();
 
-        const description = await screen.findByText(/Description:/i);
-        expect(description).toBeInTheDocument();
+        const emailInput = await screen.findByPlaceholderText(/Email/i);
+        expect(emailInput).toBeInTheDocument();
 
-        const price = await screen.findByText(/Price:/i);
+        const price = await screen.findByText(/Price/i);
         expect(price).toBeInTheDocument();
 
-        const Create = await screen.findByRole('button', { name: /Create Article/i });
+        const Create = await screen.findByRole('button', { name: /Publish/i });
         expect(Create).toBeInTheDocument();
     });
 });

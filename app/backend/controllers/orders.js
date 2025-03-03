@@ -1,6 +1,6 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const {Order, Article} = require('../models/initialise')
+const {Order, Article, User} = require('../models/initialise')
 
 
 /**
@@ -21,7 +21,6 @@ const getAllOrders = asyncErrorWrapper(async (req,res) =>{
  * */
 const createOrder= asyncErrorWrapper(async (req,res,next) =>{
     const {userID, paymentMethodID, dateOfPurchase, collectionMethod} = req.body;
-    console.log(req.body)
     let sum = 0
     let sellerID = null
     for (const x of req.body.articles){
@@ -45,6 +44,7 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
         }
         sum += price
         sellerID = article.userID;
+
     }
     if (userID === sellerID){
         next(new APIError('User cant buy his own article!',401));
@@ -59,6 +59,9 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
             userID: sellerID
         }
     });
+
+
+
     if (collectionMethod === "delivery"){
         sum += 2;
     }
@@ -78,9 +81,12 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
             collectionMethod : collectionMethod,
             orderStatus : "purchased",
             totalPrice : sum
+
         }
+
     )
-    console.log("sum: " + sum);
+    console.log(req.body)
+
     if (order.collectionMethod === "delivery"){
         buyer.wallet -= sum;
         await buyer.save();
@@ -94,8 +100,7 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
         await seller.save();
     }
     for (const articles of req.body.articles) {
-        console.log(articles)
-        console.log(order.orderID)
+
         await Article.update(
             { orderID: order.orderID, state:"sold" },
             {

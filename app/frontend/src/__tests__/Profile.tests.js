@@ -18,7 +18,7 @@ describe('ArticleDetails Component', () => {
     beforeEach(() => {
         useAuth.mockReturnValue({
             isLoggedIn: true,
-            user: { userID: '1234'}
+            user: { userID: 'pIHf8DLX0TNPfYsXbkEMhXxa19q1'}
         });
 
         getUserArticles.mockResolvedValue({
@@ -55,21 +55,21 @@ describe('ArticleDetails Component', () => {
             </MemoryRouter>
         );
 
+        // Wait for loading state to disappear
+        await screen.findByText(/loading/i);
+
+        // Wait for "Test Article" after loading is gone
         const title = await screen.findByText(/Test Article/i);
         expect(title).toBeInTheDocument();
 
-        const title2 = await screen.findByText(/Articles/i);
-        expect(title2).toBeInTheDocument();
+        const articlesTitle = await screen.findByText(/Articles/i);
+        expect(articlesTitle).toBeInTheDocument();
 
-        // Check if the article description is rendered
-        const description = await screen.findByText(/Orders/i);
-        expect(description).toBeInTheDocument();
+        const ordersTitle = await screen.findByText(/Orders/i);
+        expect(ordersTitle).toBeInTheDocument();
 
-
-        // Check if the state is rendered
         const state = await screen.findByText(/delivery/i);
         expect(state).toBeInTheDocument();
-
-
     });
+
 });
