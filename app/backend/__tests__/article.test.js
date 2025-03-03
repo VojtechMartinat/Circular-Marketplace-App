@@ -140,5 +140,29 @@ describe('Article Controller Tests with Sequelize', () => {
         expect(res.statusCode).toBe(200);
     });
 
+    test('GET /api/v1/articles/unsold - Should return all unsold articles', async () => {
+        const newArticle = { articleID: '1',
+            userID: 1,
+            articleTitle: 'Chair',
+            description: 'xxxx',
+            price: 30,
+            dateAdded: '2024-10-10',
+            state: 'uploaded' };
+        const newArticle2 = { articleID: '2',
+            userID: 1,
+            articleTitle: 'Table',
+            description: 'xxxx',
+            price: 20,
+            dateAdded: '2024-10-10',
+            state: 'sold' };
+        await request(app).post('/api/v1/articles').send(newArticle)
+        await request(app).post('/api/v1/articles').send(newArticle2)
+
+        const res = await request(app).get(`/api/v1/articles/unsold`);
+        console.log(res.body)
+        expect(res.statusCode).toBe(200);
+        expect(res.body.article.length).toBe(1);
+    });
+
     //TODO article - tag link table tests
 });

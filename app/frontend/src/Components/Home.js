@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getArticlePhotos, getArticles } from '../services/articleService';
+import { getArticlePhoto, getUnsoldArticles } from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
 import { useAuth } from '../Contexts/AuthContext.js';
@@ -13,14 +13,15 @@ const Home = () => {
    
 
     useEffect(() => {
-        getArticles()
+        getUnsoldArticles()
             .then(async response => {
                 console.log('Fetched articles:', response);
                 if (response && response.article) {
                     const articlesWithPhotos = await Promise.all(response.article.map(async (article) => {
-                        const photosResponse = await getArticlePhotos(article.articleID);
-                        if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
-                            const photoData = photosResponse.photos[0].image.data;
+                        const photosResponse = await getArticlePhoto(article.articleID);
+                        console.log('Fetched photos:', photosResponse);
+                        if (photosResponse && photosResponse.photo){
+                            const photoData = photosResponse.photo.image.data;
                             const uint8Array = new Uint8Array(photoData);
                             const blob = new Blob([uint8Array], { type: 'image/png' });
                             const reader = new FileReader();
