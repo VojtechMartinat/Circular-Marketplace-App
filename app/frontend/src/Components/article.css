@@ -9,15 +9,35 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  justify-content: space-between;
+  
 }
 
-.back-button {
+.kebab{
+  display: flex;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
+  padding:10px 20px; 
+  text-align: center;
+  justify-content:flex-end;
+  max-width: fit-content;
+  margin-top: auto;
+  margin-bottom: auto;}
+
+.back-button {
+  display: flex;
+  background: none;
+  border: none;
+  font-size: 20px;
+  padding:10px 20px; 
+  text-align: center;
+  justify-content: flex-start;
+  max-width: fit-content;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .icons {
@@ -32,30 +52,49 @@
 }
 
 .carousel-container {
-  margin: 0 auto;
+  margin: auto;
   width: 100%;
+  background-color: rgba(114, 114, 114, 0.5);
 }
 
 .carousel-image {
   overflow: hidden;
-  height: 300px;
   width: 100%;
+  height: 300px;
+  max-width:fit-content;
+  max-height: fit-content;
+  align-items: center;
+  justify-content: center;
   padding: 10px;
-  margin: 0;
+  margin: auto;
+}
+
+.react-multiple-carousel__arrow {
+  background: rgba(0, 0, 0, 0.5); 
+  max-width: fit-content;  
+  max-height: fit-content;
+  border-radius: 60%; 
+}
+
+.react-multiple-carousel__arrow--left {
+  right: auto; 
+}
+
+.react-multiple-carousel__arrow--right {
+  left: auto;
 }
 
 .carousel-image img {
   height: 100%;
-  width: 100%;
-  object-fit: cover;
-  border-radius: 8px;
+  max-width:fit-content;
+  object-fit:contain;
+  background-color: rgba(0, 0, 0, 0.5);
 }
-
 
 .image-placeholder {
   width: 100%;
   height: 200px;
-  background-color: #d3d3d3;
+  background-color: #2d0505;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -70,9 +109,24 @@
   margin-top: 20px;
 }
 
+
+.info{
+  justify-content: center;
+  align-items: center;
+  
+}
 .title {
+  padding: auto;
+  padding-top: 1%;
   font-size: 24px;
   margin-bottom: 10px;
+}
+
+.price{
+  padding: auto;
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #393939;
 }
 
 .description {
@@ -116,8 +170,9 @@
 
 .purchase-options {
   display: flex;
-  justify-content: space-around;
-  margin-top: 40px;
+  align-items: center;
+  justify-content:center;
+  margin-top: 0.5%;
 }
 
 .option {
@@ -126,13 +181,18 @@
   border-radius: 8px;
 }
 .purchase-options button {
-  background-color: #666;
+  background-color: #fffefe;
+  max-width: fit-content;
+  margin:1%;
 }
 
 .purchase-button {
   margin-top: 20px;
   display: flex;
   justify-content: center;
+  align-items: center;
+  max-width: fit-content;
+  margin: auto;
 }
 
 .purchase-button button {
@@ -142,6 +202,17 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  border-radius: 10px;
+  border-color: #393939;
+  border-style: double;
+  justify-content: center;
+  align-items: center;
+}
+
+.textchoose{
+  margin-top: 50px;
+  padding-bottom: none;
+   
 }
 
 
@@ -155,6 +226,8 @@
   border: none;
   cursor: pointer;
   padding: 10px;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .dot {
@@ -167,8 +240,10 @@
 }
 
 .icons {
-  position: relative; /* Make sure the menu is positioned relative to this container */
+  justify-content: flex-end; 
 }
+
+
 
 .menu {
   position: absolute; /* Position it absolutely */

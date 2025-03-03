@@ -6,6 +6,8 @@ import { getArticle, getArticlePhotos } from '../services/articleService';
 import { createOrder } from '../services/orderService';
 import { getUser } from '../services/userService';
 import './article.css';
+import {createTaskLog} from "../services/logService";
+import ColorThief from 'colorthief';
 import {FaWallet} from "react-icons/fa";
 import {FaGear} from "react-icons/fa6";
 import {auth} from "../services/firebaseService";
@@ -20,6 +22,8 @@ const ArticleDetails = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
+    const [startTime, setStartTime] = useState(null);
+    const [backgroundGradient, setBackgroundGradient] = useState('linear-gradient(180deg, #f8f8f8, #e0e0e0)');
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -43,7 +47,6 @@ const ArticleDetails = () => {
             });
         }
     }, [user]);
-
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
 
@@ -101,7 +104,7 @@ const ArticleDetails = () => {
     useEffect(() => {
         if (article && article.userID) {
             getUser(article.userID).then((response) => {
-                if (response) {
+                if (response) { 
                     setArticleUser(response.user);
                 }
             });
@@ -176,12 +179,12 @@ const ArticleDetails = () => {
     const responsive = {
         desktop: {
             breakpoint: { max: 3000, min: 1024 },
-            items: Math.min(photos.length, 3),
+            items: Math.min(photos.length, 1),
             slidesToSlide: 1,
         },
         tablet: {
             breakpoint: { max: 1024, min: 464 },
-            items: Math.min(photos.length, 2),
+            items: Math.min(photos.length, 1),
             slidesToSlide: 1,
         },
         mobile: {
@@ -191,19 +194,33 @@ const ArticleDetails = () => {
         },
     };
 
+    const CustomLeftArrow = ({ onClick }) => (
+        <button onClick={onClick} className="custom-arrow left-arrow">←</button>
+      );
+      
+      const CustomRightArrow = ({ onClick }) => (
+        <button onClick={onClick} className="custom-arrow right-arrow">→</button>
+      );
+
     return (
-        <div className="app">
+        <div className="app" >
             {/* Header section */}
             <div className="header">
                 <button className="back-button" onClick={() => navigate('/')}>
-                    ←
+                ← 
                 </button>
+
                 <KebabMenu/>
             </div>
 
             {/* Carousel for images */}
             <div className="carousel-container">
-                <ReactMultiCarousel responsive={responsive} infinite autoPlay autoPlaySpeed={3000}>
+                <ReactMultiCarousel responsive={responsive} 
+                infinite 
+                autoPlay 
+                autoPlaySpeed={10000}
+                CustomLeftArrow={<CustomLeftArrow/>}
+                CustomRightArrow={<CustomRightArrow/>}>
                     {photos.map((photo, index) => (
                         <div key={index} className="carousel-image">
                             <img src={photo} alt={`Article ${index}`}/>
@@ -211,11 +228,15 @@ const ArticleDetails = () => {
                     ))}
                 </ReactMultiCarousel>
             </div>
+            
 
             {/* Title and description */}
-            <div className="details">
-                <h2 className="title">{article.articleTitle}</h2>
+            <div className='info'>
+                <h1 className="title" >{article.articleTitle}</h1>
+                <h2 className="price">£{article.price}</h2>
                 <p className="description">{article.description}</p>
+                
+
             </div>
 
             {/* Seller section */}
@@ -226,12 +247,13 @@ const ArticleDetails = () => {
                     <p className="seller-rating">
                         {'★★★★★ (0 reviews)'}
                     </p>
-                    <p>Cost : {article.price}</p>
                 </div>
                 <div className="seller-location">📍{articleUser?.location}</div>
 
 
             </div>
+
+            <p className='textchoose'>Choose one or both:</p>
 
             {/* Shipping and Collection */}
             <div className="purchase-options">

@@ -1,33 +1,74 @@
-/* General styling */
-.add-item {
-  background-color: #666;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  padding: 20px;
+* {
+  font-family: Arial, sans-serif; /* Change to your preferred font */
+}
+
+.add-item-container {
+  background-color: #ffffff;
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+  padding: 1.5%;
   border-radius: 10px;
-  max-width: 375px;
+  max-width: 30%;
   margin: auto;
+  margin-top: 1%;
+  margin-bottom: 1%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.background {
+  background-image: linear-gradient(#48A9FE, #0BEEF9);
+  min-height: 100vh; 
+  width: 100%;
+  position: absolute;
 }
 
 /* Header */
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #666
+  flex-direction: row;
+  align-items:center;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ddd;
 }
 
 .back-button, .ai-suggest-button {
+  display: flex;
   background: none;
   border: none;
-  color: #666;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
+  padding: 5px 10px;
+  color: #333;
+}
+
+.ai-suggest-button {
+  background-color: #007bff;
+  color: white;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: auto;
+  margin-top: 1%;
+}
+
+.ai-suggest-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
 }
 
 h1 {
-  font-size: 24px;
-  margin: 0;
+  display: flex;
+  font-size: 22px;
+  margin: 10px 0;
+  font-weight: bold;
+  margin: auto;
+  justify-content: flex-start;
 } 
 
 /* Photo section */
@@ -37,55 +78,74 @@ h1 {
   margin: 20px 0;
 }
 
+.photo-section label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
 .photo-box {
   width: 60px;
   height: 60px;
-  background-color: #999;
+  background-color: #e9ecef;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  font-size: 14px;
-  color: #333;
   overflow: hidden;
+  cursor: pointer;
+  border: 2px dashed #ccc;
 }
 
 .photo-box img{
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: center;
 }
 
-.add-photo {
-  background-color: #555;
-  color: #fff;
+.upload-label {
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 /* Input groups */
 .input-group {
-  margin: 15px 0;
+  margin-left: 2%;
+  margin-right: 2%;
+
 }
 
 .input-group label {
-  display: block;
-  font-size: 16px;
-  margin-bottom: 5px;
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0.3%;
+  justify-content: flex-start;
 }
 
-input[type="text"], textarea {
+.choice{
+  margin-top: 1%;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-left: 2%;
+}
+
+
+input[type="text"], textarea, input[type="number"]{
+  display: flex;
   width: 100%;
   padding: 10px;
-  border: none;
+  border: 1px solid #ddd;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 14px;
+  justify-content: left;
 }
-
-textarea {
-  resize: none;
-  height: 80px;
+input[type="number"]{
+  max-width: fit-content;
 }
-
 /* Shipping options */
 .shipping-options {
   display: flex;
@@ -97,36 +157,48 @@ textarea {
 .option-button {
   padding: 10px 15px;
   border-radius: 20px;
-  border: 2px solid #444;
+  border: 2px solid #007bff;
   background-color: transparent;
-  color: #fff;
+  color: #007bff;
   cursor: pointer;
+  transition: 0.3s;
 }
 
 .option-button.selected {
-  background-color: #00cc66;
+  background-color: #007bff;
+  color: white;
+}
+
+.option-button:hover {
+  background-color: #0056b3;
+  color: white;
 }
 
 .cost-info {
-  font-size: 16px;
-  color: #ccc;
+  font-size: 14px;
+  color: #555;
 }
 
 /* Publish button */
 .publish-button {
-  background-color: #333;
-  color: #fff;
-  font-size: 18px;
-  padding: 15px;
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+  padding: 12px;
   text-align: center;
-  border-radius: 10px;
+  border-radius: 8px;
   border: none;
   width: 100%;
   cursor: pointer;
-  margin-top: 20px;
+  margin: 10%;
+  transition: 0.3s;
+}
+
+.publish-button:hover {
+  background-color: #218838;
 }
 
 .subtext {
-  font-size: 14px;
-  color: #aaa;
+  font-size: 12px;
+  color: #ddd;
 }
