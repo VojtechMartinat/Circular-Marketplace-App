@@ -89,9 +89,10 @@ async function publishReview(reviewData) {
     if (!reviewData) {
         throw new Error("Review data missing!");
     }
-
+    console.log(reviewData)
     try {
-        const response = await fetch(`${url}reviews`, {
+        console.log("TEST")
+        const response = await axios.post(`${url}reviews`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

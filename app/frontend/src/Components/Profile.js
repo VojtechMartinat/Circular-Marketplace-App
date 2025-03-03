@@ -244,7 +244,7 @@ const Profile = () => {
 
                                             {/* Show Review Button if status is "shipped" or "collected" */}
                                             {(order.orderStatus === "shipped" || order.orderStatus === "collected") && (
-                                                <button onClick={() => handleReviewClick(order.articleID)}>Write a Review</button>
+                                                <button onClick={() => handleReviewClick(orderDetails[order.orderID])}>Write a Review</button>
                                             )}
                                         </div>
                                     </div>
@@ -381,6 +381,7 @@ const Profile = () => {
                             </div>
                         </div>
                     )}
+
                     {showReviewModal && (
                         <div className="modal-overlay">
                             <div className="modal">
