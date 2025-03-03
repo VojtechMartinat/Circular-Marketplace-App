@@ -2,16 +2,23 @@
   font-family: Arial, sans-serif; /* Change to your preferred font */
 }
 
-.add-item {
-  background-color: #f8f9fa;
+.add-item-container {
+  background-color: #ffffff;
   color: #333;
   font-family: 'Poppins', sans-serif;
-  padding: 20px;
+  padding: 1.5%;
   border-radius: 10px;
   max-width: 400px;
   margin: auto;
+  margin-top: 1%;
+  margin-bottom: 1%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
+}
+
+.background{
+  background-image: linear-gradient(#48A9FE, #0BEEF9);
+  padding: 0.001%;
 }
 
 /* Header */
@@ -105,13 +112,15 @@ h1 {
 .input-group {
   margin-left: 2%;
   margin-right: 2%;
+
 }
 
 .input-group label {
-  display: block;
+  display: flex;
   font-size: 14px;
   font-weight: 600;
   margin: 0.3%;
+  justify-content: flex-start;
 }
 
 .choice{
@@ -124,11 +133,13 @@ h1 {
 
 
 input[type="text"], textarea, input[type="number"]{
+  display: flex;
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 14px;
+  justify-content: left;
 }
 input[type="number"]{
   max-width: fit-content;
