@@ -9,8 +9,12 @@ const {Order, Article, User} = require('../models/initialise')
  * @param res Response sent to the client containing data about all orders
  * */
 const getAllOrders = asyncErrorWrapper(async (req,res) =>{
-    const order = Order.findAll()
-    res.status(200).json({order})
+    try {
+        const orders = await Order.findAll();
+        res.status(200).json({ orders });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 })
 
 

@@ -435,7 +435,40 @@ const Profile = () => {
                 : dbUser ? (
                     <p>ERROR USERS NOT MATCHING</p>
                 ) : (
-                    <p>Loading</p>
+                    <div className="profile-box">
+                        <header className="header2"></header>
+                        <div className="dropdown-container">
+                            <div className="top-items">
+                                <div className="dropdown" onClick={() => toggleDropdown('wallet')}>
+                                    <h2 style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        textAlign: "left",
+                                        paddingLeft: 20,
+                                        gap: 20
+                                    }}>
+                                        <FaWallet size={30} style={{color: "black"}}/>
+                                    </h2>
+                                </div>
+                                <div className="dropdown" onClick={() => toggleDropdown('settings')}>
+                                    <FaGear size={30} style={{color: 'black'}}/>
+                                </div>
+                            </div>
+                            <div className="dropdown" onClick={() => toggleDropdown('favourited')}>
+                                <h2>Favourited Articles</h2></div>
+                            <div className="dropdown" onClick={() => toggleDropdown('bought')}>
+                                <h2>Articles Bought</h2></div>
+                            <div className="dropdown" onClick={() => toggleDropdown('sold')}>
+                                <h2>Articles Sold</h2>
+                            </div>
+                            <div className="dropdown" onClick={() => toggleDropdown('posted')}>
+                                <h2>Articles Posted</h2>
+                            </div>
+                        </div>
+
+                    </div>
+
+
                 )}
         </div>
     )
