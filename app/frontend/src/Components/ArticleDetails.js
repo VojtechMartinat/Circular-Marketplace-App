@@ -209,8 +209,8 @@ const ArticleDetails = () => {
                 <button className="back-button" onClick={() => navigate('/')}>
                 ← 
                 </button>
-                
-                    <KebabMenu className='kebab'></KebabMenu>
+
+                <KebabMenu/>
             </div>
 
             {/* Carousel for images */}
@@ -223,7 +223,7 @@ const ArticleDetails = () => {
                 CustomRightArrow={<CustomRightArrow/>}>
                     {photos.map((photo, index) => (
                         <div key={index} className="carousel-image">
-                            <img src={photo} alt={`Article ${index}`} />
+                            <img src={photo} alt={`Article ${index}`}/>
                         </div>
                     ))}
                 </ReactMultiCarousel>
@@ -249,6 +249,8 @@ const ArticleDetails = () => {
                     </p>
                 </div>
                 <div className="seller-location">📍{articleUser?.location}</div>
+
+
             </div>
 
             <p className='textchoose'>Choose one or both:</p>
@@ -256,32 +258,36 @@ const ArticleDetails = () => {
             {/* Shipping and Collection */}
             <div className="purchase-options">
                 {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
-                        <button
-                            type="button"
-                            className={`option-button ${isShipping ? 'selected' : ''}`}
-                            onClick={() => {
-                                setIsShipping(!isShipping);
-                                if (!isShipping) setIsCollection(false);
-                            }}>
-                            <p>Shipping</p>
-                        </button>
+                    <button
+                        type="button"
+                        className={`option-button ${isShipping ? 'selected' : ''}`}
+                        onClick={() => {
+                            setIsShipping(!isShipping);
+                            if (!isShipping) setIsCollection(false);
+                        }}>
+                        <p>Shipping</p>
+                    </button>
                 ) : null}
                 {article.shippingType === 'collection' || article.shippingType === 'both' ? (
-                        <button
-                            type="button"
-                            className={`option-button ${isCollection ? 'selected' : ''}`}
-                            onClick={() => {
-                                setIsCollection(!isCollection);
-                                if (!isCollection) setIsShipping(false);
-                            }}>
-                            <p>Collection</p>
-                        </button>
+                    <button
+                        type="button"
+                        className={`option-button ${isCollection ? 'selected' : ''}`}
+                        onClick={() => {
+                            setIsCollection(!isCollection);
+                            if (!isCollection) setIsShipping(false);
+                        }}>
+                        <p>Collection</p>
+                    </button>
                 ) : null}
             </div>
 
             {/* Purchase Button */}
             <div className="purchase-button">
                 <button onClick={handleBuy}>Buy for {isShipping ? article.price + 2 : article.price}</button>
+
+            </div>
+            <div className="chat-button">
+                <button onClick={() => navigate(`/chat/${article.userID}`)}>Chat with Seller</button>
             </div>
         </div>
     );
