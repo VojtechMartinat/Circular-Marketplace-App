@@ -61,11 +61,12 @@ const Profile = () => {
         if (dbUser){
             getUserOrders(dbUser.userID).then(response => {
                 if (response && response.orders) {
+
                     setOrders(response.orders);
                 } else {
                     console.log("error");
                 }
-            }
+                }
             );
         }
     }, [dbUser]);
@@ -163,9 +164,13 @@ const Profile = () => {
             const fetchUserIDs = async () => {
                 const userIDMap = {};
                 for (const order of orders) {
-                    const article = await getArticleByOrderId(order.orderID);
-                    if (article) {
-                        userIDMap[order.orderID] = article.article;
+                    try {
+                        const article = await getArticleByOrderId(order.orderID);
+                        if (article) {
+                            userIDMap[order.orderID] = article.article;
+                        }
+                    } catch (error) {
+                        console.error(`Failed to fetch article for order ${order.orderID}:`, error);
                     }
                 }
                 setBoughtArticles(userIDMap);
@@ -173,6 +178,7 @@ const Profile = () => {
             fetchUserIDs();
         }
     }, [orders]);
+
 
 
     const handleDeleteArticle = async (articleID) => {
@@ -313,7 +319,6 @@ const Profile = () => {
 
                                         </div>
                                         <div className="icon">
-                                            {console.log(boughtArticles[order.orderID])}
                                             <Link
                                                 to={`/chat/${boughtArticles[order.orderID].userID}`}>
                                                 <FaMessage size={30} style={{color: 'black'}}/>

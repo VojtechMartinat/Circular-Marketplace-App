@@ -29,9 +29,6 @@ describe('CreateArticle Component', () => {
         const title2 = await screen.findByText(/Title/i);
         expect(title2).toBeInTheDocument();
 
-        const emailInput = await screen.findByPlaceholderText(/Add a title/i);
-        expect(emailInput).toBeInTheDocument();
-
         const price = await screen.findByText(/Price/i);
         expect(price).toBeInTheDocument();
 

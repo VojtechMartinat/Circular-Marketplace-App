@@ -6,8 +6,6 @@ import { getArticle, getArticlePhotos } from '../services/articleService';
 import { createOrder } from '../services/orderService';
 import { getUser } from '../services/userService';
 import './article.css';
-import {createTaskLog} from "../services/logService";
-import ColorThief from 'colorthief';
 import {FaWallet} from "react-icons/fa";
 import {FaGear} from "react-icons/fa6";
 import {auth} from "../services/firebaseService";
