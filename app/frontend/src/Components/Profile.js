@@ -21,7 +21,6 @@ const Profile = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [topupAmount, setTopupAmount] = useState(0);
     const [boughtArticles, setBoughtArticles] = useState({});
-
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             if (currentUser) {
@@ -164,13 +163,9 @@ const Profile = () => {
             const fetchUserIDs = async () => {
                 const userIDMap = {};
                 for (const order of orders) {
-                    try {
-                        const article = await getArticleByOrderId(order.orderID);
-                        if (article) {
-                            userIDMap[order.orderID] = article.article;
-                        }
-                    } catch (error) {
-                        console.error(`Failed to fetch article for order ${order.orderID}:`, error);
+                    const article = await getArticleByOrderId(order.orderID);
+                    if (article) {
+                        userIDMap[order.orderID] = article.article;
                     }
                 }
                 setBoughtArticles(userIDMap);
@@ -178,6 +173,7 @@ const Profile = () => {
             fetchUserIDs();
         }
     }, [orders]);
+
 
 
 
@@ -383,7 +379,7 @@ const Profile = () => {
                                                     )}
                                                 <div className="icon">
                                                     <Link
-                                                        to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}>
+                                                        to={`/chat/${orderDetails[article.orderID].order.userID}`}>
                                                     <FaMessage size={30} style={{color: 'black'}}/>
                                                     </Link>
                                                 </div>

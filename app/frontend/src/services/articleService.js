@@ -122,7 +122,7 @@ async function getArticleByOrderId(orderID) {
         method: 'GET',
     };
     try {
-        const response = await fetch(`${url}orders/${orderID}/article`, requestOptions);
+        const response = await fetch(`${url}orders/${orderID}/articles`, requestOptions);
         if (!response.ok) {
             console.error('Error:', response);
             throw new Error(`HTTP error! Status: ${response.status}`);
