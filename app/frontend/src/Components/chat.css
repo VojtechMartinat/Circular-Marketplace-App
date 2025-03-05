@@ -13,8 +13,17 @@
     background: #007bff;
     color: white;
     text-align: center;
-    padding: 12px;
+    padding: 5%;
     font-size: 1.2em;
+    font-weight: bold;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 3%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .message-container {

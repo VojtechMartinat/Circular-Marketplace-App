@@ -141,7 +141,7 @@ export const ChatWindow = () => {
 
     return (
         <div className="chat-window">
-            <div className="chat-header">Chat with {chatUser?.username || 'User'}</div>
+            <div className="chat-header">{chatUser?.username || 'User'}</div>
             <div className="chat-messages">
                 {messages.map((msg, index) => (
                     <div key={index} className={`message ${msg.senderID === user.uid ? 'sent' : 'received'}`}>
