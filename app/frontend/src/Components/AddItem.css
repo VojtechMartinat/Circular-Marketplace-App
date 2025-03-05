@@ -38,7 +38,6 @@
   border: none;
   font-size: 16px;
   cursor: pointer;
-  padding: 5px 10px;
   color: #333;
 }
 
@@ -54,7 +53,7 @@
   align-items: center;
   justify-content: flex-end;
   width: auto;
-  margin-top: 1%;
+  margin-top: 5%
 }
 
 .ai-suggest-button:hover {

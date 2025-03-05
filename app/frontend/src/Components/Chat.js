@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {createMessage, getChats, getMessages} from '../services/messageService';
 import { getUser } from '../services/userService';
 import {auth} from "../services/firebaseService";
 import { useParams } from 'react-router-dom';
-// ChatsPage Component for displaying all user chats
+import './chat.css'
 export const ChatsPage = () => {
     const [chats, setChats] = useState([]);
     const [user, setUser] = useState(null);
@@ -83,25 +83,18 @@ export const ChatWindow = () => {
     const [chatUser, setChatUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
+    const messagesEndRef = useRef(null);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             if (currentUser) {
                 setUser(currentUser);
-                setIsLoggedIn(true);
             } else {
-                setUser(null);
-                setIsLoggedIn(false);
                 navigate('/login');
             }
         });
-
         return () => unsubscribe();
-    }, [navigate]);
-
-    if (!isLoggedIn) {
-        navigate('/login');
-    }
+    }, []);
 
     useEffect(() => {
         if (receiverID) {
@@ -127,6 +120,10 @@ export const ChatWindow = () => {
         fetchChat();
     }, [receiverID, user]);
 
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
     const handleSend = async () => {
         if (!newMessage.trim()) return;
         try {
@@ -135,47 +132,32 @@ export const ChatWindow = () => {
                 receiverID: receiverID,
                 message: newMessage,
             });
-            setMessages((prevMessages) => [...(prevMessages || []), { senderID: user.uid, message: newMessage, updatedAt: new Date() }]);
+            setMessages([...messages, { senderID: user.uid, message: newMessage, updatedAt: new Date() }]);
             setNewMessage('');
         } catch (error) {
             console.error('Error sending message:', error);
         }
     };
+
     return (
         <div className="chat-window">
-            <div className="chat-container">
-                <h2 className="chat-header">Chat with {chatUser?.username || 'User'}</h2>
-                <div className="message-container">
-                    {messages && messages.length > 0 ? (
-                        messages.map((msg, index) => (
-                            <div
-                                key={index}
-                                className={`message ${msg.senderID === user.uid ? 'sent' : 'received'}`}
-                            >
-                                <div className="message-bubble">
-                                    <p className="message-text">{(msg.senderID === user.uid ? 'sent: ' : 'received: ') + msg.message}</p>
-                                    <span className="message-time">
-                                        {new Date(msg.updatedAt).toLocaleString()}
-                                    </span>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="no-messages">No messages yet.</p>
-                    )}
-                </div>
+            <div className="chat-header">Chat with {chatUser?.username || 'User'}</div>
+            <div className="chat-messages">
+                {messages.map((msg, index) => (
+                    <div key={index} className={`message ${msg.senderID === user.uid ? 'sent' : 'received'}`}>
+                        <div className="message-bubble">{msg.message}</div>
+                    </div>
+                ))}
+                <div ref={messagesEndRef} />
             </div>
-            <div className="message-input-container">
+            <div className="chat-input">
                 <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Type a message..."
-                    className="message-input"
                 />
-                <button onClick={handleSend} className="send-button">
-                    Send
-                </button>
+                <button onClick={handleSend}>Send</button>
             </div>
         </div>
     );
