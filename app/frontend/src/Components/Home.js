@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 import { getArticlePhoto, getUnsoldArticles } from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
-import { useAuth } from '../Contexts/AuthContext.js';
 
 
 const Home = () => {
@@ -108,15 +107,5 @@ function ProductCard({ article, onClick }) {
     );
 }
 
-function BottomNav() {
-    const navigate = useNavigate();
-    return (
-        <div className="bottom-nav">
-            <button className="nav-button" onClick={() => navigate('/')}>🏠</button>
-            <button className="nav-button" onClick={() => navigate('/CreateArticlePage')}>➕</button>
-            <button className="nav-button">👤</button>
-        </div>
-    );
-}
 
 export default Home;

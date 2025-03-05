@@ -20,8 +20,6 @@ const ArticleDetails = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
-    const [startTime, setStartTime] = useState(null);
-    const [backgroundGradient, setBackgroundGradient] = useState('linear-gradient(180deg, #f8f8f8, #e0e0e0)');
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
