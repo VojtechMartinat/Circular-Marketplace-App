@@ -139,7 +139,6 @@ h1 {
   justify-content: flex-start;
 } 
 
-/* Photo section */
 .photo-section {
   display: flex;
   gap: 10px;
@@ -179,7 +178,6 @@ h1 {
   cursor: pointer;
 }
 
-/* Input groups */
 .input-group {
     display: flex;
     flex-direction: column;
