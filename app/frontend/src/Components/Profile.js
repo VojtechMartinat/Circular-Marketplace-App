@@ -316,7 +316,7 @@ const Profile = () => {
                                         </div>
                                         <div className="icon">
                                             <Link
-                                                to={`/chat/${boughtArticles[order.orderID].userID}`}>
+                                                to={`/chat/${boughtArticles[order?.orderID]?.userID}`}>
                                                 <FaMessage size={30} style={{color: 'black'}}/>
                                             </Link>
                                         </div>
