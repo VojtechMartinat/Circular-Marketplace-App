@@ -139,35 +139,31 @@ async function getArticleByOrderId(orderID) {
         throw error;
     }
 }
+
 async function publishReview(reviewData) {
     if (!reviewData) {
         throw new Error("Review data missing!");
     }
-    console.log(reviewData)
+    console.log(reviewData);
     try {
-        console.log("TEST")
-        const response = await axios.post(`${url}reviews`, {
-            method: 'POST',
+        console.log("TEST");
+        const response = await axios.post(`${url}reviews`, reviewData, {
             headers: {
                 'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(reviewData),
+            }
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        console.log("Response:", response);
 
-        const data = await response.json();
-
-        if (!data) {
+        if (!response.data) {
             throw new Error("No review data returned!");
         }
 
-        return data;
+        return response.data;
     } catch (error) {
         console.error("Error submitting review:", error);
         throw error;
     }
 }
+
 export { createArticle, getArticles, getArticle, getArticlePhotos,getArticlePhoto, deleteArticle, getUnsoldArticles, publishReview, getArticleByOrderId };

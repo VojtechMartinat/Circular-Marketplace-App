@@ -24,6 +24,9 @@ const Profile = () => {
     const [selectedArticleID, setSelectedArticleID] = useState(null);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
+    const [selectedOrderID, setSelectedOrderID] = useState(null);
+
+
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
@@ -147,26 +150,53 @@ const Profile = () => {
         }
     };
 
-    const handleReviewClick = (articleID) => {
+    const handleReviewClick = (articleID, orderID) => {
         setSelectedArticleID(articleID);
+        setSelectedOrderID(orderID);
         setShowReviewModal(true);
     };
 
-    async function handleSubmitReview(articleID) {
+    async function handleSubmitReview() {
+        if (!selectedArticleID || !selectedOrderID) {
+            console.error("Missing article or order information.");
+            alert("Cannot submit review without correct information.");
+            return;
+        }
+
+        const userID = boughtArticles[selectedOrderID]?.userID; // Fetch userID using orderID
+        const reviewer = user.userID;
+        if (!userID) {
+            console.error("User ID not found for order:", selectedOrderID);
+            alert("Cannot submit review without user information.");
+            return;
+        }
+
         const reviewData = {
-            articleID,
+            articleID: selectedArticleID,
+            userID,  // Add userID to the request
             rating,
             comment,
+            reviewer,
         };
 
         try {
-            const result = await publishReview(reviewData);
-            console.log("Review submitted successfully:", result);
+            console.log("Submitting Review:", reviewData);
+            await publishReview(reviewData);
+            alert("Review submitted successfully!");
             setRating(0);
             setComment("");
             setShowReviewModal(false);
         } catch (error) {
-            console.error("Failed to submit review:", error);
+            console.error("Failed to submit review:", error.response?.data || error.message);
+            alert("Failed to submit review.");
+            console.log("Selected Article ID:", selectedArticleID);
+            console.log("Selected Order ID:", selectedOrderID);
+            console.log("Rating:", rating);
+            console.log("Comment:", comment);
+            console.log("Logged-in User ID (Reviewer):", reviewer);
+            console.log("Bought Articles:", boughtArticles);
+            console.log("UserID from Bought Article:", boughtArticles[selectedOrderID]?.userID);
+
         }
     }
 
@@ -266,11 +296,10 @@ const Profile = () => {
 
                                             {/* Show Review Button if status is "shipped" or "collected" */}
                                             {(order.orderStatus === "shipped" || order.orderStatus === "collected") && (
-                                                <button onClick={() => handleReviewClick(orderDetails[order.orderID])}>Write a Review</button>
+                                                <button onClick={() => handleReviewClick(boughtArticles[order.orderID].articleID, order.orderID)}>Write a Review</button>
                                             )}
                                         </div>
                                         <div className="icon">
-                                            {console.log(boughtArticles[order.orderID])}
                                             <Link
                                                 to={`/chat/${boughtArticles[order.orderID].userID}`}>
                                                 <FaMessage size={30} style={{color: 'black'}}/>
@@ -444,7 +473,7 @@ const Profile = () => {
                                 />
 
                                 {/* Submit & Close Buttons */}
-                                <button onClick={() => handleSubmitReview(selectedArticleID)}>Submit Review</button>
+                                <button onClick={() => handleSubmitReview()}>Submit Review</button>
                                 <button onClick={() => setShowReviewModal(false)}>Cancel</button>
                             </div>
                         </div>
