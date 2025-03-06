@@ -355,31 +355,31 @@ const Profile = () => {
                                                 </Link>
                                                 <p><strong>Price:</strong> ${article.price}</p>
                                                 <p>
-                                                    <strong>Status:</strong> {orderDetails[article.orderID]?.order.orderStatus}
+                                                    <strong>Status:</strong> {orderDetails[article.orderID]?.order?.orderStatus}
                                                 </p>
                                                 {orderDetails[article.orderID]?.order && (
                                                     <p><strong>Collection
-                                                        Method:</strong> {orderDetails[article.orderID]?.order.collectionMethod}
+                                                        Method:</strong> {orderDetails[article.orderID]?.order?.collectionMethod}
                                                     </p>
                                                 )}
 
-                                                {orderDetails[article.orderID] && orderDetails[article.orderID].order &&
-                                                    orderDetails[article.orderID].order.orderStatus !== 'collected' &&
-                                                    orderDetails[article.orderID].order.orderStatus !== 'shipped' && (
+                                                {orderDetails[article.orderID] && orderDetails[article.orderID]?.order &&
+                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'collected' &&
+                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' && (
                                                         <button
                                                             onClick={() =>
-                                                                handleChangeOrderStatus(article.orderID, orderDetails[article.orderID].order.collectionMethod)
+                                                                handleChangeOrderStatus(article.orderID, orderDetails[article.orderID]?.order?.collectionMethod)
                                                             }
                                                         >
                                                             Change status to{' '}
-                                                            {orderDetails[article.orderID].order.collectionMethod === 'delivery'
+                                                            {orderDetails[article.orderID]?.order?.collectionMethod === 'delivery'
                                                                 ? 'shipped'
                                                                 : 'collected'}
                                                         </button>
                                                     )}
                                                 <div className="icon">
                                                     <Link
-                                                        to={`/chat/${orderDetails[article.orderID].order.userID}`}>
+                                                        to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}>
                                                     <FaMessage size={30} style={{color: 'black'}}/>
                                                     </Link>
                                                 </div>
