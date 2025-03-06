@@ -17,13 +17,12 @@
 }
 
 .background {
-  background-image: linear-gradient(#48A9FE, #0BEEF9);
+  background-color: beige;
   min-height: 100vh; 
   width: 100%;
   position: absolute;
 }
 
-/* Header */
 .header {
   display: flex;
   flex-direction: row;
@@ -70,7 +69,6 @@ h1 {
   justify-content: flex-start;
 } 
 
-/* Photo section */
 .photo-section {
   display: flex;
   gap: 10px;
@@ -109,7 +107,6 @@ h1 {
   cursor: pointer;
 }
 
-/* Input groups */
 .input-group {
   margin-left: 2%;
   margin-right: 2%;
@@ -145,7 +142,6 @@ input[type="text"], textarea, input[type="number"]{
 input[type="number"]{
   max-width: fit-content;
 }
-/* Shipping options */
 .shipping-options {
   display: flex;
   align-items: center;
@@ -178,7 +174,6 @@ input[type="number"]{
   color: #555;
 }
 
-/* Publish button */
 .publish-button {
   background-color: #28a745;
   color: white;
