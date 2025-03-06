@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
 import {getUser, getUserArticles, getUserOrders, addMoney} from "../services/userService";
 import {changeOrderStatus, getOrder, getOrderArticlePhotos} from "../services/orderService"
-import {deleteArticle, getArticleByOrderId} from "../services/articleService";
+import {deleteArticle, getArticle, getArticleByOrderId} from "../services/articleService";
 import {getArticlePhotos} from '../services/articleService';
 import { FaGear } from "react-icons/fa6";
 import './Profile.css';
@@ -18,7 +18,7 @@ const Profile = () => {
     const [orderDetails, setOrderDetails] = useState({}); // State to store order details for each user article
     const [user, setUser] = useState(null);
     const [dbUser, setDbUser] = useState(null);
-    const [setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [topupAmount, setTopupAmount] = useState(0);
     const [boughtArticles, setBoughtArticles] = useState({});
     useEffect(() => {

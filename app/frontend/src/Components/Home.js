@@ -107,5 +107,15 @@ function ProductCard({ article, onClick }) {
     );
 }
 
+function BottomNav() {
+    const navigate = useNavigate();
+    return (
+        <div className="bottom-nav">
+            <button className="nav-button" onClick={() => navigate('/')}>🏠</button>
+            <button className="nav-button" onClick={() => navigate('/CreateArticlePage')}>➕</button>
+            <button className="nav-button">👤</button>
+        </div>
+    );
+}
 
 export default Home;
