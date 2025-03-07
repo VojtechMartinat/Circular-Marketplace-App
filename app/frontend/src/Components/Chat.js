@@ -10,7 +10,7 @@ import './chat.css'
 export const ChatsPage = () => {
     const [chats, setChats] = useState([]);
     const [userNames, setUserNames] = useState({});
-    const { receiverID } = useParams();
+    const {receiverID} = useParams();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [user, setUser] = useState(null);
@@ -18,6 +18,7 @@ export const ChatsPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
     const messagesEndRef = useRef(null);
+    const [selectedChat, setSelectedChat] = useState(null)
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -37,19 +38,19 @@ export const ChatsPage = () => {
     if (!isLoggedIn) {
         navigate('/login');
     }
-    useEffect(() => {
-        const fetchChats = async () => {
-            if (user) {
-                try {
-                    const uniqueChats = await getChats(user.uid);
-                    setChats(uniqueChats.interactedUserIDs);
-                } catch (error) {
-                    console.error('Error loading chats:', error);
-                }
-            }
-        };
-        fetchChats();
-    }, [user]);
+    // useEffect(() => {
+    //     const fetchChats = async () => {
+    //         if (user) {
+    //             try {
+    //                 const uniqueChats = await getChats(user.uid);
+    //                 setChats(uniqueChats.interactedUserIDs);
+    //             } catch (error) {
+    //                 console.error('Error loading chats:', error);
+    //             }
+    //         }
+    //     };
+    //     fetchChats();
+    // }, [user]);
 
     useEffect(() => {
         if (chats && chats.length > 0) {
@@ -99,6 +100,20 @@ export const ChatsPage = () => {
         fetchChat();
     }, [receiverID, user]);
 
+    const openChat = async (chatID) => {
+        setSelectedChat(chatID);
+        try{
+            const chatMessages = await getMessages(user.uid, chatID);
+            setMessages(chatMessages.messages);
+            const response = await getUser(chatID);
+            if (response){
+                setChatUser(response.user);
+            }
+        } catch(error){
+            console.error('Error loading chat:', error);
+        }
+    };
+
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
@@ -118,16 +133,16 @@ export const ChatsPage = () => {
         }
     };
 
+
+
     return (
         <div className='chat-window'>
-            <div className="p-4">
-                <h1 className="text-xl font-bold mb-4">Chats</h1>
+            <div className="chat-sidebar">
+                <h1 className="sidebar-header">Chats</h1>
                 {Array.isArray(chats) && chats.length > 0 ? (
-                    chats.map((chat, index) => (
-                        <div key={chat} className="mb-2">
-                            <Link to={`/chat/${chat}`} className="block p-2 border rounded shadow hover:bg-gray-100">
-                                Chat with {userNames[chat] || 'User'}
-                            </Link>
+                    chats.map((chat) => (
+                        <div key={chat} onClick={() => openChat(chat)} className='chat-item'>
+                            userNames[chat] || 'User'
                         </div>
                     ))
                 ) : (
@@ -135,6 +150,7 @@ export const ChatsPage = () => {
                 )}
             </div>
             <div className="chat">
+                
                 <div className="chat-header">{chatUser?.username || 'User'}</div>
                 <div className="chat-messages">
                     {messages.map((msg, index) => (
