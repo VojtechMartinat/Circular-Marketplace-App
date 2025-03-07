@@ -115,8 +115,6 @@ export const ChatsPage = () => {
         }
     };
 
-
-
     return (
         <div className="chat-container">
             <div className="chat-sidebar">
