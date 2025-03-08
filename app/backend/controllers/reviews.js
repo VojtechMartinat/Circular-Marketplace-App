@@ -41,18 +41,21 @@ const createReview = asyncErrorWrapper(async (req,res) =>{
  * @param req Request from the client (req.params should contain a valid reviewID)
  * @param res Response sent to the client containing review data
  * */
-const getReview = asyncErrorWrapper(async (req,res,next) =>{
-    const {id:reviewID} = req.params
+const getReview = asyncErrorWrapper(async (req, res, next) => {
+    const { id: reviewID } = req.params;
+
     const review = await Review.findOne({
-        where:{
+        where: {
             reviewID: reviewID
         }
-    })
-    if (!review){
-        next(new APIError(`No review with id : ${reviewID}`),404)
+    });
+
+    if (!review) {
+        return next(new APIError(`No review with id : ${reviewID}`, 404));
     }
-    res.status(200).json({review})
-})
+
+    res.status(200).json({ review });
+});
 
 
 /**
@@ -60,19 +63,25 @@ const getReview = asyncErrorWrapper(async (req,res,next) =>{
  * @param req Request from the client (req.params should contain a valid reviewID and req.body should contain new review data)
  * @param res Response sent to the client containing review data
  * */
-const updateReview = asyncErrorWrapper(async (req,res,next) =>{
-    const {id:reviewID} = req.params
-    const review = await Review.update(req.body,{
+const updateReview = asyncErrorWrapper(async (req, res, next) => {
+    const { id: reviewID } = req.params;
+
+    const [updatedRows] = await Review.update(req.body, {
         where: {
             reviewID: reviewID
         }
-    })
-    if (!review){
-        next(new APIError(`No review with id : ${reviewID}`),404)
-    }
-    res.status(200).json({review})
-})
+    });
 
+    if (updatedRows === 0) {
+        return next(new APIError(`No review with id : ${reviewID}`, 404));
+    }
+
+    const updatedReview = await Review.findOne({
+        where: { reviewID: reviewID }
+    });
+
+    res.status(200).json({ review: updatedReview });
+});
 
 /**
  * * Delete a review from a database
@@ -80,18 +89,33 @@ const updateReview = asyncErrorWrapper(async (req,res,next) =>{
  * @param req Request from the client (req.body should contain a valid reviewID)
  * @param res Response sent to the client containing review data
  * */
-const deleteReview = asyncErrorWrapper(async (req,res,next) =>{
-    const {id:reviewID} = req.params
-    const review = await Review.destroy({
-        where:{
-            reviewID:reviewID
-        }
+// const deleteReview = asyncErrorWrapper(async (req,res,next) =>{
+//     const {id:reviewID} = req.params
+//     const review = await Review.destroy({
+//         where:{
+//             reviewID:reviewID
+//         }
+//     });
+//     if (review === 0){
+//         next(new APIError(`No review with id : ${reviewID}`),404)
+//     }
+//     res.status(204).json({review})
+// })
+
+const deleteReview = asyncErrorWrapper(async (req, res, next) => {
+    const { id: reviewID } = req.params;
+
+    const deletedCount = await Review.destroy({
+        where: { reviewID: reviewID }  // Ensure this matches the correct field in your database
     });
-    if (!review){
-        next(new APIError(`No review with id : ${reviewID}`),404)
+
+    if (deletedCount === 0) {
+        return next(new APIError(`No review with id: ${reviewID}`, 404));
     }
-    res.status(200).json({review})
-})
+
+    res.status(204).send();  // Successful deletion
+});
+
 
 module.exports = {
     getAllReviews,createReview,getReview,updateReview,deleteReview
