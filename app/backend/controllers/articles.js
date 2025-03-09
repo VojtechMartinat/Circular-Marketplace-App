@@ -123,6 +123,7 @@ const articlePhoto = asyncErrorWrapper(async (req,res,next) =>{
     res.status(200).json({photo});
 })
 
+
 module.exports = {
     getAllArticles,createArticle,getArticle,updateArticle,deleteArticle, articlePhotos, getUnsoldArticles, articlePhoto
 }

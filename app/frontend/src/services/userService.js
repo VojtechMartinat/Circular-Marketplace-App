@@ -155,6 +155,24 @@ async function addMoney(userID,amount){
         throw error;
     }
 }
+async function getUserRating(userID){
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }
 
+    try {
+        const response = await fetch(`${url}users/${userID}/rating`, requestOptions);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
 
-export {createUser,getUserArticles,getUserOrders,loginUser,getUser, addMoney}
+export {createUser,getUserArticles,getUserOrders,loginUser,getUser,getUserRating, addMoney}

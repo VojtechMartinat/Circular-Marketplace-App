@@ -7,6 +7,9 @@ import {getArticlePhotos} from '../services/articleService';
 import { FaGear } from "react-icons/fa6";
 import './Profile.css';
 import {FaWallet} from "react-icons/fa";
+import { publishReview } from "../services/articleService";
+
+
 import { FaMessage } from "react-icons/fa6";
 
 const Profile = () => {
@@ -17,6 +20,15 @@ const Profile = () => {
     const [user, setUser] = useState(null);
     const [topupAmount, setTopupAmount] = useState(0);
     const [boughtArticles, setBoughtArticles] = useState({});
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [selectedArticleID, setSelectedArticleID] = useState(null);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+    const [selectedOrderID, setSelectedOrderID] = useState(null);
+
+
+    // const [isModalOpen, setIsModalOpen] = useState(false);
+
     useEffect(() => {
         getUser(id).then(response => {
             if (response){
@@ -138,6 +150,57 @@ const Profile = () => {
         }
     };
 
+    const handleReviewClick = (articleID, orderID) => {
+        setSelectedArticleID(articleID);
+        setSelectedOrderID(orderID);
+        setShowReviewModal(true);
+    };
+
+    async function handleSubmitReview() {
+        if (!selectedArticleID || !selectedOrderID) {
+            console.error("Missing article or order information.");
+            alert("Cannot submit review without correct information.");
+            return;
+        }
+
+        const userID = boughtArticles[selectedOrderID]?.userID; // Fetch userID using orderID
+        const reviewer = user.userID;
+        if (!userID) {
+            console.error("User ID not found for order:", selectedOrderID);
+            alert("Cannot submit review without user information.");
+            return;
+        }
+
+        const reviewData = {
+            articleID: selectedArticleID,
+            userID,  // Add userID to the request
+            rating,
+            comment,
+            reviewer,
+        };
+
+        try {
+            console.log("Submitting Review:", reviewData);
+            await publishReview(reviewData);
+            alert("Review submitted successfully!");
+            setRating(0);
+            setComment("");
+            setShowReviewModal(false);
+        } catch (error) {
+            console.error("Failed to submit review:", error.response?.data || error.message);
+            alert("Failed to submit review.");
+            console.log("Selected Article ID:", selectedArticleID);
+            console.log("Selected Order ID:", selectedOrderID);
+            console.log("Rating:", rating);
+            console.log("Comment:", comment);
+            console.log("Logged-in User ID (Reviewer):", reviewer);
+            console.log("Bought Articles:", boughtArticles);
+            console.log("UserID from Bought Article:", boughtArticles[selectedOrderID]?.userID);
+
+        }
+    }
+
+
     const [dropdowns, setDropdowns] = useState({
         bought: false,
         sold: false,
@@ -231,16 +294,18 @@ const Profile = () => {
                                             <p><strong>Shipping Method:</strong> {order.collectionMethod}</p>
                                             <p><strong>Status:</strong> {order.orderStatus}</p>
 
+                                            {/* Show Review Button if status is "shipped" or "collected" */}
+                                            {(order.orderStatus === "shipped" || order.orderStatus === "collected") && (
+                                                <button onClick={() => handleReviewClick(boughtArticles[order.orderID].articleID, order.orderID)}>Write a Review</button>
+                                            )}
                                         </div>
                                         <div className="icon">
-                                            {console.log(boughtArticles[order.orderID])}
                                             <Link
                                                 to={`/chat/${boughtArticles[order.orderID].userID}`}>
                                                 <FaMessage size={30} style={{color: 'black'}}/>
                                             </Link>
                                         </div>
                                     </div>
-
                                 ))}
                             </div>
                         ) : (
@@ -281,7 +346,6 @@ const Profile = () => {
                                                         Method:</strong> {orderDetails[article.orderID]?.order.collectionMethod}
                                                     </p>
                                                 )}
-
                                                 {orderDetails[article.orderID] && orderDetails[article.orderID].order &&
                                                     orderDetails[article.orderID].order.orderStatus !== 'collected' &&
                                                     orderDetails[article.orderID].order.orderStatus !== 'shipped' && (
@@ -381,6 +445,40 @@ const Profile = () => {
                             </div>
                         </div>
                     )}
+
+                    {showReviewModal && (
+                        <div className="modal-overlay">
+                            <div className="modal">
+                                <h2>Write a Review</h2>
+                                <p>Rate this product:</p>
+
+                                {/* Rating Input */}
+                                <div className="rating-stars">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <span
+                                            key={star}
+                                            onClick={() => setRating(star)}
+                                            style={{ cursor: "pointer", fontSize: "24px", color: star <= rating ? "gold" : "gray" }}
+                                        >
+                                            ★
+                                        </span>
+                                    ))}
+                                </div>
+
+                                {/* Comment Input */}
+                                <textarea
+                                    placeholder="Write your review here..."
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                />
+
+                                {/* Submit & Close Buttons */}
+                                <button onClick={() => handleSubmitReview()}>Submit Review</button>
+                                <button onClick={() => setShowReviewModal(false)}>Cancel</button>
+                            </div>
+                        </div>
+                    )}
+
                 </div>
 
 
