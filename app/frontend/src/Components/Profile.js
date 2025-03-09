@@ -428,9 +428,9 @@ const Profile = () => {
                                                     </p>
                                                 )}
 
-                                            {orderDetails[article.orderID] && orderDetails[article.orderID].order &&
-                                                    orderDetails[article.orderID].order.orderStatus !== 'collected' &&
-                                                    orderDetails[article.orderID].order.orderStatus !== 'shipped' && (
+                                            {orderDetails[article.orderID] && orderDetails[article.orderID]?.order &&
+                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'collected' &&
+                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' && (
                                                         <button
                                                             onClick={() =>
                                                                 handleChangeOrderStatus(article.orderID, orderDetails[article.orderID]?.order?.collectionMethod)
