@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 import { getArticlePhoto, getUnsoldArticles } from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
-import { useAuth } from '../Contexts/AuthContext.js';
 
 
 const Home = () => {
@@ -15,7 +14,6 @@ const Home = () => {
     useEffect(() => {
         getUnsoldArticles()
             .then(async response => {
-                console.log('Fetched articles:', response);
                 if (response && response.article) {
                     const articlesWithPhotos = await Promise.all(response.article.map(async (article) => {
                         const photosResponse = await getArticlePhoto(article.articleID);

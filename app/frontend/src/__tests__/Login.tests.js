@@ -22,11 +22,13 @@ describe('CreateArticle Component', () => {
             </MemoryRouter>
         );
 
-        const title = await screen.findByText(/Username:/i);
-        expect(title).toBeInTheDocument();
+        const loginHeaders = await screen.findAllByText(/login/i);
+        expect(loginHeaders[0]).toBeInTheDocument();
 
-        const title2 = await screen.findByText(/Password:/i);
-        expect(title2).toBeInTheDocument();
+
+        const emailInput = await screen.findByPlaceholderText(/Email/i);
+        expect(emailInput).toBeInTheDocument();
+
 
         const Loginbutton = await screen.findByRole('button', { name: /Login/i });
         expect(Loginbutton).toBeInTheDocument();
