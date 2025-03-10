@@ -360,6 +360,12 @@ const Profile = () => {
                                                                 : 'collected'}
                                                         </button>
                                                     )}
+                                                {(orderDetails[article.orderID]?.order?.orderStatus === 'shipped' ||
+                                                    orderDetails[article.orderID]?.order?.orderStatus === 'collected') && (
+                                                    <button onClick={() => handleReviewClick(article.articleID, article.orderID)}>
+                                                        Write a Review
+                                                    </button>
+                                                )}
                                                 <div className="icon">
                                                     <Link
                                                         to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}>
