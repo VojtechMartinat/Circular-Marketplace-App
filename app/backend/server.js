@@ -47,3 +47,10 @@ app.use(errorHandler);
 
 // AWS Lambda compatibility
 module.exports.handler = serverless(app);
+
+if (require.main === module) {
+    const PORT = process.env.PORT || 8080;
+    app.listen(PORT, () => {
+        console.log(`Server is running locally on http://localhost:${PORT}`);
+    });
+}
