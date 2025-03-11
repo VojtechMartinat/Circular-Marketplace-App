@@ -9,6 +9,7 @@ const PaymentCardModel = require('./PaymentCard');
 const PhotoModel = require('./Photo');
 const TagModel = require('./Tag');
 const WishlistModel = require('./Wishlist');
+const ReviewModel = require('./Review');
 const TaskModel = require('./Task');
 const TaskLogModel = require('./TaskLog')
 const MessageModel = require('./Message');
@@ -21,6 +22,8 @@ const Article = ArticleModel(sequelize);
 const Photo = PhotoModel(sequelize);
 const Wishlist = WishlistModel(sequelize);
 const Tag = TagModel(sequelize);
+const Review = ReviewModel(sequelize);
+
 const Task = TaskModel(sequelize);
 const TaskLog = TaskLogModel(sequelize);
 const Message = MessageModel(sequelize);
@@ -48,6 +51,13 @@ Photo.belongsTo(Article, { foreignKey: 'articleID' , onDelete: 'CASCADE'});
 User.hasMany(PaymentCard, { foreignKey: 'userID' , onDelete: 'CASCADE'});
 PaymentCard.belongsTo(User, { foreignKey: 'userID' , onDelete: 'CASCADE'});
 
+User.hasMany(Review, { foreignKey: 'userID' });
+Review.belongsTo(User, { foreignKey: 'userID' });
+
+User.hasMany(Review, { foreignKey: 'reviewer' });
+Review.belongsTo(User, { foreignKey: 'reviewer' });
+
+Review.belongsTo(Article, { foreignKey: 'articleID' });
 TaskLog.belongsTo(Task, {foreignKey: 'taskID'})
 Task.hasMany(TaskLog,{foreignKey: 'taskID'})
 
@@ -64,6 +74,7 @@ module.exports = {
     Photo,
     Tag,
     Wishlist,
+    Review,
     Task,
     TaskLog,
     Message,
