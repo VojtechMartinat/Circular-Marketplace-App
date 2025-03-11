@@ -207,7 +207,7 @@ const userReviews = asyncErrorWrapper(async (req,res,next) =>{
     const {id:userID} = req.params
     const reviews = await Review.findAll({
         where:{
-            reviewer: userID
+            userID: userID
         }
     });
     if (!reviews){

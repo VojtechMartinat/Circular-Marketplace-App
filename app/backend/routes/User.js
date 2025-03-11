@@ -11,7 +11,7 @@ router.route('/:id/orders').get(userOrders);
 router.route('/:id/articles').get(userArticles);
 router.route('/:id/rating').get(userRating);
 router.route('/:id/writtenreviews').get(userWrittenReviews)
-router.route('/:id/reviews').post(userReviews);
+router.route('/:id/reviews').get(userReviews);
 router.route('/:id/topup').post(userTopUp);
 router.route('/:id/chats').get(getInteractedUsers);
 module.exports = router;

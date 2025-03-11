@@ -5,7 +5,7 @@ import 'react-multi-carousel/lib/styles.css';
 import { getArticle, getArticlePhotos } from '../services/articleService';
 import { createOrder } from '../services/orderService';
 import { useAuth } from '../Contexts/AuthContext';
-import {getUser, getUserRating} from '../services/userService';
+import {getUser, getUserRating, getUserReviews} from '../services/userService';
 import './article.css';
 import {createTaskLog} from "../services/logService";
 import ColorThief from 'colorthief';
@@ -25,6 +25,10 @@ const ArticleDetails = () => {
     const [isCollection, setIsCollection] = useState(false);
     const [startTime, setStartTime] = useState(null);
     const [backgroundGradient, setBackgroundGradient] = useState('linear-gradient(180deg, #f8f8f8, #e0e0e0)');
+    const [rating, setRating] = useState(null);
+    const [reviewAmount, setReviewAmount] = useState(null);
+    const [reviews, setReviews] = useState(null);
+    const [showReviews, setShowReviews] = useState(false);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -48,8 +52,7 @@ const ArticleDetails = () => {
             });
         }
     }, [user]);
-    const [rating, setRating] = useState(null);
-    const [reviewAmount, setReviewAmount] = useState(null);
+
 
     const KebabMenu = () => {
         const [isOpen, setIsOpen] = useState(false);
@@ -166,6 +169,42 @@ const ArticleDetails = () => {
         );
     };
 
+    const handleShowReviews = () => {
+        if (articleUser?.userID) {
+            getUserReviews(articleUser.userID)
+                .then((response) => {
+                    if (response) {
+                        setReviews(response.reviews || []);
+                        setShowReviews(true);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching reviews:", error);
+                });
+        }
+    };
+    const ReviewModal = () => {
+        return (
+            <div className="reviews-modal">
+                <h2>Reviews for {articleUser?.username}</h2>
+                <ul>
+                    {reviews.length > 0 ? (
+                        reviews.map((review, index) => (
+                            <li key={index}>
+                                <p><strong>{review.reviewer}:</strong> {review.comment}</p>
+                                <div className="star-rating-container">
+                                    <StarRating rating={review.rating}/>
+                                </div>
+                            </li>
+                        ))
+                    ) : (
+                        <p>No reviews yet.</p>
+                    )}
+                </ul>
+                <button onClick={() => setShowReviews(false)}>Close</button>
+            </div>
+        );
+    };
 
 
 
@@ -290,18 +329,23 @@ const ArticleDetails = () => {
                 <div className="seller-avatar">👤</div>
                 <div className="seller-details">
                     <p className="seller-name">{articleUser?.username}</p>
-                    <p className="seller-rating">
+                    <div className="seller-rating">
                         {rating
                             ? <>
-                                <StarRating rating={rating} /> {reviewAmount} reviews
+                                <StarRating rating={rating}/> {reviewAmount} reviews
                             </>
                             : 'no reviews yet'}
-                    </p>
+                    </div>
+
+                    <button onClick={handleShowReviews} className="show-reviews-btn">
+                        Show Reviews
+                    </button>
                 </div>
                 <div className="seller-location">📍{articleUser?.location}</div>
 
 
             </div>
+            {showReviews && <ReviewModal/>}
 
             <p className='textchoose'>Choose one or both:</p>
 
@@ -339,6 +383,8 @@ const ArticleDetails = () => {
             <div className="chat-button">
                 <button onClick={() => navigate(`/chat/${article.userID}`)}>Chat with Seller</button>
             </div>
+
+
         </div>
     );
 };
