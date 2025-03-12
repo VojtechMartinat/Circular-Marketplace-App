@@ -14,7 +14,7 @@ const wishlists = require('./routes/Wishlist');
 const tasklog = require('./routes/TaskLog');
 const messages = require('./routes/Message');
 const errorHandler = require('./middleware/errorHandler');
-
+const reviews = require('./routes/Review');
 const app = express();
 
 // Database connection
@@ -41,7 +41,7 @@ app.use('/api/v1/tags', tags);
 app.use('/api/v1/wishlists', wishlists);
 app.use('/api/v1/tasklog', tasklog);
 app.use('/api/v1/messages', messages);
-
+app.use('/api/v1/reviews', reviews);
 // Error handling middleware
 app.use(errorHandler);
 

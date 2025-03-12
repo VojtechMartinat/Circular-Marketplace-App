@@ -233,7 +233,7 @@ const Profile = () => {
         }
 
         const userID = boughtArticles[selectedOrderID]?.userID; // Fetch userID using orderID
-        const reviewer = user.userID;
+        const reviewer = user.uid;
         if (!userID) {
             console.error("User ID not found for order:", selectedOrderID);
             alert("Cannot submit review without user information.");
