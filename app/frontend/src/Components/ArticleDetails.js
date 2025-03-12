@@ -65,33 +65,32 @@ const ArticleDetails = () => {
             setIsOpen(false);
         };
 
-        return (
-            <div className="icons">
-                <div className="top-items">
-                    <div className="dropdown">
-                        <h2 style={{
-                            display: "flex",
-                            alignItems: "center",
-                            textAlign: "left",
-                            paddingLeft: 5,
-                            gap: 10 // Adjust the gap as needed
-                        }}>
-                            <FaWallet size={30} style={{color: "black"}}/>
-                            {dbUser?.wallet}£
-                        </h2>
-                    </div>
-                    <div className="dropdown">
-                        <FaGear size={30} onClick={toggleMenu} style={{color: 'black'}}/>
-                    </div>
-                </div>
-
-                {isOpen && (
-                    <div className="menu">
-                        <div className="menu-item" onClick={handleSharing}>Share</div>
-                    </div>
-                )}
-            </div>
-        );
+        // return (
+        //     <div className="icons">
+        //         <div className="top-items">
+        //             <div className="dropdown">
+        //                 <h2 style={{
+        //                     display: "flex",
+        //                     alignItems: "center",
+        //                     textAlign: "left",
+        //                     paddingLeft: 5,
+        //                     gap: 10 // Adjust the gap as needed
+        //                 }}>
+        //                     <FaWallet size={30} style={{color: "black"}}/>
+        //                     {dbUser?.wallet}£
+        //                 </h2>
+        //             </div>
+        //             <div className="dropdown">
+        //                 <FaGear size={30} onClick={toggleMenu} style={{color: 'black'}}/>
+        //             </div>
+        //             {isOpen && (
+        //                 <div className="menu" >
+        //                     <div className="menu-item" onClick={handleSharing}>Share</div>
+        //                 </div>
+        //             )}
+        //         </div>
+        //     </div>
+        // );
     };
 
     useEffect(() => {
@@ -246,109 +245,118 @@ const ArticleDetails = () => {
         }
     };
 
+    function handleAddToWishlist() {
+        alert("Not implemented yet");
+    }
+
     return (
-        <div className="app" >
+        <div className="app">
             {/* Header section */}
-            <div className="header">
-                <button className="back-button" onClick={() => navigate('/')}>
-                ←
-                </button>
+            {/*<div className="header">*/}
+            {/*    <button className="back-button" onClick={() => navigate('/')}>*/}
+            {/*        ←*/}
+            {/*    </button>*/}
+            {/*    <KebabMenu />*/}
+            {/*</div>*/}
 
-                <KebabMenu/>
-            </div>
-
-            {/* Image grid*/}
-            {photos.length > 1 ? (
-                <div className={`image-grid${photos.length >= 4 ? '-4' : ''} grid-${photos.length}`}>
-                    {photos.map((photo, index) => (
-                        <div
-                            key={index}
-                            className={`image-item ${index === 0 ? 'main-image' : 'side-image'}`}
-                            onClick={() => handlePhotoClick(index)}
-                        >
-                            <img src={photo} alt={`Article Image ${index}`} />
+            {/* Article details layout */}
+            <div className="article-container">
+                {/* Image section */}
+                <div className="image-container">
+                    {photos.length > 1 ? (
+                        <div className={`image-grid${photos.length >= 4 ? '-4' : ''} grid-${photos.length}`}>
+                            {photos.map((photo, index) => (
+                                <div
+                                    key={index}
+                                    className={`image-item ${index === 0 ? 'main-image' : 'side-image'}`}
+                                    onClick={() => handlePhotoClick(index)}
+                                >
+                                    <img src={photo} alt={`Article Image ${index}`} />
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    ) : (
+                        <div className={'image-solo'} onClick={() => handlePhotoClick(0)}>
+                            <img src={photos[0]} alt={`Article Image 0`} />
+                        </div>
+                    )}
+
+                    {/* Image Viewer */}
+                    {isOpen && (
+                        <SimpleImageViewer
+                            src={photos}  // Array of photo sources
+                            currentIndex={photoIndex}  // Initial index for the viewer
+                            onClose={() => setIsOpen(false)}  // Close the viewer
+                        />
+                    )}
                 </div>
-            ) : (
-                <div className={'image-solo'} onClick={() => handlePhotoClick(0)}>
-                    <img src={photos[0]} alt={`Article Image 0`} />
+
+                {/* Info section */}
+                <div className="info-container">
+                    <h1 className="title">{article.articleTitle}</h1>
+                    <h2 className="price">£{article.price}</h2>
+                    <p className="description">{article.description}</p>
+
+                    {/* Seller info */}
+                    <div className="seller-info">
+                        <div className="seller-avatar">👤</div>
+                        <div className="seller-details">
+                            <p className="seller-name">{articleUser?.username}</p>
+                            <p className="seller-rating">
+                                {rating ? (
+                                    <>
+                                        <StarRating rating={rating}/> {reviewAmount} reviews
+                                    </>
+                                ) : (
+                                    'no reviews yet'
+                                )}
+                            </p>
+                        </div>
+                        <div className="seller-location">📍{articleUser?.location}</div>
+                    </div>
+
+                    <p className="textchoose">Choose one or both:</p>
+
+                    {/* Shipping and Collection */}
+                    <div className="purchase-options">
+                        {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
+                            <button
+                                type="button"
+                                className={`option-button ${isShipping ? 'selected' : ''}`}
+                                onClick={() => {
+                                    setIsShipping(!isShipping);
+                                    if (!isShipping) setIsCollection(false);
+                                }}
+                            >
+                                <p>Shipping</p>
+                            </button>
+                        ) : null}
+                        {article.shippingType === 'collection' || article.shippingType === 'both' ? (
+                            <button
+                                type="button"
+                                className={`option-button ${isCollection ? 'selected' : ''}`}
+                                onClick={() => {
+                                    setIsCollection(!isCollection);
+                                    if (!isCollection) setIsShipping(false);
+                                }}
+                            >
+                                <p>Collection</p>
+                            </button>
+                        ) : null}
+                    </div>
+
+                    {/* Purchase Button */}
+                    <div className="purchase-button">
+                        <button onClick={handleBuy}>Buy for £{isShipping ? article.price + 2 : article.price}</button>
+                    </div>
+
+                    <div className="chat-button">
+                        <button onClick={() => navigate(`/chat/${article.userID}`)}>Chat with Seller</button>
+                    </div>
+                    <div className="wishlist-section">
+                        <button onClick={handleAddToWishlist}>Save for Later</button>
+                    </div>
                 </div>
-            )}
-
-            {/* Image Viewer */}
-            {isOpen && (
-                <SimpleImageViewer
-                    src={photos}  // Array of photo sources
-                    currentIndex={photoIndex}  // Initial index for the viewer
-                    onClose={() => setIsOpen(false)}  // Close the viewer
-                />
-            )}
-
-
-
-            {/* Title and description */}
-            <div className='info'>
-                <h1 className="title">{article.articleTitle}</h1>
-                <h2 className="price">£{article.price}</h2>
-                <p className="description">{article.description}</p>
-
-
-            </div>
-
-            {/* Seller section */}
-            <div className="seller-info">
-                <div className="seller-avatar">👤</div>
-                <div className="seller-details">
-                    <p className="seller-name">{articleUser?.username}</p>
-                    <p className="seller-rating">
-                        {rating
-                            ? <>
-                                <StarRating rating={rating} /> {reviewAmount} reviews
-                            </>
-                            : 'no reviews yet'}
-                    </p>
-                </div>
-                <div className="seller-location">📍{articleUser?.location}</div>
-
-
-            </div>
-
-            <p className='textchoose'>Choose one or both:</p>
-
-            {/* Shipping and Collection */}
-            <div className="purchase-options">
-                {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
-                    <button
-                        type="button"
-                        className={`option-button ${isShipping ? 'selected' : ''}`}
-                        onClick={() => {
-                            setIsShipping(!isShipping);
-                            if (!isShipping) setIsCollection(false);
-                        }}>
-                        <p>Shipping</p>
-                    </button>
-                ) : null}
-                {article.shippingType === 'collection' || article.shippingType === 'both' ? (
-                    <button
-                        type="button"
-                        className={`option-button ${isCollection ? 'selected' : ''}`}
-                        onClick={() => {
-                            setIsCollection(!isCollection);
-                            if (!isCollection) setIsShipping(false);
-                        }}>
-                        <p>Collection</p>
-                    </button>
-                ) : null}
-            </div>
-
-            {/* Purchase Button */}
-            <div className="purchase-button">
-                <button onClick={handleBuy}>Buy for {isShipping ? article.price + 2 : article.price}</button>
-
-            </div>
-            <div className="chat-button">
-                <button onClick={() => navigate(`/chat/${article.userID}`)}>Chat with Seller</button>
             </div>
         </div>
     );

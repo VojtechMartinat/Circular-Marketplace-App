@@ -116,27 +116,23 @@
 
 }
 .title {
-  padding: auto;
-  padding-top: 1%;
   font-size: 24px;
-  margin-bottom: 10px;
+  margin-bottom: 5px; /* Reduce space between title and price */
 }
 
-.price{
-  padding: auto;
+.price {
   font-size: 20px;
-  margin-bottom: 10px;
-  color: #393939;
+  margin-bottom: 10px; /* Reduce space between price and description */
 }
 
 .description {
   color: #666;
+  margin-bottom: 10px; /* Reduce space between description and seller section */
 }
 
 .seller-info {
   display: flex;
-  align-items: center;
-  margin-top: 20px;
+  margin-top: 10px; /* Reduced space between description and seller info */
 }
 
 .seller-avatar {
@@ -187,7 +183,7 @@
 }
 
 .purchase-button {
-  margin-top: 20px;
+  margin-top: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -273,6 +269,7 @@
   margin: auto;
   grid-template-columns: 1fr 1fr; /* Two equal width columns */
   grid-template-rows: auto; /* Adjust the height automatically */
+
 }
 
 .image-grid-4 {
@@ -287,29 +284,33 @@
 
 /* First image: takes up the left half of the grid, spanning 2 rows */
 .image-item.main-image {
+  width: 400px;
+  height: 900px;
   grid-row: span 2; /* Span 2 rows */
   grid-column: 1; /* First column */
 }
 .image-solo{
     display: grid;
     gap: 10px;
-    width: 600px;
-    height: 600px;
-    margin: auto;
+    margin-left: 25%;
+    width: 700px;
+    height: 900px;
     grid-template-columns: 1fr; /* Two equal width columns */
     grid-template-rows: 1fr; /* Adjust the height automatically */
 }
 
 /* All images in the right column should fill the space vertically */
 .image-item.side-image {
-  width: 100%;
-  height: auto; /* Allow the height to adjust dynamically */
+  width: 200px;
+  height: 445px; /* Allow the height to adjust dynamically */
 }
 
 
 .grid-2 .side-image:nth-child(2) {
   grid-row: span 2;
   grid-column: 2;
+  width: 400px;
+  height: 900px;
 }
 
 
@@ -321,6 +322,7 @@
 .grid-3 .side-image:nth-child(2) {
   grid-row: span 1;
   grid-column: 2;
+
 }
 
 
@@ -337,6 +339,8 @@
 .grid-4 .side-image:nth-child(3) {
   grid-row: span 2;
   grid-column: 3;
+  width: 200px;
+  height: 900px;
 }
 
 
@@ -406,4 +410,72 @@
 .modal-content img {
   width: 100%;
   height: auto;
+}
+/* Add this to your current CSS */
+.article-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+}
+
+.image-container {
+  margin-left: -10%;
+  margin-right: 1%;
+  flex: 0 0 75%; /* Take up 50% of the container width */
+}
+
+.info {
+  flex: 1; /* Allow the info box to take up available space */
+  margin-left: 10px; /* Reduces space between the image grid and the info box */
+  padding: 15px;
+}
+.image-grid, .image-grid-4, .image-solo {
+  margin-bottom: 0;
+
+}
+
+.info-container {
+  flex: 0 0 25%; /* Take up 40% of the container width */
+  margin-right: 10%;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Title and description */
+.info-container h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.info-container .price {
+  font-size: 20px;
+  color: #393939;
+  margin-bottom: 10px;
+}
+
+.info-container .description {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .article-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .image-container, .info-container {
+    flex: 0 0 100%; /* Take up full width on smaller screens */
+  }
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Align the icons to the right */
 }
