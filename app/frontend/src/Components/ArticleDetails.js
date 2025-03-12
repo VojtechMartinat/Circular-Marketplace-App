@@ -255,29 +255,29 @@ const ArticleDetails = () => {
                 <KebabMenu/>
             </div>
 
-            {/* Carousel for images */}
-            <div className="carousel-container">
-                <ReactMultiCarousel responsive={responsive} 
-                infinite 
-                autoPlay 
-                autoPlaySpeed={10000}
-                CustomLeftArrow={<CustomLeftArrow/>}
-                CustomRightArrow={<CustomRightArrow/>}>
+            {/* Image grid*/}
+            {photos.length > 1 ? (
+                <div className={`image-grid${photos.length >= 4 ? '-4' : ''} grid-${photos.length}`}>
                     {photos.map((photo, index) => (
-                        <div key={index} className="carousel-image">
-                            <img src={photo} alt={`Article ${index}`}/>
-                        </div>
+                    <div key={index} className={`image-item ${index === 0 ? 'main-image' : 'side-image'}`}>
+                        <img src={photo} alt={`Article Image ${index}`}/>
+                    </div>
                     ))}
-                </ReactMultiCarousel>
-            </div>
-            
+                </div>
+            ) : (
+                <div className={'image-solo'}>
+                    <img src={photos[0]} alt={`Article Image 0`}/>
+                </div>
+            )}
+
+
 
             {/* Title and description */}
             <div className='info'>
-                <h1 className="title" >{article.articleTitle}</h1>
+                <h1 className="title">{article.articleTitle}</h1>
                 <h2 className="price">£{article.price}</h2>
                 <p className="description">{article.description}</p>
-                
+
 
             </div>
 
