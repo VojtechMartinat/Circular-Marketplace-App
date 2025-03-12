@@ -94,9 +94,10 @@ describe('Order Controller Tests', () => {
             articles: [{ articleID: '2' }],
         })
         const res = await request(app).get('/api/v1/orders');
-
+        console.log("Body:" + res.body)
         expect(res.statusCode).toBe(200);
         expect(res.body.orders).toBeDefined(); // Ensure orders is defined
+        console.log(res.body);
         expect(res.body.orders.length).toBe(2);
     });
 
@@ -160,10 +161,10 @@ describe('Order Controller Tests', () => {
             articles: [{ articleID: '1' }],
         })
 
-        const res = await request(app).patch(`/api/v1/orders/${res1.body.order.orderID}`).send({ dateOfPurchase: '2024-12-12' });
+        const res = await request(app).patch(`/api/v1/orders/${res1.body.order.orderID}`).send({ orderStatus: 'shipped' });
         expect(res.statusCode).toBe(200);
         const res2 = await request(app).get(`/api/v1/orders`);
-        expect(res2.body.orders[0].dateOfPurchase).toBe("2024-12-12T00:00:00.000Z");
+        expect(res2.body.orders[0].orderStatus).toBe('shipped');
     });
 
     test('Nonexisting article for order', async () => {
@@ -199,4 +200,21 @@ describe('Order Controller Tests', () => {
         expect(res2.statusCode).toBe(500);
 
     });
-});
+
+        test('Should return articles for a valid order ID', async () => {
+            const order = await request(app).post('/api/v1/orders').send({
+                userID: 2,
+                paymentMethodID: 1,
+                dateOfPurchase: '2024-10-01',
+                collectionMethod: 'delivery',
+                orderStatus: 'confirmed',
+                articles: [{ articleID: '1' }],
+            })
+            const res = await request(app).get(`/api/v1/orders/${order.body.order.orderID}/articles`);
+            expect(res.statusCode).toBe(200);
+            expect(res.body.article.articleID).toBe(1);
+            expect(res.body.article.articleTitle).toBe('Table');
+        });
+
+
+    });

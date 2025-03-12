@@ -4,7 +4,6 @@ on:
   push:
     branches:
     - "dev"
-    - "DBtests2"
   pull_request:
     branches: [ "dev" ]
 

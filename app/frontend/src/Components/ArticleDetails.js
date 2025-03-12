@@ -7,8 +7,6 @@ import { createOrder } from '../services/orderService';
 import { useAuth } from '../Contexts/AuthContext';
 import {getUser, getUserRating, getUserReviews} from '../services/userService';
 import './article.css';
-import {createTaskLog} from "../services/logService";
-import ColorThief from 'colorthief';
 import {FaWallet} from "react-icons/fa";
 import {FaGear} from "react-icons/fa6";
 import {auth} from "../services/firebaseService";
@@ -30,6 +28,7 @@ const ArticleDetails = () => {
     const [reviews, setReviews] = useState(null);
     const [showReviews, setShowReviews] = useState(false);
     const [reviewUser, setReviewUser] = useState(null);
+
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {

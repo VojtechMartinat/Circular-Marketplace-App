@@ -58,8 +58,9 @@ describe('ArticleDetails Component', () => {
         expect(description).toBeInTheDocument();
 
         // Check if the price is rendered
-        const price = await screen.findByText(/cost : 100/i);
+        const price = await screen.findByRole('heading', { name: /£?\s*100/i });
         expect(price).toBeInTheDocument();
+
 
         // Check if the "Buy" button is rendered
         const buyButton = await screen.findByRole('button', { name: /buy for 100/i });
