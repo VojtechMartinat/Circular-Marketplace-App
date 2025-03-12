@@ -9,7 +9,6 @@ import './Profile.css';
 import {FaWallet} from "react-icons/fa";
 import { publishReview } from "../services/articleService";
 
-
 import { FaMessage } from "react-icons/fa6";
 
 const Profile = () => {
@@ -25,8 +24,7 @@ const Profile = () => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [selectedOrderID, setSelectedOrderID] = useState(null);
-
-
+    const [isBought, setIsBought] = useState(false);
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
@@ -150,10 +148,12 @@ const Profile = () => {
         }
     };
 
-    const handleReviewClick = (articleID, orderID) => {
+    const handleReviewClick = (articleID, orderID, isBought) => {
         setSelectedArticleID(articleID);
         setSelectedOrderID(orderID);
         setShowReviewModal(true);
+        setIsBought(isBought);
+
     };
 
     async function handleSubmitReview() {
@@ -162,9 +162,10 @@ const Profile = () => {
             alert("Cannot submit review without correct information.");
             return;
         }
-
-        const userID = boughtArticles[selectedOrderID]?.userID; // Fetch userID using orderID
         const reviewer = user.userID;
+        const userID = isBought
+            ? boughtArticles[selectedOrderID]?.userID  // For bought articles, userID is the seller
+            : orderDetails[selectedOrderID]?.order?.userID;  // For sold articles, userID is the buyer        const reviewer = user.userID;
         if (!userID) {
             console.error("User ID not found for order:", selectedOrderID);
             alert("Cannot submit review without user information.");
@@ -296,7 +297,7 @@ const Profile = () => {
 
                                             {/* Show Review Button if status is "shipped" or "collected" */}
                                             {(order.orderStatus === "shipped" || order.orderStatus === "collected") && (
-                                                <button onClick={() => handleReviewClick(boughtArticles[order.orderID].articleID, order.orderID)}>Write a Review</button>
+                                                <button onClick={() => handleReviewClick(boughtArticles[order.orderID].articleID, order.orderID, true)}>Write a Review</button>
                                             )}
                                         </div>
                                         <div className="icon">
@@ -362,7 +363,7 @@ const Profile = () => {
                                                     )}
                                                 {(orderDetails[article.orderID]?.order?.orderStatus === 'shipped' ||
                                                     orderDetails[article.orderID]?.order?.orderStatus === 'collected') && (
-                                                    <button onClick={() => handleReviewClick(article.articleID, article.orderID)}>
+                                                    <button onClick={() => handleReviewClick(article.articleID, article.orderID, false)}>
                                                         Write a Review
                                                     </button>
                                                 )}
