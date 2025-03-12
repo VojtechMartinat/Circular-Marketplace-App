@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ReactMultiCarousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { getArticle, getArticlePhotos } from '../services/articleService';
 import { createOrder } from '../services/orderService';
-import { useAuth } from '../Contexts/AuthContext';
 import {getUser, getUserRating} from '../services/userService';
 import './article.css';
 import {FaWallet} from "react-icons/fa";
 import {FaGear} from "react-icons/fa6";
 import {auth} from "../services/firebaseService";
+import SimpleImageViewer from 'react-simple-image-viewer';
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -21,6 +20,8 @@ const ArticleDetails = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
+    const [isOpen, setIsOpen] = useState(false); // To control Lightbox
+    const [photoIndex, setPhotoIndex] = useState(0); // Default to 0 if nothing is set
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -104,7 +105,7 @@ const ArticleDetails = () => {
     useEffect(() => {
         if (article && article.userID) {
             getUser(article.userID).then((response) => {
-                if (response) { 
+                if (response) {
                     setArticleUser(response.user);
                 }
             });
@@ -236,20 +237,21 @@ const ArticleDetails = () => {
         },
     };
 
-    const CustomLeftArrow = ({ onClick }) => (
-        <button onClick={onClick} className="custom-arrow left-arrow">←</button>
-      );
-      
-      const CustomRightArrow = ({ onClick }) => (
-        <button onClick={onClick} className="custom-arrow right-arrow">→</button>
-      );
+    const handlePhotoClick = (index) => {
+        if (index >= 0 && index < photos.length) {
+            setPhotoIndex(index);
+            setIsOpen(true);
+        } else {
+            console.error('Invalid photo index');
+        }
+    };
 
     return (
         <div className="app" >
             {/* Header section */}
             <div className="header">
                 <button className="back-button" onClick={() => navigate('/')}>
-                ← 
+                ←
                 </button>
 
                 <KebabMenu/>
@@ -259,15 +261,28 @@ const ArticleDetails = () => {
             {photos.length > 1 ? (
                 <div className={`image-grid${photos.length >= 4 ? '-4' : ''} grid-${photos.length}`}>
                     {photos.map((photo, index) => (
-                    <div key={index} className={`image-item ${index === 0 ? 'main-image' : 'side-image'}`}>
-                        <img src={photo} alt={`Article Image ${index}`}/>
-                    </div>
+                        <div
+                            key={index}
+                            className={`image-item ${index === 0 ? 'main-image' : 'side-image'}`}
+                            onClick={() => handlePhotoClick(index)}
+                        >
+                            <img src={photo} alt={`Article Image ${index}`} />
+                        </div>
                     ))}
                 </div>
             ) : (
-                <div className={'image-solo'}>
-                    <img src={photos[0]} alt={`Article Image 0`}/>
+                <div className={'image-solo'} onClick={() => handlePhotoClick(0)}>
+                    <img src={photos[0]} alt={`Article Image 0`} />
                 </div>
+            )}
+
+            {/* Image Viewer */}
+            {isOpen && (
+                <SimpleImageViewer
+                    src={photos}  // Array of photo sources
+                    currentIndex={photoIndex}  // Initial index for the viewer
+                    onClose={() => setIsOpen(false)}  // Close the viewer
+                />
             )}
 
 
