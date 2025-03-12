@@ -29,6 +29,7 @@ const ArticleDetails = () => {
     const [reviewAmount, setReviewAmount] = useState(null);
     const [reviews, setReviews] = useState(null);
     const [showReviews, setShowReviews] = useState(false);
+    const [reviewUser, setReviewUser] = useState(null);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -119,6 +120,20 @@ const ArticleDetails = () => {
     }, [article]);
 
     useEffect(() => {
+        if (reviews && Array.isArray(reviews)) {
+            reviews.forEach((review) => {
+                if (review && review.reviewer) {
+                    getUser(review.reviewer).then((response) => {
+                        if (response) {
+                            setReviewUser(response.user);
+                        }
+                    });
+                }
+            });
+        }
+    }, [reviews]);
+
+    useEffect(() => {
         getArticlePhotos(id).then((response) => {
             if (response && response.photos) {
                 const images = response.photos.map((photo) => {
@@ -191,7 +206,7 @@ const ArticleDetails = () => {
                     {reviews.length > 0 ? (
                         reviews.map((review, index) => (
                             <li key={index}>
-                                <p><strong>{review.reviewer}:</strong> {review.comment}</p>
+                                <p><strong>{reviewUser?.username}:</strong> {review.comment}</p>
                                 <div className="star-rating-container">
                                     <StarRating rating={review.rating}/>
                                 </div>
