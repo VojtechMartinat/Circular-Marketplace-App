@@ -1,10 +1,11 @@
 
 .profile-back {
-    
+    /* background-color: #1481a3; */
     background-image: linear-gradient(#48A9FE, #0BEEF9);
-    bottom: 0; 
-    left: 0; 
-    min-height: 100vh; 
+    bottom: 0; /* Starts from the bottom */
+    left: 0; /* Align to the left (or adjust as needed) */
+    min-height: 100vh; /* Allows it to grow when content expands */
+    padding-top: 20px;
 
 }
 
@@ -15,7 +16,7 @@
     padding: 20px;
     border-radius: 10px;
     max-width: 700px;
-    margin: 0 auto;
+    margin: 20px auto 0 auto;
 }
 
 /* Header */
@@ -44,6 +45,8 @@
     padding: 15px;
     margin-bottom: 10px;
     cursor: pointer;
+    overflow-y: auto;
+    max-height:500px;
 }
 
 .icon{
@@ -62,31 +65,29 @@
 }
 
 .dropdown p {
-    color: #000; /* Black text */
+    color: #000;
 }
-
-/* Optionally, you can specify the color for links as well */
 .dropdown a {
-    color: #000; /* Black color for links */
+    color: #000;
 }
 
 .orders-gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Create a responsive grid */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
     padding-top: 20px;
 }
 
-/* Each order box */
+
 .order-box {
-    background-color: #666; /* Gray background */
+    background-color: white;
     color: #fff;
     padding: 15px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.8);
 }
 
 /* Order image */

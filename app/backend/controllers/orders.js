@@ -2,6 +2,7 @@ const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
 const {Order, Article, User} = require('../models/initialise')
 
+
 /**
  * * Get all orders from the database
  * @param req Request from the client
@@ -48,6 +49,7 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
         }
         sum += price
         sellerID = article.userID;
+
     }
     if (userID === sellerID){
         next(new APIError('User cant buy his own article!',401));
@@ -83,7 +85,6 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
             totalPrice : sum
         }
     )
-    console.log("sum: " + sum);
     if (order.collectionMethod === "delivery"){
         buyer.wallet -= sum;
         await buyer.save();
@@ -97,8 +98,6 @@ const createOrder= asyncErrorWrapper(async (req,res,next) =>{
         await seller.save();
     }
     for (const articles of req.body.articles) {
-        console.log(articles)
-        console.log(order.orderID)
         await Article.update(
             { orderID: order.orderID, state:"sold" },
             {
@@ -130,6 +129,25 @@ const getOrder = asyncErrorWrapper(async (req,res,next) =>{
     }
     next(new APIError(`No order with id : ${orderID}`),404)
 })
+
+
+const getOrderArticles = asyncErrorWrapper(async (req, res, next) => {
+    console.log("TEST");
+    const { id: orderID } = req.params;
+    const order = await Order.findOne({ where: { orderID } });
+    if (!order) {
+        return next(new APIError(`No order with id: ${orderID}`, 404));
+    }
+
+    const articles = await Article.findAll({ where: { orderID } });
+
+    if (!articles || articles.length === 0) {
+        return next(new APIError(`No articles found for order ID: ${orderID}`, 404));
+    }
+
+    res.status(200).json({ articles });
+});
+
 
 
 /**
@@ -170,6 +188,7 @@ const deleteOrder = asyncErrorWrapper(async (req,res,next) =>{
     res.status(200).json({order})
 })
 
+
 const getArticleByOrderId = asyncErrorWrapper(async (req,res,next) =>{
     const {id:orderID} = req.params
     const order = await Order.findOne({
@@ -191,6 +210,7 @@ const getArticleByOrderId = asyncErrorWrapper(async (req,res,next) =>{
     res.status(200).json({article})
 
 })
+
 module.exports = {
-    getAllOrders,createOrder,getOrder,updateOrder,deleteOrder,getArticleByOrderId
+    getAllOrders,createOrder,getOrder,updateOrder,deleteOrder, getOrderArticles,getArticleByOrderId
 }

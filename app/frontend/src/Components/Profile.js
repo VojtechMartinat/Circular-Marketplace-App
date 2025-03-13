@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
 import {getUser, getUserArticles, getUserOrders, addMoney} from "../services/userService";
+import {changeOrderStatus, getOrder, getOrderArticlePhotos} from "../services/orderService"
 import {deleteArticle, getArticle, getArticleByOrderId} from "../services/articleService";
-import {changeOrderStatus, getOrder} from "../services/orderService"
 import {getArticlePhotos} from '../services/articleService';
 import { FaGear } from "react-icons/fa6";
 import './Profile.css';
 import {FaWallet} from "react-icons/fa";
+import {auth} from "../services/firebaseService";
 import { publishReview } from "../services/articleService";
 
 import { FaMessage } from "react-icons/fa6";
@@ -17,6 +18,8 @@ const Profile = () => {
     const [orders, setOrders] = useState(null);
     const [orderDetails, setOrderDetails] = useState({}); // State to store order details for each user article
     const [user, setUser] = useState(null);
+    const [dbUser, setDbUser] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [topupAmount, setTopupAmount] = useState(0);
     const [boughtArticles, setBoughtArticles] = useState({});
     const [showReviewModal, setShowReviewModal] = useState(false);
@@ -28,34 +31,54 @@ const Profile = () => {
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
-        getUser(id).then(response => {
-            if (response){
-                setUser(response.user);
+        const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+            if (currentUser) {
+
+                setIsLoggedIn(true);
+                setUser(currentUser);  // Set user state here
             } else {
-                console.log("error getting the user data");
-            }
-        })
-    }, [id]);
-    useEffect(() => {
-        getUserArticles(id).then(response => {
-            if (response && response.articles) {
-                setArticles(response.articles);
-            } else {
-                console.log("error");
+                setIsLoggedIn(false);
+                setUser(null);  // Reset user to null
             }
         });
-    }, [id]);
+        return () => unsubscribe();
+    }, []);
 
     useEffect(() => {
-        getUserOrders(id).then(response => {
-            console.log(response);
-            if (response && response.orders) {
-                setOrders(response.orders);
-            } else {
-                console.log("error");
+        if (!user) return;
+        getUser(user.uid).then((response) => {
+            if (response) {
+                setDbUser(response.user);
             }
         });
-    }, [id]);
+    }, [user]);
+
+    useEffect(() => {
+        if (dbUser){
+            getUserArticles(dbUser.userID).then(response => {
+                if (response && response.articles) {
+                    setArticles(response.articles);
+                } else {
+                    console.log("error");
+                }
+            });
+        }
+    }, [dbUser]);
+
+    useEffect(() => {
+        if (dbUser){
+            getUserOrders(dbUser.userID).then(response => {
+                if (response && response.orders) {
+
+                    setOrders(response.orders);
+                } else {
+                    console.log("error");
+                }
+                }
+            );
+        }
+    }, [dbUser]);
+
     useEffect(() => {
         if (articles) {
             const fetchOrderDetails = async () => {
@@ -64,15 +87,14 @@ const Profile = () => {
                     const updatedArticles = await Promise.all(
                         articles.map(async (article) => {
                             if (article.orderID) {
-                                // Fetch the order details
                                 details[article.orderID] = await getOrder(article.orderID);
-
+                            }
                                 // Fetch photos associated with the article
                                 const photosResponse = await getArticlePhotos(article.articleID);
                                 if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
                                     const photoData = photosResponse.photos[0].image.data;
                                     const uint8Array = new Uint8Array(photoData);
-                                    const blob = new Blob([uint8Array], { type: 'image/png' });
+                                    const blob = new Blob([uint8Array], {type: 'image/png'});
                                     const reader = new FileReader();
 
                                     return new Promise((resolve) => {
@@ -83,7 +105,7 @@ const Profile = () => {
                                         reader.readAsDataURL(blob);
                                     });
                                 }
-                            }
+
                             return article; // Return article in case no photos are found
                         })
                     );
@@ -97,8 +119,52 @@ const Profile = () => {
                 }
             };
 
-            fetchOrderDetails(); // Call the async function
+            fetchOrderDetails();
         }
+    }, [articles]);
+
+    useEffect(() => {
+        const fetchOrderPhotos = async () => {
+            try {
+                if (!orders || orders.length === 0) return;
+                const updatedOrders = await Promise.all(
+                    orders.map(async (order) => {
+
+                        try {
+                            const photosResponse = await getOrderArticlePhotos(order.orderID);
+
+
+                            if (photosResponse?.photos?.[0]) {
+                                const photoData = photosResponse.photos[0].image.data;
+                                const uint8Array = new Uint8Array(photoData);
+                                const blob = new Blob([uint8Array], { type: 'image/png' });
+                                const reader = new FileReader();
+
+                                return new Promise((resolve) => {
+                                    reader.onloadend = () => {
+                                        order.imageUrl = reader.result;
+                                        resolve(order);
+                                    };
+                                    reader.readAsDataURL(blob);
+                                });
+                            }
+                        } catch (error) {
+                            console.error(`Error fetching photos for order ${order.orderID}:`, error);
+                        }
+                        return order;
+                    })
+                );
+
+                setOrders(updatedOrders);
+            } catch (error) {
+                console.error("Error fetching order photos:", error);
+            }
+        };
+
+        fetchOrderPhotos();
+        const interval = setInterval(fetchOrderPhotos, 30000);
+
+        return () => clearInterval(interval);
     }, [articles]);
 
     useEffect(() => {
@@ -116,6 +182,9 @@ const Profile = () => {
             fetchUserIDs();
         }
     }, [orders]);
+
+
+
 
     const handleDeleteArticle = async (articleID) => {
         try {
@@ -210,10 +279,17 @@ const Profile = () => {
     });
 
     const toggleDropdown = (key) => {
-        setDropdowns((prev) => ({
-            ...prev,
-            [key]: !prev[key],
-        }));
+        setDropdowns((prev) => {
+
+            const newDropdowns = {
+                bought: false,
+                sold: false,
+                posted: false,
+                favourited: false,
+            };
+            newDropdowns[key] = !prev[key];
+            return newDropdowns;
+        });
     };
 
     const handleChangeOrderStatus = async (orderID, collectionMethod) => {
@@ -240,15 +316,21 @@ const Profile = () => {
     }
     const [showTopupOptions, setShowTopupOptions] = useState(false);
     return (
+
+
         <div className="profile-back">
+            {dbUser && (dbUser.userID = user.uid)  ?
+
         <div className="profile-box">
             <header className="header2">
-                <b>Your Profile</b>
+                <b>{dbUser ? <p>Hi {dbUser.username}!</p> : <p>Loading...</p>}</b>
+
+
             </header>
 
             <div className="dropdown-container">
 
-                <div className="top-items">
+            <div className="top-items">
                     <div className="dropdown" onClick={() => toggleDropdown('wallet')}>
                         <h2 style={{
                             display: "flex",
@@ -258,7 +340,7 @@ const Profile = () => {
                             gap: 20
                         }}>
                             <FaWallet size={30} style={{color: "black"}}/>
-                            {user?.wallet}£
+                            {dbUser?.wallet}£
                         </h2>
 
                     </div>
@@ -283,7 +365,6 @@ const Profile = () => {
                             <div className="orders-gallery">
                                 {orders.map((order) => (
                                     <div key={order.orderID} className="order-box">
-                                        {/* Render the order image */}
                                         {order.imageUrl ? (
                                             <img src={order.imageUrl} alt={order.orderID} className="order-image"/>
                                         ) : (
@@ -302,7 +383,7 @@ const Profile = () => {
                                         </div>
                                         <div className="icon">
                                             <Link
-                                                to={`/chat/${boughtArticles[order.orderID].userID}`}>
+                                                to={`/chat/${boughtArticles[order?.orderID]?.userID}`}>
                                                 <FaMessage size={30} style={{color: 'black'}}/>
                                             </Link>
                                         </div>
@@ -319,7 +400,7 @@ const Profile = () => {
                 <div className="dropdown" onClick={() => toggleDropdown('sold')}>
                     <h2>Articles Sold</h2>
                     {dropdowns.sold && (
-                        articles && articles.length > 0 ? (
+                        articles && articles.some(article => article.state === "sold") > 0 ? (
                             <div className="orders-gallery">
 
 
@@ -340,23 +421,24 @@ const Profile = () => {
                                                 </Link>
                                                 <p><strong>Price:</strong> ${article.price}</p>
                                                 <p>
-                                                    <strong>Status:</strong> {orderDetails[article.orderID]?.order.orderStatus}
+                                                    <strong>Status:</strong> {orderDetails[article.orderID]?.order?.orderStatus}
                                                 </p>
                                                 {orderDetails[article.orderID]?.order && (
                                                     <p><strong>Collection
-                                                        Method:</strong> {orderDetails[article.orderID]?.order.collectionMethod}
+                                                        Method:</strong> {orderDetails[article.orderID]?.order?.collectionMethod}
                                                     </p>
                                                 )}
-                                                {orderDetails[article.orderID] && orderDetails[article.orderID].order &&
-                                                    orderDetails[article.orderID].order.orderStatus !== 'collected' &&
-                                                    orderDetails[article.orderID].order.orderStatus !== 'shipped' && (
+
+                                            {orderDetails[article.orderID] && orderDetails[article.orderID]?.order &&
+                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'collected' &&
+                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' && (
                                                         <button
                                                             onClick={() =>
-                                                                handleChangeOrderStatus(article.orderID, orderDetails[article.orderID].order.collectionMethod)
+                                                                handleChangeOrderStatus(article.orderID, orderDetails[article.orderID]?.order?.collectionMethod)
                                                             }
                                                         >
                                                             Change status to{' '}
-                                                            {orderDetails[article.orderID].order.collectionMethod === 'delivery'
+                                                            {orderDetails[article.orderID]?.order?.collectionMethod === 'delivery'
                                                                 ? 'shipped'
                                                                 : 'collected'}
                                                         </button>
@@ -389,12 +471,12 @@ const Profile = () => {
                 <div className="dropdown" onClick={() => toggleDropdown('posted')}>
                     <h2>Articles Posted</h2>
                     {dropdowns.posted && (
-                        articles && articles.length > 0 ? (
+                        articles && articles.some(article => article.state === "uploaded") ? (
                             <div className="orders-gallery">
                                 {articles.map((article) =>
                                     article.orderID === null ? (
                                         <div key={article.articleID} className="order-box">
-                                            {/* Render the article image */}
+
                                             {article.imageUrl ? (
                                                 <img src={article.imageUrl} alt={article.articleTitle}
                                                      className="order-image"/>
@@ -423,6 +505,7 @@ const Profile = () => {
                             <p>No articles found</p>
                         )
                     )}
+
                 </div>
                 <div className="topup-container">
                     <button onClick={() => setShowTopupOptions(true)}>Add Money</button>
@@ -494,7 +577,44 @@ const Profile = () => {
             </div>
 
         </div>
+                : dbUser ? (
+                    <p>ERROR USERS NOT MATCHING</p>
+                ) : (
+                    <div className="profile-box">
+                        <header className="header2"></header>
+                        <div className="dropdown-container">
+                            <div className="top-items">
+                                <div className="dropdown" onClick={() => toggleDropdown('wallet')}>
+                                    <h2 style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        textAlign: "left",
+                                        paddingLeft: 20,
+                                        gap: 20
+                                    }}>
+                                        <FaWallet size={30} style={{color: "black"}}/>
+                                    </h2>
+                                </div>
+                                <div className="dropdown" onClick={() => toggleDropdown('settings')}>
+                                    <FaGear size={30} style={{color: 'black'}}/>
+                                </div>
+                            </div>
+                            <div className="dropdown" onClick={() => toggleDropdown('favourited')}>
+                                <h2>Favourited Articles</h2></div>
+                            <div className="dropdown" onClick={() => toggleDropdown('bought')}>
+                                <h2>Articles Bought</h2></div>
+                            <div className="dropdown" onClick={() => toggleDropdown('sold')}>
+                                <h2>Articles Sold</h2>
+                            </div>
+                            <div className="dropdown" onClick={() => toggleDropdown('posted')}>
+                                <h2>Articles Posted</h2>
+                            </div>
+                        </div>
 
+                    </div>
+
+
+                )}
         </div>
     )
         ;
