@@ -132,49 +132,144 @@
 
 .seller-info {
   display: flex;
-  margin-top: 10px; /* Reduced space between description and seller info */
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .seller-avatar {
   background-color: #e6e6e6;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
+  font-size: 20px;
+  margin-right: 10px;
 }
 
 .seller-details {
-  margin-left: 10px;
+  flex-grow: 1;
 }
 
 .seller-name {
+  font-size: 16px;
   font-weight: bold;
+  color: #333;
+  margin: 0;
 }
-
 .seller-rating {
   font-size: 14px;
   color: #666;
+  margin: 2px 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.seller-rating .star-rating {
+  display: inline-flex;
+  align-items: center;
 }
 
 .seller-location {
-  margin-left: auto;
+  font-size: 14px;
   color: #666;
+  margin-left: auto;
 }
 
 .purchase-options {
   display: flex;
-  align-items: center;
-  justify-content:center;
-  margin-top: 0.5%;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .option {
   background-color: #d3d3d3;
   padding: 10px 20px;
   border-radius: 8px;
+}
+.option-button {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.option-button.selected {
+  background-color: #e0e0e0;
+  border-color: #bbb;
+}
+/* Buttons */
+
+
+/* Chat and Wishlist Button Styles */
+.chat-button,
+.wishlist-section {
+  margin-bottom: 10px;
+}
+
+.chat-button button,
+.wishlist-section button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s; /* Smooth transition for background and scale */
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center items vertically */
+  justify-content: center; /* Center items horizontally */
+  border: 1px solid #ddd; /* Add a border for better definition */
+}
+
+/* Chat Button Specific Styles */
+.chat-button button {
+  background-color: #007bff; /* Blue background for chat */
+  color: white; /* White text */
+}
+
+.chat-button button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Wishlist Button Specific Styles */
+.wishlist-section button {
+  background-color: #28a745; /* Green background for wishlist */
+  color: white; /* White text */
+}
+
+.wishlist-section button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+/* Optional: Add icons to buttons */
+.chat-button button::before,
+.wishlist-section button::before {
+  margin-right: 8px; /* Space between icon and text */
+  font-size: 20px; /* Icon size */
+}
+
+/* Example icons (you can replace these with actual icons) */
+/*.chat-button button::before {*/
+/*  content: '💬'; !* Chat icon *!*/
+/*}*/
+
+/*.wishlist-section button::before {*/
+/*  content: '❤️'; !* Wishlist icon *!*/
+/*}*/
+
+/* Responsive */
+@media (max-width: 768px) {
+  .info-container {
+    flex: 0 0 100%;
+    margin-right: 0;
+  }
 }
 .purchase-options button {
   background-color: #fffefe;
@@ -183,7 +278,7 @@
 }
 
 .purchase-button {
-  margin-top: 15px;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -205,10 +300,11 @@
   align-items: center;
 }
 
-.textchoose{
-  margin-top: 50px;
-  padding-bottom: none;
-
+.textchoose {
+  font-size: 16px;
+  color: #333;
+  margin: 20px 0 10px 0;
+  font-weight: 500;
 }
 
 
@@ -436,30 +532,41 @@
 }
 
 .info-container {
-  flex: 0 0 25%; /* Take up 40% of the container width */
+  flex: 0 0 25%; /* Take up 25% of the container width */
   margin-right: 10%;
   border: 1px solid #e0e0e0;
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
 }
 
 /* Title and description */
+.info-container .title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
 .info-container h1 {
   font-size: 24px;
   margin-bottom: 10px;
 }
 
 .info-container .price {
-  font-size: 20px;
-  color: #393939;
-  margin-bottom: 10px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 15px 0;
 }
 
 .info-container .description {
+  font-size: 14px;
   color: #666;
-  margin-bottom: 20px;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
 }
 
 /* Responsive */
@@ -479,3 +586,55 @@
   align-items: center;
   justify-content: flex-end; /* Align the icons to the right */
 }
+
+.separator {
+  height: 1px;
+  background-color: #ccc;
+  margin: 15px 0;
+}
+
+.shipping-button {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border: none;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  color: #333;
+  border-radius: 8px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shipping-button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Buy Button Styles */
+/* Buy Button Styles */
+.buy-button {
+  width: 100%; /* Full width */
+  padding: 10px 15px; /* Consistent padding with other buttons */
+  font-size: 16px; /* Match font size with other buttons */
+  border-radius: 8px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s, transform 0.1s; /* Smooth transition for background and scale */
+  background-color: #1e7e34; /* Darker green background for buy button */
+  color: white; /* White text */
+  border: none; /* Remove default border */
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center items vertically */
+  justify-content: space-between; /* Center items horizontally */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+/* Buy Button Hover Effect */
+.buy-button:hover {
+  background-color: #4bd369; /* Even darker green on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Optional: Add an icon to the buy button */

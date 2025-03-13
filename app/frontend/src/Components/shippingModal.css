@@ -1,0 +1,163 @@
+/* Modal background */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Modal container */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Adds space between all elements */
+    align-items: center; /* Centers items horizontally */
+}
+
+/* Close button */
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s ease-in-out;
+}
+
+.modal-close:hover {
+    color: black;
+}
+
+/* Modal header */
+.modal-header {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+/* Modal body */
+.modal-body {
+    margin-bottom: 20px;
+}
+
+/* Modal footer */
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.modal-button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.modal-button:hover {
+    background-color: #0056b3;
+}
+
+/* Adding space between radio options */
+.option {
+    margin-bottom: 15px; /* Space between radio options */
+    display: flex;
+    align-items: center; /* Vertically centers the radio button */
+    gap: 15px;
+    width: 100%; /* Ensure the option takes full width */
+    justify-content: flex-start; /* Ensures the radio button stays to the left */
+    position: relative; /* Used to align the text properly */
+    padding: 10px; /* Add padding for better spacing */
+    border-radius: 8px; /* Rounded corners */
+    transition: background-color 0.2s ease; /* Smooth transition for hover effect */
+}
+
+/* Align radio buttons properly */
+.option input[type="radio"] {
+    margin-right: 10px;
+    vertical-align: middle; /* Ensures radio buttons are aligned in the middle */
+    flex-shrink: 0;
+}
+
+/* Title and description container */
+.option div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Aligns text to the left */
+    text-align: left; /* Aligns text within the div to the left */
+    flex-grow: 1; /* Allow text to grow and take up remaining space */
+}
+
+/* Optional: Add styles for selected option */
+.option.selected {
+    background-color: #e7f3ff; /* Light blue background for selected option */
+    border: 2px solid #0095ff; /* Blue border for selected option */
+    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3); /* Subtle shadow for depth */
+}
+
+/* Hover effect for options */
+.option:hover {
+    background-color: #f0f0f0; /* Light gray background on hover */
+}
+
+/* Modal actions container */
+.modal-actions {
+    display: flex;
+    justify-content: space-between; /* Space between buttons */
+    width: 100%;
+}
+
+/* Button styles */
+.modal-button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff; /* Primary button color */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease; /* Smooth transition for background and scale */
+    font-size: 16px; /* Increase font size for better readability */
+    flex: 1; /* Allow buttons to grow equally */
+    margin: 0 5px; /* Add margin between buttons */
+}
+
+/* Confirm button specific styles */
+.modal-button.confirm {
+    background-color: #28a745; /* Green for confirm */
+}
+
+.modal-button.confirm:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Cancel button specific styles */
+.modal-button.cancel {
+    background-color: #dc3545; /* Red for cancel */
+}
+
+.modal-button.cancel:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+/* Button active state */
+.modal-button:active {
+    transform: scale(0.95); /* Slightly shrink button on click */
+}
