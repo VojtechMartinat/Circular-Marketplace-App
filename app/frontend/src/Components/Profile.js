@@ -454,8 +454,8 @@ const Profile = () => {
                     )}
 
                     {showReviewModal && (
-                        <div className="modal-overlay">
-                            <div className="modal">
+                        <div className="review-modal-overlay">
+                            <div className="review-modal">
                                 <h2>Write a Review</h2>
                                 <p>Rate this product:</p>
 
@@ -473,15 +473,17 @@ const Profile = () => {
                                 </div>
 
                                 {/* Comment Input */}
-                                <textarea
+                                <textarea className="review-textarea"
                                     placeholder="Write your review here..."
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
                                 />
+                                <div className="review-buttons">
+                                    {/* Submit & Close Buttons */}
+                                    <button onClick={() => handleSubmitReview()}>Submit Review</button>
+                                    <button onClick={() => setShowReviewModal(false)}>Cancel</button>
+                                </div>
 
-                                {/* Submit & Close Buttons */}
-                                <button onClick={() => handleSubmitReview()}>Submit Review</button>
-                                <button onClick={() => setShowReviewModal(false)}>Cancel</button>
                             </div>
                         </div>
                     )}
