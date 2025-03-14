@@ -17,6 +17,7 @@
   text-align: center;
 }
 
+
 .search-group {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
@@ -26,6 +27,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between; /* Align items to space out the content */
+
   width: 100%;
   max-width: 600px; /* Set max-width for larger screens */
 }
@@ -70,6 +72,7 @@
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-top: 12px solid #1c1c1e; /* Dark color for the triangle */
+
 }
 
 /* Hover Effect for Price Order Button */
@@ -108,8 +111,16 @@
   flex-grow: 1;
   padding: 24px;
   display: grid;
+
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
+
+}
+/* When the screen is smaller than 900px, show only 2 columns */
+@media (max-width: 900px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* Product Card */
@@ -120,6 +131,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
+
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -127,6 +139,7 @@
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+
 }
 
 .product-card img {
@@ -152,9 +165,11 @@
   margin-top: 12px;
 }
 
+
 .product-name {
   font-size: 18px;
   font-weight: 600;
+
 }
 
 .product-price {
@@ -221,11 +236,11 @@ body.dark .dark-mode-toggle {
   border: none;
   font-size: 20px;
   cursor: pointer;
-  padding: 10px 16px; /* Adjust padding for a more rectangular shape */
-  border-radius: 5px; /* Slight rounding for the rectangle */
+  padding: 10px 16px; 
+  border-radius: 5px; 
   color: #1c1c1e;
   transition: background-color 0.2s ease, color 0.2s ease;
-  box-shadow: none; /* Remove box shadow */
+  box-shadow: none; 
 }
 
 .dark-mode-toggle.inline-toggle:hover {

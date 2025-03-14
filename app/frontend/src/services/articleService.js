@@ -34,6 +34,22 @@ async function getArticles() {
     }
 }
 
+async function getUnsoldArticles() {
+    try {
+        const response = await fetch(`${url}articles/unsold`);
+        const data = await response.json();
+
+        if (!data) {
+            throw new Error("No articles found or data missing!");
+        }
+
+        return data;
+    } catch (error) {
+        console.log('Error fetching articles:', error);
+        throw error;
+    }
+}
+
 async function getArticle(articleID) {
     try {
         const response = await fetch(`${url}articles/${articleID}`);
@@ -66,6 +82,22 @@ async function getArticlePhotos(articleID) {
     }
 }
 
+async function getArticlePhoto(articleID) {
+    try {
+        const response = await fetch(`${url}articles/${articleID}/photo`);
+        const data = await response.json();
+
+        if (!data) {
+            throw new Error("No photos found or data missing!");
+        }
+
+        return data;
+    } catch (error) {
+        console.log('Error fetching articles:', error);
+        throw error;
+    }
+}
+
 async function deleteArticle(articleID) {
     const requestOptions = {
         method: 'DELETE',
@@ -85,4 +117,53 @@ async function deleteArticle(articleID) {
     }
 }
 
-export { createArticle, getArticles, getArticle, getArticlePhotos, deleteArticle };
+async function getArticleByOrderId(orderID) {
+    const requestOptions = {
+        method: 'GET',
+    };
+    try {
+        const response = await fetch(`${url}orders/${orderID}/articles`, requestOptions);
+        if (!response.ok) {
+            console.error('Error:', response);
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        if (!data) {
+            throw new Error("No articles found or data missing!");
+        }
+
+        return data;
+    } catch (error) {
+        console.log('Error fetching articles:', error);
+        throw error;
+    }
+}
+
+async function publishReview(reviewData) {
+    if (!reviewData) {
+        throw new Error("Review data missing!");
+    }
+    console.log(reviewData);
+    try {
+        console.log("TEST");
+        const response = await axios.post(`${url}reviews`, reviewData, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        console.log("Response:", response);
+
+        if (!response.data) {
+            throw new Error("No review data returned!");
+        }
+
+        return response.data;
+    } catch (error) {
+        console.error("Error submitting review:", error);
+        throw error;
+    }
+}
+
+export { createArticle, getArticles, getArticle, getArticlePhotos,getArticlePhoto, deleteArticle, getUnsoldArticles, publishReview, getArticleByOrderId };

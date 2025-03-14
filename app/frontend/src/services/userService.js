@@ -1,14 +1,12 @@
 import {url} from "../Config/config"
 
-// services/userService.js
 async function loginUser(username, password) {
     const requestOptions = {
-        method: 'GET', // Use GET to fetch all users
+        method: 'GET',
         headers: { 'Content-Type': 'application/json' },
     };
 
     try {
-        // Fetch all users from the API
         const response = await fetch(`${url}users`, requestOptions);
 
         if (!response.ok) {
@@ -17,7 +15,6 @@ async function loginUser(username, password) {
 
         const result = await response.json();
 
-        console.log(result);
 
         const users = result.users || result;
 
@@ -25,14 +22,12 @@ async function loginUser(username, password) {
             throw new Error('Unexpected response format, users is not an array');
         }
 
-        // Find the user that matches the username and password
         const user = users.find((user) => user.username === username && user.password === password);
 
         if (!user) {
             throw new Error('Invalid username or password');
         }
 
-        // Return the user data if a match is found
         return {
             userID: user.userID,
             username: user.username,
@@ -136,5 +131,43 @@ async function getUser(userID){
     }
 }
 
+async function addMoney(userID,amount){
+    const  requestOptions = {
+        method: 'POST',
+        headers : {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ amount: amount })
+    }
+    try{
+        const response = await fetch(`${url}users/${userID}/topup`,requestOptions)
+        if (!response.ok){
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json()
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+async function getUserRating(userID){
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }
 
-export {createUser,getUserArticles,getUserOrders,loginUser,getUser}
+    try {
+        const response = await fetch(`${url}users/${userID}/rating`, requestOptions);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+export {createUser,getUserArticles,getUserOrders,loginUser,getUser,getUserRating, addMoney}

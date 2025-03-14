@@ -1,13 +1,13 @@
-const { sequelize, Order } = require('./Setup');
+const { sequelize} = require('../config/Setup');
 const request = require('supertest');
 const app = require('../server');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
-const { beforeAll, afterAll, beforeEach, describe, test,expect,} = require('@jest/globals');
+const { beforeAll, afterAll, beforeEach, describe, test,expect, afterEach,} = require('@jest/globals');
 
 
 
 beforeAll(async () => {
-    await sequelize.sync();
+    await sequelize.sync({ force: true  });
 });
 
 afterAll(async () => {
@@ -15,58 +15,206 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-    await Order.destroy({ where: {} });
+    // Clear data from tables before each test
+    await sequelize.models.User.destroy({ where: {}, force: true });
+    await sequelize.models.Order.destroy({ where: {}, force: true });
+    await sequelize.models.Article.destroy({ where: {}, force: true });
+
+
+    // Insert necessary data for each test
+    const newUser = { userID: '1', username: 'user1', password: 'password', email: 'user1@example.com', wallet: 100.0 };
+    const newUser2 = { userID: '2', username: 'user2', password: 'password', email: 'user2@example.com', wallet: 100.0 };
+    await request(app).post('/api/v1/users').send(newUser)
+    await request(app).post('/api/v1/users').send(newUser2)
+    const newArticle = { articleID: '1',
+        userID: 1,
+        articleTitle: 'Table',
+        description: 'xxxx',
+        tagID: 100.0,
+        price: 20,
+        dateAdded: '2024-10-10',
+        state: 'uploaded' };
+    const newArticle2 = { articleID: '2',
+        userID: 1,
+        articleTitle: 'Chair',
+        description: 'xxxx',
+        tagID: 100.0,
+        price: 30,
+        dateAdded: '2024-10-10',
+        state: 'uploaded' };
+    await request(app).post('/api/v1/articles').send(newArticle2)
+    await request(app).post('/api/v1/articles').send(newArticle)
+    const newCard = {
+        paymentMethodID: 1,
+        userID: '1',
+        cardHolder: 'John Doe',
+        sortCode: 123456,
+        cardNumber: 1234567812345678,
+        ExpiryDate: '2025-12-01',
+    };
+    await request(app)
+        .post('/api/v1/paymentcards')
+        .send(newCard);
+
+});
+
+afterEach(async () => {
+    // Ensure no data remains in the database by truncating tables again
+    await sequelize.models.User.destroy({ where: {}, force: true });
+    await sequelize.models.Order.destroy({ where: {}, force: true });
+    await sequelize.models.Article.destroy({ where: {}, force: true });
+    await sequelize.models.PaymentCard.destroy({ where: {}, force: true });
 });
 
 describe('Order Controller Tests', () => {
 
-    test('GET /api/v1/orders - Should return all orders', async () => {
-        // Replace bulkCreate with createOrder controller calls
-        await request(app).post('/api/v1/orders').send({
-            orderID: '1', userID: '123', articleID: '456', paymentMethod: 'Visa', dateOfPurchase: '2024-10-01', totalPrice: 100.0, collectionMethod: 'delivery', orderStatus: 'confirmed'
-        });
-        await request(app).post('/api/v1/orders').send({
-            orderID: '2', userID: '456', articleID: '789', paymentMethod: 'MasterCard', dateOfPurchase: '2024-10-02', totalPrice: 200.0, collectionMethod: 'delivery', orderStatus: 'dispatched'
-        });
 
+    test('GET /api/v1/orders - Should return an empty array if no orders exist', async () => {
         const res = await request(app).get('/api/v1/orders');
         expect(res.statusCode).toBe(200);
-        expect(res.body.order.length).toBe(2);
+        expect(res.body.orders).toEqual([]);  // Should return an empty array
     });
 
-    test('POST /api/v1/orders - Should create a new order', async () => {
-        const newOrder = { orderID: '3', userID: '789', articleID: '101', paymentMethod: 'Visa', dateOfPurchase: '2024-10-03', totalPrice: 150.0, collectionMethod: 'pickup', orderStatus: 'pending' };
-        const res = await request(app).post('/api/v1/orders').send(newOrder);
-        expect(res.statusCode).toBe(201);
-        expect(res.body.order.orderID).toBe('3');
+
+    test('GET /api/v1/orders - Should return all orders', async () => {
+        const res1 = await request(app).post('/api/v1/orders').send({
+            userID: 2,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
+        })
+        const res2 = await request(app).post('/api/v1/orders').send({
+            userID: 2,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '2' }],
+        })
+        const res = await request(app).get('/api/v1/orders');
+        console.log("Body:" + res.body)
+        expect(res.statusCode).toBe(200);
+        expect(res.body.orders).toBeDefined(); // Ensure orders is defined
+        console.log(res.body);
+        expect(res.body.orders.length).toBe(2);
     });
 
     test('GET /api/v1/orders/:id - Should return a single order by ID', async () => {
-        const orderResponse = await request(app).post('/api/v1/orders').send({
-            orderID: '4', userID: '234', articleID: '567', paymentMethod: 'Amex', dateOfPurchase: '2024-10-04', totalPrice: 180.0, collectionMethod: 'delivery', orderStatus: 'confirmed'
+        const res1 = await request(app).post('/api/v1/orders').send({
+            userID: 2,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
         });
-        const res = await request(app).get(`/api/v1/orders/${orderResponse.body.order.orderID}`);
+
+        const res = await request(app).get(`/api/v1/orders/${res1.body.order.orderID}`);
         expect(res.statusCode).toBe(200);
-        expect(res.body.order.orderID).toBe('4');
+        expect(res.body.order.userID).toBe('2');
+    });
+
+    test('POST /api/v1/orders - Should create a new order', async () => {
+        const res1 = await request(app).post('/api/v1/orders').send({
+            userID: 2,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
+        })
+
+        expect(res1.statusCode).toBe(201);
+        expect(res1.body.order.totalPrice).toBe(22);
+    });
+
+    test('GET /api/v1/orders/:id - Should return error  if order is not found', async () => {
+        const res = await request(app).get('/api/v1/orders/9999');  // Non-existent ID
+        expect(res.statusCode).toBe(500);
+        expect(res.body.error).toBe('No order with id : 9999');
+    });
+
+
+    test('DELETE /api/v1/orders/:id - Should delete an order', async () => {
+        const res1 = await request(app).post('/api/v1/orders').send({
+            userID: 2,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
+        })
+
+        const res = await request(app).delete(`/api/v1/orders/${res1.body.order.orderID}`);
+        expect(res.statusCode).toBe(200);
     });
 
     test('PUT /api/v1/orders/:id - Should update an existing order', async () => {
-        const orderResponse = await request(app).post('/api/v1/orders').send({
-            orderID: '5', userID: '345', articleID: '678', paymentMethod: 'PayPal', dateOfPurchase: '2024-10-05', totalPrice: 120.0, collectionMethod: 'pickup', orderStatus: 'pending'
-        });
-        const res = await request(app).put(`/api/v1/orders/${orderResponse.body.order.orderID}`).send({ orderStatus: 'dispatched' });
+        const res1 = await request(app).post('/api/v1/orders').send({
+            userID: 2,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
+        })
+
+        const res = await request(app).patch(`/api/v1/orders/${res1.body.order.orderID}`).send({ orderStatus: 'shipped' });
         expect(res.statusCode).toBe(200);
-        expect(res.body.order[0]).toBe(1);
+        const res2 = await request(app).get(`/api/v1/orders`);
+        expect(res2.body.orders[0].orderStatus).toBe('shipped');
     });
 
-    test('DELETE /api/v1/orders/:id - Should delete an order', async () => {
-        const orderResponse = await request(app).post('/api/v1/orders').send({
-            orderID: '6', userID: '456', articleID: '789', paymentMethod: 'Visa', dateOfPurchase: '2024-10-06', totalPrice: 90.0, collectionMethod: 'delivery', orderStatus: 'confirmed'
-        });
-        const res = await request(app).delete(`/api/v1/orders/${orderResponse.body.order.orderID}`);
-        expect(res.statusCode).toBe(200);
-        const deletedOrder = await Order.findOne({ where: { orderID: '6' } });
-        expect(deletedOrder).toBeNull();
+    test('Nonexisting article for order', async () => {
+        const res1 = await request(app).post('/api/v1/orders').send({
+            userID: 1,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '3' }],
+        })
+        expect(res1.statusCode).toBe(500);
     });
 
-});
+    test('Referenced article assigned to another order already', async () => {
+
+        await request(app).post('/api/v1/orders').send({
+            userID: 2,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
+        })
+        const res2 = await request(app).post('/api/v1/orders').send({
+            userID: 2,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-12-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
+        })
+        expect(res2.statusCode).toBe(500);
+
+    });
+
+        test('Should return articles for a valid order ID', async () => {
+            const order = await request(app).post('/api/v1/orders').send({
+                userID: 2,
+                paymentMethodID: 1,
+                dateOfPurchase: '2024-10-01',
+                collectionMethod: 'delivery',
+                orderStatus: 'confirmed',
+                articles: [{ articleID: '1' }],
+            })
+            const res = await request(app).get(`/api/v1/orders/${order.body.order.orderID}/articles`);
+            expect(res.statusCode).toBe(200);
+            expect(res.body.article.articleID).toBe(1);
+            expect(res.body.article.articleTitle).toBe('Table');
+        });
+
+
+    });

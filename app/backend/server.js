@@ -9,11 +9,13 @@ const paymentcards = require('./routes/PaymentCard')
 const photos = require('./routes/Photo')
 const tags = require('./routes/Tag')
 const wishlists = require('./routes/Wishlist')
+const reviews = require('./routes/Review')
+const tasklog = require('./routes/TaskLog')
+const messages = require('./routes/Message')
 const errorHandler = require('../backend/middleware/errorHandler');  // Import error handler
 const cors = require('cors');
 connection.sync().then(r => console.log("Success")).catch((error) => {console.log(error)})
 
-//middleware
 app.use(express.json())
 
 app.use(bodyParser.json({limit: "10000mb"}));
@@ -29,16 +31,20 @@ app.use('/api/v1/paymentcards', paymentcards);
 app.use('/api/v1/photos', photos);
 app.use('/api/v1/tags', tags);
 app.use('/api/v1/wishlists', wishlists);
+app.use('/api/v1/reviews', reviews);
+app.use('/api/v1/tasklog',tasklog)
+app.use('/api/v1/messages', messages)
 app.use(errorHandler);
 
 const port = 8080;
-app.listen(port, (err) => {
-    if (err) {
-        console.error('Error starting the server:', err);
-        return;
-    }
-    console.log(`Server is listening on port ${port}...`);
-});
-
+if (require.main === module) {
+    app.listen(port, (err) => {
+        if (err) {
+            console.error('Error starting the server:', err);
+            return;
+        }
+        console.log(`Server is listening on port ${port}...`);
+    });
+}
 module.exports = app;
 
