@@ -1,22 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './navbar.css';  // Make sure the path is correct
-import { useAuth } from '../Contexts/AuthContext.js';
+import './navbar.css';
+import { auth } from '../services/firebaseService';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const NavBarDefault = () => {
-    const { isLoggedIn, user } = useAuth();
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     return (
         <nav>
-            <ul>
-                <li><Link to="/">Home</Link></li>
-                <li><Link to="/create-article">Add Item</Link></li>
-                <li>
-                    <Link to={isLoggedIn ? `/profile/${user.userID}` : "/login"}>
-                        {isLoggedIn ? "Account" : "Login"}
-                    </Link>
-                </li>
-            </ul>
+            <div className="nav-container">
+                <div className="nav-left">
+                    <Link to="/" className="brand">ReList</Link>
+                </div>
+                <ul className="nav-right">
+                    <li><Link to="/">Home</Link></li>
+                    <li><Link to="/create-article">Add Item</Link></li>
+                    {user ? (
+                        <>
+                            <li><Link to={`/profile/${user.uid}`}>Account</Link></li>
+                            <li><button onClick={() => signOut(auth)}>Logout</button></li>
+                        </>
+                    ) : (
+                        <li><Link to="/login">Login</Link></li>
+                    )}
+                </ul>
+            </div>
         </nav>
     );
 };
