@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'react-multi-carousel/lib/styles.css';
-import {getArticle, getArticlePhoto, getArticlePhotos} from '../services/articleService';
+import {getArticle, getArticlePhoto, getArticlePhotos, getPhotosForArticleIds} from '../services/articleService';
 import { createOrder } from '../services/orderService';
 import {getUser, getUserArticles, getUserRating} from '../services/userService';
 import './article.css';
@@ -123,26 +123,47 @@ const ArticleDetails = () => {
         if (article && article.userID) {
             getUserArticles(article.userID).then(async (response) => {
                 if (response && response.articles) {
-                    const articleData = response.articles.filter((x) => x.articleID !== article.articleID);
-                    const articlesWithPhotos = await Promise.all(articleData.map(async (article) => {
-                        const photosResponse = await getArticlePhoto(article.articleID);
-                        if (photosResponse && photosResponse.photo) {
-                            const photoData = photosResponse.photo.image.data;
-                            const uint8Array = new Uint8Array(photoData);
-                            const blob = new Blob([uint8Array], {type: 'image/png'});
-                            const reader = new FileReader();
-                            return new Promise((resolve) => {
-                                reader.onloadend = () => {
-                                    article.imageUrl = reader.result;
-                                    resolve(article);
-                                };
-                                reader.readAsDataURL(blob);
+                    const articleIds = response.articles.map(article => article.articleID);
+
+                    console.log("Extracted Article IDs:", articleIds);
+
+                    // Check if articleIds is an array and contains values
+                    if (Array.isArray(articleIds) && articleIds.length > 0) {
+                        try {
+                            // Fetch photos for all articles at once
+                            const photosResponse = await getPhotosForArticleIds(articleIds);
+                            console.log('Fetched photos:', photosResponse);
+
+                            // Process the photos and associate with articles (same as before)
+                            const articlesWithPhotos = response.articles
+                                .filter((x) => x.articleID !== article.articleID)
+                                .map((article) => {
+                                const photo = photosResponse[article.articleID];
+                                if (photo && photo.image) {
+                                    const photoData = photo.image.data;
+                                    const uint8Array = new Uint8Array(photoData);
+                                    const blob = new Blob([uint8Array], { type: 'image/png' });
+                                    const reader = new FileReader();
+                                    return new Promise((resolve) => {
+                                        reader.onloadend = () => {
+                                            article.imageUrl = reader.result; // This is the base64 encoded image
+                                            resolve(article);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    });
+                                }
+                                return article;
                             });
+
+                            // Wait for all articles to be processed with their images
+                            const resolvedArticles = await Promise.all(articlesWithPhotos);
+                            setUserArticles(resolvedArticles);
+                        } catch (error) {
+                            console.error('Error fetching photos:', error);
                         }
-                        return article;
-                    }));
-                    console.log(articlesWithPhotos);
-                    setUserArticles(articlesWithPhotos);
+                    } else {
+                        console.error("Invalid articleIds:", articleIds);
+                    }
                 }
             });
         }
