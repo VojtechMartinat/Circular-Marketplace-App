@@ -211,7 +211,7 @@
 /* Chat and Wishlist Button Styles */
 .chat-button,
 .wishlist-section {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .chat-button button,
@@ -230,11 +230,13 @@
 
 /* Chat Button Specific Styles */
 .chat-button button {
-  background-color: #007bff; /* Blue background for chat */
+  background-color: #1560bd;
   color: white; /* White text */
 }
 
 .chat-button button:hover {
+  transform: scale(1.02);
+  transition: transform 0.5s ease;
   background-color: #0056b3; /* Darker blue on hover */
 }
 
@@ -246,6 +248,8 @@
 
 .wishlist-section button:hover {
   background-color: #218838; /* Darker green on hover */
+  transform: scale(1.02);
+  transition: transform 0.5s ease;
 }
 
 /* Optional: Add icons to buttons */
@@ -381,7 +385,7 @@
 /* First image: takes up the left half of the grid, spanning 2 rows */
 .image-item.main-image {
   width: 400px;
-  height: 900px;
+  height: 800px;
   grid-row: span 2; /* Span 2 rows */
   grid-column: 1; /* First column */
 }
@@ -389,8 +393,8 @@
     display: grid;
     gap: 10px;
     margin-left: 25%;
-    width: 700px;
-    height: 900px;
+    width: 600px;
+    max-height: 600px;
     grid-template-columns: 1fr; /* Two equal width columns */
     grid-template-rows: 1fr; /* Adjust the height automatically */
 }
@@ -398,7 +402,7 @@
 /* All images in the right column should fill the space vertically */
 .image-item.side-image {
   width: 200px;
-  height: 445px; /* Allow the height to adjust dynamically */
+  height: 395px;
 }
 
 
@@ -406,7 +410,7 @@
   grid-row: span 2;
   grid-column: 2;
   width: 400px;
-  height: 900px;
+  height: 800px;
 }
 
 
@@ -436,7 +440,7 @@
   grid-row: span 2;
   grid-column: 3;
   width: 200px;
-  height: 900px;
+  height: 800px;
 }
 
 
@@ -511,9 +515,11 @@
 .article-container {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
-  padding: 20px;
+  gap: 30px;
+  padding-bottom: 30px;
+  margin-bottom: 150px; /* Adds space between article and other articles section */
 }
+
 
 .image-container {
   margin-left: -10%;
@@ -530,7 +536,6 @@
   margin-bottom: 0;
 
 }
-
 .info-container {
   flex: 0 0 25%; /* Take up 25% of the container width */
   margin-right: 10%;
@@ -540,6 +545,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
+  max-height: 540px;
 }
 
 /* Title and description */
@@ -610,6 +616,8 @@
 }
 
 .shipping-button:hover {
+  transform: scale(1.02); /* Slightly enlarge on hover */
+  transition: transform 0.5s ease;
   background-color: #e0e0e0;
 }
 
@@ -629,12 +637,115 @@
   align-items: center; /* Center items vertically */
   justify-content: space-between; /* Center items horizontally */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  margin-bottom: 20px;
 }
 
 /* Buy Button Hover Effect */
 .buy-button:hover {
-  background-color: #4bd369; /* Even darker green on hover */
+  background-color: #5ea633; /* Even darker green on hover */
   transform: scale(1.05); /* Slightly enlarge on hover */
 }
 
 /* Optional: Add an icon to the buy button */
+
+
+.other-articles {
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 50px; /* Ensures some space before the section */
+}
+
+.other-articles h3 {
+  font-size: 24px;
+  margin: 20px;
+}
+
+.other-articles-container {
+  margin-top: 10px;
+  display: flex;
+  gap: 20px;
+  overflow-x: auto; /* Allows horizontal scrolling if there are too many items */
+  padding-top: 10px;
+  padding-bottom: 20px; /* Adds spacing to the bottom */
+  padding-left: 7px;
+  margin-left: 3%;
+  margin-right: 3%;
+}
+
+.other-article-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  width: 250px; /* Ensures each item has a minimum width */
+  flex-shrink: 0; /* Prevents items from shrinking when the container overflows */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Ensures space is distributed between image and text */
+  height: 320px; /* Set a fixed height for consistency */
+}
+
+.other-article-item:hover {
+  transform: scale(1.05);
+}
+
+.other-article-image {
+  width: 100%;
+  height: 200px; /* Set a fixed height for all images */
+  object-fit: cover; /* Ensures the image covers the area without stretching */
+  border-radius: 8px;
+}
+
+.other-article-item h4 {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #333;
+  flex-grow: 1; /* Ensures the text will be pushed to the bottom of the box */
+}
+
+.other-article-item p {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 2%;
+}
+
+
+.other-articles-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 3%;
+  margin-right: 3%;
+  background-color: #f8f8f8;
+}
+
+.see-all-button {
+  display: flex;
+  align-items: center;
+  font-size: 25px; /* Make the button text smaller */
+  font-weight: bold;
+  padding: 5px 10px; /* Adjust the padding for a smaller button */
+  background-color: transparent; /* Button color */
+  transition: background-color 0.5s; /* Smooth transition on hover */
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 150px;
+  height: 50px;
+  margin: 10px;
+  gap: 8px;
+}
+.arrow-icon {
+
+  align-items: center;
+}
+
+.see-all-button:hover {
+  transform: scale(1.15); /* Slightly enlarge on hover */
+  transition: transform 0.3s ease;
+  background-color: transparent; /* Darker color on hover */
+}

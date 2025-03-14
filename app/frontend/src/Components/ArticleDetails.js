@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'react-multi-carousel/lib/styles.css';
-import { getArticle, getArticlePhotos } from '../services/articleService';
+import {getArticle, getArticlePhoto, getArticlePhotos} from '../services/articleService';
 import { createOrder } from '../services/orderService';
-import {getUser, getUserRating} from '../services/userService';
+import {getUser, getUserArticles, getUserRating} from '../services/userService';
 import './article.css';
 import { FaLongArrowAltRight } from "react-icons/fa";
 import {auth} from "../services/firebaseService";
@@ -11,7 +11,7 @@ import SimpleImageViewer from 'react-simple-image-viewer';
 import ShippingModal from './ShippingModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faComment, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
-
+import OtherArticlesModal from './OtherArticlesModal';
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -28,6 +28,8 @@ const ArticleDetails = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
     const [shippingOptions, setShippingOptions] = useState([]);
+    const [userArticles, setUserArticles] = useState([]);
+    const [isOtherArticleModalOpen, setIsOtherArticleModalOpen] = useState(false);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -119,6 +121,36 @@ const ArticleDetails = () => {
 
     useEffect(() => {
         if (article && article.userID) {
+            getUserArticles(article.userID).then(async (response) => {
+                if (response && response.articles) {
+                    const articleData = response.articles.filter((x) => x.articleID !== article.articleID);
+                    const articlesWithPhotos = await Promise.all(articleData.map(async (article) => {
+                        const photosResponse = await getArticlePhoto(article.articleID);
+                        if (photosResponse && photosResponse.photo) {
+                            const photoData = photosResponse.photo.image.data;
+                            const uint8Array = new Uint8Array(photoData);
+                            const blob = new Blob([uint8Array], {type: 'image/png'});
+                            const reader = new FileReader();
+                            return new Promise((resolve) => {
+                                reader.onloadend = () => {
+                                    article.imageUrl = reader.result;
+                                    resolve(article);
+                                };
+                                reader.readAsDataURL(blob);
+                            });
+                        }
+                        return article;
+                    }));
+                    console.log(articlesWithPhotos);
+                    setUserArticles(articlesWithPhotos);
+                }
+            });
+        }
+    },[article])
+
+
+    useEffect(() => {
+        if (article && article.userID) {
             if (article.shippingType === 'both'){
                 setShippingOptions([{title: 'Collection', description: 'Free - Collect from the seller'},{title: 'Delivery', description: '£2 - Delivery in 3-5 business days'}])
             }
@@ -129,7 +161,7 @@ const ArticleDetails = () => {
                 setShippingOptions([{title: 'Collection', description: 'Free - Collect from the seller'}])
             }
         }
-    })
+    },[article])
 
     useEffect(() => {
         getArticlePhotos(id).then((response) => {
@@ -152,7 +184,6 @@ const ArticleDetails = () => {
                 }
             });
         }
-        console.log(rating)
     }, [article]);
 
     const StarRating = ({ rating, totalStars = 5 }) => {
@@ -281,6 +312,18 @@ const ArticleDetails = () => {
         }
     };
 
+    const handleSeeAllArticles = () => {
+        setIsOtherArticleModalOpen(true);
+    };
+
+    const handleViewArticle = (articleID) => {
+        navigate(`/articles/${articleID}`);
+        setIsOtherArticleModalOpen(false); // Close the modal after navigating
+    };
+
+
+
+
 
     return (
         <div className="app">
@@ -342,7 +385,7 @@ const ArticleDetails = () => {
                     </div>
 
                     <button className="shipping-button" onClick={() => setIsModalOpen(true)}>Select Shipping Method
-                        <FaLongArrowAltRight />
+                        <FaLongArrowAltRight/>
                     </button>
                     {selectedOption !== null && (
                         <p>Selected: {shippingOptions[selectedOption]?.title}</p>
@@ -360,25 +403,61 @@ const ArticleDetails = () => {
                     {/* Buttons */}
                     <div className="purchase-button">
                         <button className="buy-button" onClick={handleBuy}>
-                            <FontAwesomeIcon icon={faShoppingCart} style={{ marginRight: '8px' }} />
+                            <FontAwesomeIcon icon={faShoppingCart} style={{marginRight: '8px'}}/>
                             Buy now for £{isShipping ? article.price + 2 : article.price}
                         </button>
                     </div>
 
                     <div className="chat-button">
                         <button onClick={() => navigate(`/chat/${article.userID}`)}>
-                            <FontAwesomeIcon icon={faComment} style={{ marginRight: '8px' }} />
+                            <FontAwesomeIcon icon={faComment} style={{marginRight: '8px'}}/>
                             Chat with Seller
                         </button>
                     </div>
                     <div className="wishlist-section">
                         <button onClick={handleAddToWishlist}>
-                            <FontAwesomeIcon icon={faHeart} style={{ color: 'red', marginRight: '8px' }} />
+                            <FontAwesomeIcon icon={faHeart} style={{color: 'red', marginRight: '8px'}}/>
                             Save for Later
                         </button>
                     </div>
                 </div>
             </div>
+
+            {/* Other Articles Section */}
+            <div className="other-articles">
+                <div className="other-articles-header">
+                    <h3>More from this seller</h3>
+                    <button className="see-all-button" onClick={handleSeeAllArticles}>View All <FaLongArrowAltRight className="arrow-icon" /></button>
+                </div>
+
+                <div className="other-articles-container">
+                    {userArticles.slice(0, 6).length > 0 ? (
+                        userArticles.slice(0, 6).map((userArticle) => (
+                            <div className="other-article-item" key={userArticle.articleID} onClick={() => handleViewArticle(userArticle.articleID)}>
+                                <img
+                                    src={userArticle.imageUrl || 'default_image.png'}
+                                    alt={userArticle.articleTitle}
+                                    className="other-article-image"
+                                />
+                                <h4>{userArticle.articleTitle}</h4>
+                                <p>£{userArticle.price}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No other articles from this seller.</p>
+                    )}
+                </div>
+            </div>
+
+            {/* Other Articles Modal */}
+            {isOtherArticleModalOpen && (
+                <OtherArticlesModal
+                    userArticles={userArticles}
+                    onClose={() => setIsOtherArticleModalOpen(false)}
+                    onViewArticle={handleViewArticle}
+                />
+            )}
+
         </div>
     );
 };

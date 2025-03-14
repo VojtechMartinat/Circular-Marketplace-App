@@ -1,10 +1,27 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './shippingModal.css';
-import { TbTruckDelivery } from "react-icons/tb";
 
 const ShippingModal = ({ options, onClose, onSelect, selectedOption }) => {
+    const handleOverlayClick = (e) => {
+        if (e.target.classList.contains('modal-overlay')) {
+            onClose();
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Escape') {
+            onClose();
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
     return (
-        <div className="modal-overlay">
+        <div className="modal-overlay" onClick={handleOverlayClick}>
             <div className="modal-content">
                 <h2>Select Shipping Method</h2>
                 {options.map((option, index) => (

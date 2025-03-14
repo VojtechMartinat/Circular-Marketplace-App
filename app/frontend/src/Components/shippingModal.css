@@ -142,10 +142,13 @@
 /* Confirm button specific styles */
 .modal-button.confirm {
     background-color: #28a745; /* Green for confirm */
+
 }
 
 .modal-button.confirm:hover {
     background-color: #218838; /* Darker green on hover */
+    transform: scale(1.08); /* Slightly enlarge on hover */
+    transition: transform 0.5s ease;
 }
 
 /* Cancel button specific styles */
@@ -155,6 +158,8 @@
 
 .modal-button.cancel:hover {
     background-color: #c82333; /* Darker red on hover */
+    transform: scale(1.08); /* Slightly enlarge on hover */
+    transition: transform 0.5s ease;
 }
 
 /* Button active state */
