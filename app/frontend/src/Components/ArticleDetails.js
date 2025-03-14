@@ -1,7 +1,7 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'react-multi-carousel/lib/styles.css';
-import {getArticle, getArticlePhoto, getArticlePhotos, getPhotosForArticleIds} from '../services/articleService';
+import {getArticle, getArticlePhotos, getPhotosForArticleIds} from '../services/articleService';
 import { createOrder } from '../services/orderService';
 import {getUser, getUserArticles, getUserRating} from '../services/userService';
 import './article.css';
@@ -360,13 +360,13 @@ const ArticleDetails = () => {
                                     className={`image-item ${index === 0 ? 'main-image' : 'side-image'}`}
                                     onClick={() => handlePhotoClick(index)}
                                 >
-                                    <img src={photo} alt={`Article Image ${index}`}/>
+                                    <img src={photo} alt={`Article  ${index}`}/>
                                 </div>
                             ))}
                         </div>
                     ) : (
                         <div className={'image-solo'} onClick={() => handlePhotoClick(0)}>
-                            <img src={photos[0]} alt={`Article Image 0`}/>
+                            <img src={photos[0]} alt={`Article  0`}/>
                         </div>
                     )}
 

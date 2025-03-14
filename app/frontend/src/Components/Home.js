@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {useNavigate } from 'react-router-dom';
-import {getArticlePhoto, getPhotosForArticleIds, getUnsoldArticles} from '../services/articleService';
+import {getPhotosForArticleIds, getUnsoldArticles} from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
 
@@ -130,15 +130,6 @@ function ProductCard({ article, onClick }) {
     );
 }
 
-function BottomNav() {
-    const navigate = useNavigate();
-    return (
-        <div className="bottom-nav">
-            <button className="nav-button" onClick={() => navigate('/')}>🏠</button>
-            <button className="nav-button" onClick={() => navigate('/CreateArticlePage')}>➕</button>
-            <button className="nav-button">👤</button>
-        </div>
-    );
-}
+
 
 export default Home;
