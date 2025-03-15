@@ -205,7 +205,6 @@
   background-color: #e0e0e0;
   border-color: #bbb;
 }
-/* Buttons */
 
 
 /* Chat and Wishlist Button Styles */
@@ -224,7 +223,7 @@
   transition: background-color 0.3s, transform 0.1s; /* Smooth transition for background and scale */
   display: flex; /* Use flexbox for alignment */
   align-items: center; /* Center items vertically */
-  justify-content: center; /* Center items horizontally */
+  justify-content: center;
   border: 1px solid #ddd; /* Add a border for better definition */
 }
 
@@ -258,15 +257,6 @@
   margin-right: 8px; /* Space between icon and text */
   font-size: 20px; /* Icon size */
 }
-
-/* Example icons (you can replace these with actual icons) */
-/*.chat-button button::before {*/
-/*  content: '💬'; !* Chat icon *!*/
-/*}*/
-
-/*.wishlist-section button::before {*/
-/*  content: '❤️'; !* Wishlist icon *!*/
-/*}*/
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -346,9 +336,9 @@
   top: 100%; /* Position it below the button */
   right: 0; /* Align it to the right */
   background-color: white; /* Background color for visibility */
-  border: 1px solid #ccc; /* Optional border */
+  border: 1px solid #ccc;
   z-index: 1000; /* Ensure it appears above other elements */
-  display: block; /* Ensure it is displayed */
+  display: block;
 }
 
 .menu-item {
@@ -511,7 +501,7 @@
   width: 100%;
   height: auto;
 }
-/* Add this to your current CSS */
+
 .article-container {
   display: flex;
   justify-content: space-between;
@@ -524,7 +514,7 @@
 .image-container {
   margin-left: -10%;
   margin-right: 1%;
-  flex: 0 0 75%; /* Take up 50% of the container width */
+  flex: 0 0 75%; /* Take up 75% of the container width */
 }
 
 .info {
@@ -632,7 +622,7 @@
   transition: background-color 0.3s, transform 0.1s; /* Smooth transition for background and scale */
   background-color: #1e7e34; /* Darker green background for buy button */
   color: white; /* White text */
-  border: none; /* Remove default border */
+  border: none;
   display: flex; /* Use flexbox for alignment */
   align-items: center; /* Center items vertically */
   justify-content: space-between; /* Center items horizontally */
@@ -642,17 +632,15 @@
 
 /* Buy Button Hover Effect */
 .buy-button:hover {
-  background-color: #5ea633; /* Even darker green on hover */
+  background-color: #5ea633;
   transform: scale(1.05); /* Slightly enlarge on hover */
 }
-
-/* Optional: Add an icon to the buy button */
 
 
 .other-articles {
   padding: 20px;
   border-radius: 10px;
-  margin-top: 50px; /* Ensures some space before the section */
+  margin-top: 50px; /* Ensures space before the section */
 }
 
 .other-articles h3 {
@@ -725,10 +713,10 @@
 .see-all-button {
   display: flex;
   align-items: center;
-  font-size: 25px; /* Make the button text smaller */
+  font-size: 25px;
   font-weight: bold;
-  padding: 5px 10px; /* Adjust the padding for a smaller button */
-  background-color: transparent; /* Button color */
+  padding: 5px 10px;
+  background-color: transparent;
   transition: background-color 0.5s; /* Smooth transition on hover */
   color: black;
   border: none;
@@ -747,5 +735,5 @@
 .see-all-button:hover {
   transform: scale(1.15); /* Slightly enlarge on hover */
   transition: transform 0.3s ease;
-  background-color: transparent; /* Darker color on hover */
+  background-color: transparent;
 }

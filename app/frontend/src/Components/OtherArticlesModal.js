@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import './otherArticlesModal.css'; // Importing the CSS file for styling
+import './otherArticlesModal.css';
 import { FaXmark } from "react-icons/fa6";
 
 const OtherArticlesModal = ({ userArticles, onClose, onViewArticle }) => {

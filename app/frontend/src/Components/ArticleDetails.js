@@ -24,7 +24,7 @@ const ArticleDetails = () => {
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
     const [isOpen, setIsOpen] = useState(false); // To control Lightbox
-    const [photoIndex, setPhotoIndex] = useState(0); // Default to 0 if nothing is set
+    const [photoIndex, setPhotoIndex] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
     const [shippingOptions, setShippingOptions] = useState([]);
@@ -130,11 +130,11 @@ const ArticleDetails = () => {
                     // Check if articleIds is an array and contains values
                     if (Array.isArray(articleIds) && articleIds.length > 0) {
                         try {
-                            // Fetch photos for all articles at once
+                            // Fetch photos for all articles
                             const photosResponse = await getPhotosForArticleIds(articleIds);
                             console.log('Fetched photos:', photosResponse);
 
-                            // Process the photos and associate with articles (same as before)
+                            // Process the photos and associate with articles
                             const articlesWithPhotos = response.articles
                                 .filter((x) => x.articleID !== article.articleID)
                                 .map((article) => {
@@ -146,7 +146,7 @@ const ArticleDetails = () => {
                                     const reader = new FileReader();
                                     return new Promise((resolve) => {
                                         reader.onloadend = () => {
-                                            article.imageUrl = reader.result; // This is the base64 encoded image
+                                            article.imageUrl = reader.result; // base64 encoded image
                                             resolve(article);
                                         };
                                         reader.readAsDataURL(blob);
