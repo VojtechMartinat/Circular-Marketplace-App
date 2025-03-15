@@ -12,6 +12,8 @@ import ShippingModal from './ShippingModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faComment, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import OtherArticlesModal from './OtherArticlesModal';
+import { GrMapLocation } from "react-icons/gr";
+import { RxAvatar } from "react-icons/rx";
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -56,50 +58,6 @@ const ArticleDetails = () => {
     const [rating, setRating] = useState(null);
     const [reviewAmount, setReviewAmount] = useState(null);
 
-    const KebabMenu = () => {
-        const [isOpen, setIsOpen] = useState(false);
-
-        const toggleMenu = () => {
-            setIsOpen(!isOpen);
-        };
-
-        const handleSharing = () => {
-            const currentUrl = window.location.href
-            navigator.clipboard.writeText(currentUrl)
-                .then(() => {alert('Article copied to the clipboard!')})
-                .catch((error) => {
-                    console.error('Error copying text: ',error)
-                })
-            setIsOpen(false);
-        };
-
-        // return (
-        //     <div className="icons">
-        //         <div className="top-items">
-        //             <div className="dropdown">
-        //                 <h2 style={{
-        //                     display: "flex",
-        //                     alignItems: "center",
-        //                     textAlign: "left",
-        //                     paddingLeft: 5,
-        //                     gap: 10 // Adjust the gap as needed
-        //                 }}>
-        //                     <FaWallet size={30} style={{color: "black"}}/>
-        //                     {dbUser?.wallet}£
-        //                 </h2>
-        //             </div>
-        //             <div className="dropdown">
-        //                 <FaGear size={30} onClick={toggleMenu} style={{color: 'black'}}/>
-        //             </div>
-        //             {isOpen && (
-        //                 <div className="menu" >
-        //                     <div className="menu-item" onClick={handleSharing}>Share</div>
-        //                 </div>
-        //             )}
-        //         </div>
-        //     </div>
-        // );
-    };
 
     useEffect(() => {
         getArticle(id).then((response) => {
@@ -389,7 +347,7 @@ const ArticleDetails = () => {
 
                     {/* Seller info */}
                     <div className="seller-info">
-                        <div className="seller-avatar">👤</div>
+                        <div className="seller-avatar"><RxAvatar size={55} /></div>
                         <div className="seller-details">
                             <p className="seller-name">{articleUser?.username}</p>
                             <p className="seller-rating">
@@ -402,7 +360,7 @@ const ArticleDetails = () => {
                                 )}
                             </p>
                         </div>
-                        <div className="seller-location">📍{articleUser?.location}</div>
+                        <div className="seller-location"><GrMapLocation/>{articleUser?.location}</div>
                     </div>
 
                     <button className="shipping-button" onClick={() => setIsModalOpen(true)}>Select Shipping Method
