@@ -28,6 +28,7 @@ const Profile = () => {
     const [comment, setComment] = useState("");
     const [selectedOrderID, setSelectedOrderID] = useState(null);
     const [isBought, setIsBought] = useState(false);
+
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
@@ -124,22 +125,25 @@ const Profile = () => {
     }, [articles]);
 
     useEffect(() => {
+        console.log('Orders: ', orders);
+
         const fetchOrderPhotos = async () => {
             try {
-                if (!orders || orders.length === 0) return;
+                if (!orders || orders.length === 0) {
+                    console.log('No orders found to fetch photos');
+                    return;
+                }
+
                 const updatedOrders = await Promise.all(
                     orders.map(async (order) => {
-
                         try {
                             const photosResponse = await getOrderArticlePhotos(order.orderID);
-
 
                             if (photosResponse?.photos?.[0]) {
                                 const photoData = photosResponse.photos[0].image.data;
                                 const uint8Array = new Uint8Array(photoData);
                                 const blob = new Blob([uint8Array], { type: 'image/png' });
                                 const reader = new FileReader();
-
                                 return new Promise((resolve) => {
                                     reader.onloadend = () => {
                                         order.imageUrl = reader.result;
@@ -155,7 +159,11 @@ const Profile = () => {
                     })
                 );
 
-                setOrders(updatedOrders);
+
+                const ordersChanged = !updatedOrders.every((order, index) => order.imageUrl === orders[index]?.imageUrl);
+                if (ordersChanged) {
+                    setOrders([...updatedOrders]);
+                }
             } catch (error) {
                 console.error("Error fetching order photos:", error);
             }
@@ -165,7 +173,7 @@ const Profile = () => {
         const interval = setInterval(fetchOrderPhotos, 30000);
 
         return () => clearInterval(interval);
-    }, [articles]);
+    }, [orders]);
 
     useEffect(() => {
         if (orders) {
@@ -218,6 +226,11 @@ const Profile = () => {
     };
 
     const handleReviewClick = (articleID, orderID, isBought) => {
+        if (!articleID) {
+            console.error("Article ID is undefined for order:", orderID);
+            alert("There was an issue retrieving the article. Please try again later.");
+            return;
+        }
         setSelectedArticleID(articleID);
         setSelectedOrderID(orderID);
         setShowReviewModal(true);
@@ -231,7 +244,7 @@ const Profile = () => {
             alert("Cannot submit review without correct information.");
             return;
         }
-        const reviewer = user.userID;
+        const reviewer = user?.uid;
         const userID = isBought
             ? boughtArticles[selectedOrderID]?.userID  // For bought articles, userID is the seller
             : orderDetails[selectedOrderID]?.order?.userID;  // For sold articles, userID is the buyer        const reviewer = user.userID;
@@ -243,7 +256,7 @@ const Profile = () => {
 
         const reviewData = {
             articleID: selectedArticleID,
-            userID,  // Add userID to the request
+            userID,
             rating,
             comment,
             reviewer,
@@ -257,6 +270,9 @@ const Profile = () => {
             setComment("");
             setShowReviewModal(false);
         } catch (error) {
+            console.log("Logged-in User:", user);
+
+            console.log("Submitting Review:", reviewData);
             console.error("Failed to submit review:", error.response?.data || error.message);
             alert("Failed to submit review.");
             console.log("Selected Article ID:", selectedArticleID);
@@ -378,7 +394,13 @@ const Profile = () => {
 
                                             {/* Show Review Button if status is "shipped" or "collected" */}
                                             {(order.orderStatus === "shipped" || order.orderStatus === "collected") && (
-                                                <button onClick={() => handleReviewClick(boughtArticles[order.orderID].articleID, order.orderID, true)}>Write a Review</button>
+                                                <button onClick={() => handleReviewClick(
+                                                    boughtArticles[order.orderID].articleID,
+                                                    order.orderID,
+                                                    true
+                                                )}>
+                                                    Write a Review
+                                                </button>
                                             )}
                                         </div>
                                         <div className="icon">
