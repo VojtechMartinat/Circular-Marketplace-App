@@ -197,15 +197,16 @@ const ArticleDetails = () => {
                 });
         }
     };
-    const ReviewModal = () => {
+    const ReviewModal = ({onClose}) => {
         return (
-            <div className="reviews-modal">
+            <div className="review-modal-overlay" onClick={onClose}>
+            <div className="review-modal-content">
                 <h2>Reviews for {articleUser?.username}</h2>
-                <ul>
+                <ul className="reviews">
                     {reviews.length > 0 ? (
                         reviews.map((review, index) => (
                             <li key={index}>
-                                <p><strong>{reviewUser?.username}:</strong> {review.comment}</p>
+                                <span><strong>{reviewUser?.username}</strong>: {review.comment}</span>
                                 <div className="star-rating-container">
                                     <StarRating rating={review.rating}/>
                                 </div>
@@ -215,7 +216,8 @@ const ArticleDetails = () => {
                         <p>No reviews yet.</p>
                     )}
                 </ul>
-                <button onClick={() => setShowReviews(false)}>Close</button>
+                <button onClick={onClose} className="close-modal">Close</button>
+            </div>
             </div>
         );
     };
@@ -359,7 +361,7 @@ const ArticleDetails = () => {
 
 
             </div>
-            {showReviews && <ReviewModal/>}
+            {showReviews && <ReviewModal onClose={() => setShowReviews(false)} />}
 
             <p className='textchoose'>Choose one or both:</p>
 
