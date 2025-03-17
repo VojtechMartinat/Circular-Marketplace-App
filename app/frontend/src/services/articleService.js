@@ -97,6 +97,25 @@ async function getArticlePhoto(articleID) {
         throw error;
     }
 }
+async function getPhotosForArticleIds(articleIds) {
+    try {
+        // Send a POST request with the articleIds in the body
+        const response = await axios.post(`${url}photos/articles`, {
+            articleIds: articleIds  // Send articleIds in the request body as JSON
+        }, {
+            headers: {
+                'Content-Type': 'application/json'  // Ensure the server knows we're sending JSON
+            }
+        });
+
+        // Return the result from the server
+        const result = response.data;
+        return result;
+    } catch (error) {
+        console.error('Error fetching photos:', error);
+        throw error;  // Re-throw the error after logging
+    }
+}
 
 async function deleteArticle(articleID) {
     const requestOptions = {
@@ -166,4 +185,4 @@ async function publishReview(reviewData) {
     }
 }
 
-export { createArticle, getArticles, getArticle, getArticlePhotos,getArticlePhoto, deleteArticle, getUnsoldArticles, publishReview, getArticleByOrderId };
+export { createArticle, getArticles, getArticle, getArticlePhotos,getArticlePhoto, deleteArticle, getUnsoldArticles, publishReview, getArticleByOrderId,getPhotosForArticleIds };

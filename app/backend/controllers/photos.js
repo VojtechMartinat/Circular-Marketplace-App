@@ -1,6 +1,7 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
 const {Photo, Tag} = require('../models/initialise')
+const {Op} = require("sequelize");
 const fs = require("fs").promises;
 
 
@@ -59,6 +60,34 @@ const getPhoto = asyncErrorWrapper(async (req,res,next) =>{
     res.status(200).json({photo})
 })
 
+const getPhotosByArticleIds = asyncErrorWrapper(async (req, res, next) => {
+    const { articleIds } = req.body;
+
+    if (!Array.isArray(articleIds) || articleIds.length === 0) {
+        return next(new APIError('Please provide a valid array of articleIds.', 400));
+    }
+
+    const photos = await Photo.findAll({
+        where: {
+            articleID: {
+                [Op.in]: articleIds
+            }
+        }
+    });
+
+    if (photos.length === 0) {
+        return next(new APIError('No photos found for the provided articleIds.', 404));
+    }
+
+    // Creates a result object mapping each articleId to its photo (or null if not found)
+    const result = articleIds.reduce((acc, articleId) => {
+        const photo = photos.find(p => p.articleID === articleId);
+        acc[articleId] = photo || null;
+        return acc;
+    }, {});
+
+    res.status(200).json(result);
+});
 
 /**
  * * Update photo in a database
@@ -117,5 +146,5 @@ const photosTags =  asyncErrorWrapper(async (req,res,next) =>{
     }
 })
 module.exports = {
-    getAllPhotos,createPhoto,getPhoto,updatePhoto,deletePhoto, photosTags
+    getAllPhotos,createPhoto,getPhoto,updatePhoto,deletePhoto, photosTags, getPhotosByArticleIds
 }

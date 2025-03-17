@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ReactMultiCarousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
-import { getArticle, getArticlePhotos } from '../services/articleService';
+import {getArticle, getArticlePhotos, getPhotosForArticleIds} from '../services/articleService';
 import { createOrder } from '../services/orderService';
-import { useAuth } from '../Contexts/AuthContext';
-import {getUser, getUserRating} from '../services/userService';
+import {getUser, getUserArticles, getUserRating} from '../services/userService';
 import './article.css';
-import {FaWallet} from "react-icons/fa";
-import {FaGear} from "react-icons/fa6";
+import { FaLongArrowAltRight } from "react-icons/fa";
 import {auth} from "../services/firebaseService";
+import SimpleImageViewer from 'react-simple-image-viewer';
+import ShippingModal from './ShippingModal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart, faComment, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import OtherArticlesModal from './OtherArticlesModal';
+import { GrMapLocation } from "react-icons/gr";
+import { RxAvatar } from "react-icons/rx";
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -21,6 +25,13 @@ const ArticleDetails = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
+    const [isOpen, setIsOpen] = useState(false); // To control Lightbox
+    const [photoIndex, setPhotoIndex] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedOption, setSelectedOption] = useState(null);
+    const [shippingOptions, setShippingOptions] = useState([]);
+    const [userArticles, setUserArticles] = useState([]);
+    const [isOtherArticleModalOpen, setIsOtherArticleModalOpen] = useState(false);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -47,51 +58,6 @@ const ArticleDetails = () => {
     const [rating, setRating] = useState(null);
     const [reviewAmount, setReviewAmount] = useState(null);
 
-    const KebabMenu = () => {
-        const [isOpen, setIsOpen] = useState(false);
-
-        const toggleMenu = () => {
-            setIsOpen(!isOpen);
-        };
-
-        const handleSharing = () => {
-            const currentUrl = window.location.href
-            navigator.clipboard.writeText(currentUrl)
-                .then(() => {alert('Article copied to the clipboard!')})
-                .catch((error) => {
-                    console.error('Error copying text: ',error)
-                })
-            setIsOpen(false);
-        };
-
-        return (
-            <div className="icons">
-                <div className="top-items">
-                    <div className="dropdown">
-                        <h2 style={{
-                            display: "flex",
-                            alignItems: "center",
-                            textAlign: "left",
-                            paddingLeft: 5,
-                            gap: 10 // Adjust the gap as needed
-                        }}>
-                            <FaWallet size={30} style={{color: "black"}}/>
-                            {dbUser?.wallet}£
-                        </h2>
-                    </div>
-                    <div className="dropdown">
-                        <FaGear size={30} onClick={toggleMenu} style={{color: 'black'}}/>
-                    </div>
-                </div>
-
-                {isOpen && (
-                    <div className="menu">
-                        <div className="menu-item" onClick={handleSharing}>Share</div>
-                    </div>
-                )}
-            </div>
-        );
-    };
 
     useEffect(() => {
         getArticle(id).then((response) => {
@@ -104,12 +70,77 @@ const ArticleDetails = () => {
     useEffect(() => {
         if (article && article.userID) {
             getUser(article.userID).then((response) => {
-                if (response) { 
+                if (response) {
                     setArticleUser(response.user);
                 }
             });
         }
     }, [article]);
+
+    useEffect(() => {
+        if (article && article.userID) {
+            getUserArticles(article.userID).then(async (response) => {
+                if (response && response.articles) {
+                    const articleIds = response.articles.map(article => article.articleID);
+
+                    console.log("Extracted Article IDs:", articleIds);
+
+                    // Check if articleIds is an array and contains values
+                    if (Array.isArray(articleIds) && articleIds.length > 0) {
+                        try {
+                            // Fetch photos for all articles
+                            const photosResponse = await getPhotosForArticleIds(articleIds);
+                            console.log('Fetched photos:', photosResponse);
+
+                            // Process the photos and associate with articles
+                            const articlesWithPhotos = response.articles
+                                .filter((x) => x.articleID !== article.articleID)
+                                .map((article) => {
+                                const photo = photosResponse[article.articleID];
+                                if (photo && photo.image) {
+                                    const photoData = photo.image.data;
+                                    const uint8Array = new Uint8Array(photoData);
+                                    const blob = new Blob([uint8Array], { type: 'image/png' });
+                                    const reader = new FileReader();
+                                    return new Promise((resolve) => {
+                                        reader.onloadend = () => {
+                                            article.imageUrl = reader.result; // base64 encoded image
+                                            resolve(article);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    });
+                                }
+                                return article;
+                            });
+
+                            // Wait for all articles to be processed with their images
+                            const resolvedArticles = await Promise.all(articlesWithPhotos);
+                            setUserArticles(resolvedArticles);
+                        } catch (error) {
+                            console.error('Error fetching photos:', error);
+                        }
+                    } else {
+                        console.error("Invalid articleIds:", articleIds);
+                    }
+                }
+            });
+        }
+    },[article])
+
+
+    useEffect(() => {
+        if (article && article.userID) {
+            if (article.shippingType === 'both'){
+                setShippingOptions([{title: 'Collection', description: 'Free - Collect from the seller'},{title: 'Delivery', description: '£2 - Delivery in 3-5 business days'}])
+            }
+            else if (article.shippingType === 'shipping'){
+                setShippingOptions([{title: 'Delivery', description: '£2 - Delivery in 3-5 business days'}])
+            }
+            else if (article.shippingType === 'collection'){
+                setShippingOptions([{title: 'Collection', description: 'Free - Collect from the seller'}])
+            }
+        }
+    },[article])
 
     useEffect(() => {
         getArticlePhotos(id).then((response) => {
@@ -132,7 +163,6 @@ const ArticleDetails = () => {
                 }
             });
         }
-        console.log(rating)
     }, [article]);
 
     const StarRating = ({ rating, totalStars = 5 }) => {
@@ -236,105 +266,177 @@ const ArticleDetails = () => {
         },
     };
 
-    const CustomLeftArrow = ({ onClick }) => (
-        <button onClick={onClick} className="custom-arrow left-arrow">←</button>
-      );
-      
-      const CustomRightArrow = ({ onClick }) => (
-        <button onClick={onClick} className="custom-arrow right-arrow">→</button>
-      );
+    const handlePhotoClick = (index) => {
+        if (index >= 0 && index < photos.length) {
+            setPhotoIndex(index);
+            setIsOpen(true);
+        } else {
+            console.error('Invalid photo index');
+        }
+    };
+
+    function handleAddToWishlist() {
+        alert("Not implemented yet");
+    }
+
+    const handleShippingSelection = (index) => {
+        setSelectedOption(index);
+        if (shippingOptions[index].title === 'Collection') {
+            setIsCollection(true);
+            setIsShipping(false);
+        }
+        if (shippingOptions[index].title === 'Delivery') {
+            setIsShipping(true);
+            setIsCollection(false);
+        }
+    };
+
+    const handleSeeAllArticles = () => {
+        setIsOtherArticleModalOpen(true);
+    };
+
+    const handleViewArticle = (articleID) => {
+        navigate(`/articles/${articleID}`);
+        setIsOtherArticleModalOpen(false); // Close the modal after navigating
+    };
+
+
+
+
 
     return (
-        <div className="app" >
-            {/* Header section */}
-            <div className="header">
-                <button className="back-button" onClick={() => navigate('/')}>
-                ← 
-                </button>
-
-                <KebabMenu/>
-            </div>
-
-            {/* Carousel for images */}
-            <div className="carousel-container">
-                <ReactMultiCarousel responsive={responsive} 
-                infinite 
-                autoPlay 
-                autoPlaySpeed={10000}
-                CustomLeftArrow={<CustomLeftArrow/>}
-                CustomRightArrow={<CustomRightArrow/>}>
-                    {photos.map((photo, index) => (
-                        <div key={index} className="carousel-image">
-                            <img src={photo} alt={`Article ${index}`}/>
+        <div className="app">
+            {/* Article details layout */}
+            <div className="article-container">
+                {/* Image section */}
+                <div className="image-container">
+                    {photos.length > 1 ? (
+                        <div className={`image-grid${photos.length >= 4 ? '-4' : ''} grid-${photos.length}`}>
+                            {photos.map((photo, index) => (
+                                <div
+                                    key={index}
+                                    className={`image-item ${index === 0 ? 'main-image' : 'side-image'}`}
+                                    onClick={() => handlePhotoClick(index)}
+                                >
+                                    <img src={photo} alt={`Article  ${index}`}/>
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </ReactMultiCarousel>
-            </div>
-            
+                    ) : (
+                        <div className={'image-solo'} onClick={() => handlePhotoClick(0)}>
+                            <img src={photos[0]} alt={`Article  0`}/>
+                        </div>
+                    )}
 
-            {/* Title and description */}
-            <div className='info'>
-                <h1 className="title" >{article.articleTitle}</h1>
-                <h2 className="price">£{article.price}</h2>
-                <p className="description">{article.description}</p>
-                
-
-            </div>
-
-            {/* Seller section */}
-            <div className="seller-info">
-                <div className="seller-avatar">👤</div>
-                <div className="seller-details">
-                    <p className="seller-name">{articleUser?.username}</p>
-                    <p className="seller-rating">
-                        {rating
-                            ? <>
-                                <StarRating rating={rating} /> {reviewAmount} reviews
-                            </>
-                            : 'no reviews yet'}
-                    </p>
+                    {/* Image Viewer */}
+                    {isOpen && (
+                        <SimpleImageViewer
+                            src={photos}  // Array of photo sources
+                            currentIndex={photoIndex}  // Initial index for the viewer
+                            onClose={() => setIsOpen(false)}  // Close the viewer
+                        />
+                    )}
                 </div>
-                <div className="seller-location">📍{articleUser?.location}</div>
 
+                {/* Info section */}
+                <div className="info-container">
+                    <h1 className="title">{article.articleTitle}</h1>
+                    <h2 className="price">£{article.price}</h2>
+                    <p className="description">{article.description}</p>
+                    <div className="separator"></div>
 
-            </div>
+                    {/* Seller info */}
+                    <div className="seller-info">
+                        <div className="seller-avatar"><RxAvatar size={55} /></div>
+                        <div className="seller-details">
+                            <p className="seller-name">{articleUser?.username}</p>
+                            <p className="seller-rating">
+                                {rating ? (
+                                    <>
+                                        <StarRating rating={rating}/> ({reviewAmount} reviews)
+                                    </>
+                                ) : (
+                                    "No reviews yet"
+                                )}
+                            </p>
+                        </div>
+                        <div className="seller-location"><GrMapLocation/>{articleUser?.location}</div>
+                    </div>
 
-            <p className='textchoose'>Choose one or both:</p>
-
-            {/* Shipping and Collection */}
-            <div className="purchase-options">
-                {article.shippingType === 'shipping' || article.shippingType === 'both' ? (
-                    <button
-                        type="button"
-                        className={`option-button ${isShipping ? 'selected' : ''}`}
-                        onClick={() => {
-                            setIsShipping(!isShipping);
-                            if (!isShipping) setIsCollection(false);
-                        }}>
-                        <p>Shipping</p>
+                    <button className="shipping-button" onClick={() => setIsModalOpen(true)}>Select Shipping Method
+                        <FaLongArrowAltRight/>
                     </button>
-                ) : null}
-                {article.shippingType === 'collection' || article.shippingType === 'both' ? (
-                    <button
-                        type="button"
-                        className={`option-button ${isCollection ? 'selected' : ''}`}
-                        onClick={() => {
-                            setIsCollection(!isCollection);
-                            if (!isCollection) setIsShipping(false);
-                        }}>
-                        <p>Collection</p>
-                    </button>
-                ) : null}
+                    {selectedOption !== null && (
+                        <p>Selected: {shippingOptions[selectedOption]?.title}</p>
+                    )}
+                    <div className="separator"></div>
+                    {isModalOpen && (
+                        <ShippingModal
+                            options={shippingOptions}
+                            onClose={() => setIsModalOpen(false)}
+                            onSelect={handleShippingSelection}
+                            selectedOption={selectedOption}
+                        />
+                    )}
+
+                    {/* Buttons */}
+                    <div className="purchase-button">
+                        <button className="buy-button" onClick={handleBuy}>
+                            <FontAwesomeIcon icon={faShoppingCart} style={{marginRight: '8px'}}/>
+                            Buy now for £{isShipping ? article.price + 2 : article.price}
+                        </button>
+                    </div>
+
+                    <div className="chat-button">
+                        <button onClick={() => navigate(`/chat/${article.userID}`)}>
+                            <FontAwesomeIcon icon={faComment} style={{marginRight: '8px'}}/>
+                            Chat with Seller
+                        </button>
+                    </div>
+                    <div className="wishlist-section">
+                        <button onClick={handleAddToWishlist}>
+                            <FontAwesomeIcon icon={faHeart} style={{color: 'red', marginRight: '8px'}}/>
+                            Save for Later
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            {/* Purchase Button */}
-            <div className="purchase-button">
-                <button onClick={handleBuy}>Buy for {isShipping ? article.price + 2 : article.price}</button>
+            {/* Other Articles Section */}
+            <div className="other-articles">
+                <div className="other-articles-header">
+                    <h3>More from this seller</h3>
+                    <button className="see-all-button" onClick={handleSeeAllArticles}>View All <FaLongArrowAltRight className="arrow-icon" /></button>
+                </div>
 
+                <div className="other-articles-container">
+                    {userArticles.slice(0, 6).length > 0 ? (
+                        userArticles.slice(0, 6).map((userArticle) => (
+                            <div className="other-article-item" key={userArticle.articleID} onClick={() => handleViewArticle(userArticle.articleID)}>
+                                <img
+                                    src={userArticle.imageUrl || 'default_image.png'}
+                                    alt={userArticle.articleTitle}
+                                    className="other-article-image"
+                                />
+                                <h4>{userArticle.articleTitle}</h4>
+                                <p>£{userArticle.price}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No other articles from this seller.</p>
+                    )}
+                </div>
             </div>
-            <div className="chat-button">
-                <button onClick={() => navigate(`/chat/${article.userID}`)}>Chat with Seller</button>
-            </div>
+
+            {/* Other Articles Modal */}
+            {isOtherArticleModalOpen && (
+                <OtherArticlesModal
+                    userArticles={userArticles}
+                    onClose={() => setIsOtherArticleModalOpen(false)}
+                    onViewArticle={handleViewArticle}
+                />
+            )}
+
         </div>
     );
 };
