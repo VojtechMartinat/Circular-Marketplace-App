@@ -1,3 +1,3 @@
-const url = "https://api.relist.live/api/v1/"
+const url = "http://localhost:8080/api/v1/"
 const urlGateway = "https://4i0yaqji7g.execute-api.eu-west-1.amazonaws.com"
 module.exports = {url, urlGateway}

@@ -12,6 +12,10 @@ import ShippingModal from './ShippingModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faComment, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import OtherArticlesModal from './OtherArticlesModal';
+import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import axios from 'axios';
+
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -30,6 +34,8 @@ const ArticleDetails = () => {
     const [shippingOptions, setShippingOptions] = useState([]);
     const [userArticles, setUserArticles] = useState([]);
     const [isOtherArticleModalOpen, setIsOtherArticleModalOpen] = useState(false);
+    const [coordinates, setCoordinates] = useState(null);
+
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -206,6 +212,36 @@ const ArticleDetails = () => {
             });
         }
     }, [article]);
+
+    useEffect(() => {
+        const getCoordinates = async () => {
+            const postcode = articleUser?.location;
+            console.log(postcode)
+            if (postcode) {
+                try {
+                    const response = await axios.get(`http://postcodeof.co.uk/postcode/${postcode}/`);
+                    const htmlData = response.data;
+
+                    // Extract coordinates from the HTML content using regex
+                    const match = htmlData.match(/GPS Coordinates for [A-Za-z0-9]+ are ([\d.]+), ([\d.]+)/);
+
+                    if (match) {
+                        // Extract latitude and longitude from the match
+                        const latitude = parseFloat(match[1]);
+                        const longitude = parseFloat(match[2]);
+
+                        setCoordinates([latitude, longitude]);
+                    } else {
+                        console.error('No coordinates found in the response.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching coordinates:', error);
+                }
+            }
+        };
+
+        getCoordinates();
+    }, [articleUser?.location]);
 
     const StarRating = ({ rating, totalStars = 5 }) => {
         return (
@@ -390,19 +426,31 @@ const ArticleDetails = () => {
                     {/* Seller info */}
                     <div className="seller-info">
                         <div className="seller-avatar">👤</div>
-                        <div className="seller-details">
-                            <p className="seller-name">{articleUser?.username}</p>
-                            <p className="seller-rating">
-                                {rating ? (
-                                    <>
-                                        <StarRating rating={rating}/> ({reviewAmount} reviews)
-                                    </>
-                                ) : (
-                                    "No reviews yet"
-                                )}
-                            </p>
+                        <div className="seller-details-container">
+                            <div className="seller-details">
+                                <p className="seller-name">{articleUser?.username}</p>
+                                <p className="seller-rating">
+                                    {rating ? (
+                                        <>
+                                            <StarRating rating={rating}/> ({reviewAmount} reviews)
+                                        </>
+                                    ) : (
+                                        "No reviews yet"
+                                    )}
+                                </p>
+                            </div>
+
+                            {/* OpenStreetMap Below Location */}
+                            <div className="seller-map">
+
+                                <p>{articleUser?.location}</p>
+                                <MapContainer center={coordinates} zoom={13}
+                                              style={{height: "200px", width: "100%", borderRadius: "10px"}}>
+                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                                    <Circle center={coordinates} radius={500} color="blue" fillOpacity={0.3}/>
+                                </MapContainer>
+                            </div>
                         </div>
-                        <div className="seller-location">📍{articleUser?.location}</div>
                     </div>
 
                     <button className="shipping-button" onClick={() => setIsModalOpen(true)}>Select Shipping Method
@@ -448,13 +496,15 @@ const ArticleDetails = () => {
             <div className="other-articles">
                 <div className="other-articles-header">
                     <h3>More from this seller</h3>
-                    <button className="see-all-button" onClick={handleSeeAllArticles}>View All <FaLongArrowAltRight className="arrow-icon" /></button>
+                    <button className="see-all-button" onClick={handleSeeAllArticles}>View All <FaLongArrowAltRight
+                        className="arrow-icon"/></button>
                 </div>
 
                 <div className="other-articles-container">
                     {userArticles.slice(0, 6).length > 0 ? (
                         userArticles.slice(0, 6).map((userArticle) => (
-                            <div className="other-article-item" key={userArticle.articleID} onClick={() => handleViewArticle(userArticle.articleID)}>
+                            <div className="other-article-item" key={userArticle.articleID}
+                                 onClick={() => handleViewArticle(userArticle.articleID)}>
                                 <img
                                     src={userArticle.imageUrl || 'default_image.png'}
                                     alt={userArticle.articleTitle}
