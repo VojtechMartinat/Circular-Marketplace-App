@@ -12,7 +12,7 @@
   align-items: center;
   margin-bottom: 20px;
   justify-content: space-between;
-  
+
 }
 
 .kebab{
@@ -20,7 +20,7 @@
   background: none;
   border: none;
   font-size: 20px;
-  padding:10px 20px; 
+  padding:10px 20px;
   text-align: center;
   justify-content:flex-end;
   max-width: fit-content;
@@ -32,7 +32,7 @@
   background: none;
   border: none;
   font-size: 20px;
-  padding:10px 20px; 
+  padding:10px 20px;
   text-align: center;
   justify-content: flex-start;
   max-width: fit-content;
@@ -70,14 +70,14 @@
 }
 
 .react-multiple-carousel__arrow {
-  background: rgba(0, 0, 0, 0.5); 
-  max-width: fit-content;  
+  background: rgba(0, 0, 0, 0.5);
+  max-width: fit-content;
   max-height: fit-content;
-  border-radius: 60%; 
+  border-radius: 60%;
 }
 
 .react-multiple-carousel__arrow--left {
-  right: auto; 
+  right: auto;
 }
 
 .react-multiple-carousel__arrow--right {
@@ -113,72 +113,157 @@
 .info{
   justify-content: center;
   align-items: center;
-  
+
 }
 .title {
-  padding: auto;
-  padding-top: 1%;
   font-size: 24px;
-  margin-bottom: 10px;
+  margin-bottom: 5px; /* Reduce space between title and price */
 }
 
-.price{
-  padding: auto;
+.price {
   font-size: 20px;
-  margin-bottom: 10px;
-  color: #393939;
+  margin-bottom: 10px; /* Reduce space between price and description */
 }
 
 .description {
   color: #666;
+  margin-bottom: 10px; /* Reduce space between description and seller section */
 }
 
 .seller-info {
   display: flex;
   align-items: center;
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .seller-avatar {
   background-color: #e6e6e6;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
+  font-size: 20px;
+  margin-right: 10px;
 }
 
 .seller-details {
-  margin-left: 10px;
+  flex-grow: 1;
 }
 
 .seller-name {
+  font-size: 16px;
   font-weight: bold;
+  color: #333;
+  margin: 0;
 }
-
 .seller-rating {
   font-size: 14px;
   color: #666;
+  margin: 2px 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.seller-rating .star-rating {
+  display: inline-flex;
+  align-items: center;
 }
 
 .seller-location {
-  margin-left: auto;
+  font-size: 14px;
   color: #666;
+  margin-left: auto;
 }
 
 .purchase-options {
   display: flex;
-  align-items: center;
-  justify-content:center;
-  margin-top: 0.5%;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .option {
   background-color: #d3d3d3;
   padding: 10px 20px;
   border-radius: 8px;
+}
+.option-button {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.option-button.selected {
+  background-color: #e0e0e0;
+  border-color: #bbb;
+}
+
+
+/* Chat and Wishlist Button Styles */
+.chat-button,
+.wishlist-section {
+  margin-bottom: 20px;
+}
+
+.chat-button button,
+.wishlist-section button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s; /* Smooth transition for background and scale */
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center items vertically */
+  justify-content: center;
+  border: 1px solid #ddd; /* Add a border for better definition */
+}
+
+/* Chat Button Specific Styles */
+.chat-button button {
+  background-color: #1560bd;
+  color: white; /* White text */
+}
+
+.chat-button button:hover {
+  transform: scale(1.02);
+  transition: transform 0.5s ease;
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Wishlist Button Specific Styles */
+.wishlist-section button {
+  background-color: #28a745; /* Green background for wishlist */
+  color: white; /* White text */
+}
+
+.wishlist-section button:hover {
+  background-color: #218838; /* Darker green on hover */
+  transform: scale(1.02);
+  transition: transform 0.5s ease;
+}
+
+/* Optional: Add icons to buttons */
+.chat-button button::before,
+.wishlist-section button::before {
+  margin-right: 8px; /* Space between icon and text */
+  font-size: 20px; /* Icon size */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .info-container {
+    flex: 0 0 100%;
+    margin-right: 0;
+  }
 }
 .purchase-options button {
   background-color: #fffefe;
@@ -187,7 +272,7 @@
 }
 
 .purchase-button {
-  margin-top: 20px;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -209,10 +294,11 @@
   align-items: center;
 }
 
-.textchoose{
-  margin-top: 50px;
-  padding-bottom: none;
-   
+.textchoose {
+  font-size: 16px;
+  color: #333;
+  margin: 20px 0 10px 0;
+  font-weight: 500;
 }
 
 
@@ -240,7 +326,7 @@
 }
 
 .icons {
-  justify-content: flex-end; 
+  justify-content: flex-end;
 }
 
 
@@ -250,9 +336,9 @@
   top: 100%; /* Position it below the button */
   right: 0; /* Align it to the right */
   background-color: white; /* Background color for visibility */
-  border: 1px solid #ccc; /* Optional border */
+  border: 1px solid #ccc;
   z-index: 1000; /* Ensure it appears above other elements */
-  display: block; /* Ensure it is displayed */
+  display: block;
 }
 
 .menu-item {
@@ -264,6 +350,390 @@
   background-color: #f0f0f0;
 }
 
-.chat-button{
-  
+
+.image-grid {
+  display: grid;
+  gap: 10px;
+  width: 600px;
+  height: 600px;
+  margin: auto;
+  grid-template-columns: 1fr 1fr; /* Two equal width columns */
+  grid-template-rows: auto; /* Adjust the height automatically */
+
+}
+
+.image-grid-4 {
+    display: grid;
+    gap: 10px;
+    width: 600px;
+    height: 600px;
+    margin: auto;
+    grid-template-columns: 1fr 0.5fr 0.5fr; /* Two equal width columns */
+    grid-template-rows: auto; /* Adjust the height automatically */
+}
+
+/* First image: takes up the left half of the grid, spanning 2 rows */
+.image-item.main-image {
+  width: 400px;
+  height: 800px;
+  grid-row: span 2; /* Span 2 rows */
+  grid-column: 1; /* First column */
+}
+.image-solo{
+    display: grid;
+    gap: 10px;
+    margin-left: 25%;
+    width: 600px;
+    max-height: 600px;
+    grid-template-columns: 1fr; /* Two equal width columns */
+    grid-template-rows: 1fr; /* Adjust the height automatically */
+}
+
+/* All images in the right column should fill the space vertically */
+.image-item.side-image {
+  width: 200px;
+  height: 395px;
+}
+
+
+.grid-2 .side-image:nth-child(2) {
+  grid-row: span 2;
+  grid-column: 2;
+  width: 400px;
+  height: 800px;
+}
+
+
+.grid-3 .side-image:nth-child(1) {
+  grid-row: span 1;
+  grid-column: 2;
+}
+
+.grid-3 .side-image:nth-child(2) {
+  grid-row: span 1;
+  grid-column: 2;
+
+}
+
+
+.grid-4 .side-image:nth-child(1) {
+  grid-row: span 1;
+  grid-column: 2;
+}
+
+.grid-4 .side-image:nth-child(2) {
+  grid-row: span 1;
+  grid-column: 2;
+}
+
+.grid-4 .side-image:nth-child(3) {
+  grid-row: span 2;
+  grid-column: 3;
+  width: 200px;
+  height: 800px;
+}
+
+
+.grid-5 .side-image:nth-child(1) {
+  grid-row: span 1;
+  grid-column: 3;
+}
+
+.grid-5 .side-image:nth-child(2) {
+  grid-row: span 1;
+  grid-column: 2;
+}
+
+.grid-5 .side-image:nth-child(3) {
+  grid-row: span 1;
+  grid-column: 3;
+}
+
+.grid-5 .side-image:nth-child(4) {
+  grid-row: span 1;
+  grid-column: 2;
+}
+
+/* Image styling */
+.image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin-bottom: 100px;
+  border-radius: 5px;
+}
+.image-solo img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Responsive: Stack images vertically on smaller screens */
+@media (max-width: 600px) {
+  .image-grid {
+    display: flex;
+    flex-direction: column;
+  }
+}
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.9); /* Black w/ opacity *//* Darken the background */
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  width: 80%;
+  max-width: 700px;
+}
+
+.modal-content img {
+  width: 100%;
+  height: auto;
+}
+
+.article-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  padding-bottom: 30px;
+  margin-bottom: 150px; /* Adds space between article and other articles section */
+}
+
+
+.image-container {
+  margin-left: -10%;
+  margin-right: 1%;
+  flex: 0 0 75%; /* Take up 75% of the container width */
+}
+
+.info {
+  flex: 1; /* Allow the info box to take up available space */
+  margin-left: 10px; /* Reduces space between the image grid and the info box */
+  padding: 15px;
+}
+.image-grid, .image-grid-4, .image-solo {
+  margin-bottom: 0;
+
+}
+.info-container {
+  flex: 0 0 25%; /* Take up 25% of the container width */
+  margin-right: 10%;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  max-height: 540px;
+}
+
+/* Title and description */
+.info-container .title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 10px 0;
+}
+
+.info-container h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.info-container .price {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 15px 0;
+}
+
+.info-container .description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .article-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .image-container, .info-container {
+    flex: 0 0 100%; /* Take up full width on smaller screens */
+  }
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Align the icons to the right */
+}
+
+.separator {
+  height: 1px;
+  background-color: #ccc;
+  margin: 15px 0;
+}
+
+.shipping-button {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border: none;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  color: #333;
+  border-radius: 8px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shipping-button:hover {
+  transform: scale(1.02); /* Slightly enlarge on hover */
+  transition: transform 0.5s ease;
+  background-color: #e0e0e0;
+}
+
+/* Buy Button Styles */
+/* Buy Button Styles */
+.buy-button {
+  width: 100%; /* Full width */
+  padding: 10px 15px; /* Consistent padding with other buttons */
+  font-size: 16px; /* Match font size with other buttons */
+  border-radius: 8px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s, transform 0.1s; /* Smooth transition for background and scale */
+  background-color: #1e7e34; /* Darker green background for buy button */
+  color: white; /* White text */
+  border: none;
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center items vertically */
+  justify-content: space-between; /* Center items horizontally */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  margin-bottom: 20px;
+}
+
+/* Buy Button Hover Effect */
+.buy-button:hover {
+  background-color: #5ea633;
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+
+.other-articles {
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 50px; /* Ensures space before the section */
+}
+
+.other-articles h3 {
+  font-size: 24px;
+  margin: 20px;
+}
+
+.other-articles-container {
+  margin-top: 10px;
+  display: flex;
+  gap: 20px;
+  overflow-x: auto; /* Allows horizontal scrolling if there are too many items */
+  padding-top: 10px;
+  padding-bottom: 20px; /* Adds spacing to the bottom */
+  padding-left: 7px;
+  margin-left: 3%;
+  margin-right: 3%;
+}
+
+.other-article-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  width: 250px; /* Ensures each item has a minimum width */
+  flex-shrink: 0; /* Prevents items from shrinking when the container overflows */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Ensures space is distributed between image and text */
+  height: 320px; /* Set a fixed height for consistency */
+}
+
+.other-article-item:hover {
+  transform: scale(1.05);
+}
+
+.other-article-image {
+  width: 100%;
+  height: 200px; /* Set a fixed height for all images */
+  object-fit: cover; /* Ensures the image covers the area without stretching */
+  border-radius: 8px;
+}
+
+.other-article-item h4 {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #333;
+  flex-grow: 1; /* Ensures the text will be pushed to the bottom of the box */
+}
+
+.other-article-item p {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 2%;
+}
+
+
+.other-articles-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 3%;
+  margin-right: 3%;
+  background-color: #f8f8f8;
+}
+
+.see-all-button {
+  display: flex;
+  align-items: center;
+  font-size: 25px;
+  font-weight: bold;
+  padding: 5px 10px;
+  background-color: transparent;
+  transition: background-color 0.5s; /* Smooth transition on hover */
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 150px;
+  height: 50px;
+  margin: 10px;
+  gap: 8px;
+}
+.arrow-icon {
+
+  align-items: center;
+}
+
+.see-all-button:hover {
+  transform: scale(1.15); /* Slightly enlarge on hover */
+  transition: transform 0.3s ease;
+  background-color: transparent;
 }
