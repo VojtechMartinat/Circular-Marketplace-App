@@ -202,26 +202,28 @@ const ArticleDetails = () => {
             <div className="review-modal-overlay" onClick={onClose}>
             <div className="review-modal-content">
                 <h2>Reviews for {articleUser?.username}</h2>
-                <ul className="reviews">
-                    {reviews.length > 0 ? (
-                        reviews.map((review, index) => (
-                            <li key={index}>
-                                <span><strong>{reviewUser?.username}</strong>: {review.comment}</span>
-                                <div className="star-rating-container">
-                                    <StarRating rating={review.rating}/>
-                                </div>
-                            </li>
-                        ))
-                    ) : (
-                        <p>No reviews yet.</p>
-                    )}
-                </ul>
+                <div className="reviews">
+                    <ul className="review-list">
+                        {reviews.length > 0 ? (
+                            reviews.map((review, index) => (
+                                <li key={index}>
+                                    <span><strong>{reviewUser?.username}</strong>: {review.comment}</span>
+                                    <div className="star-rating-container">
+                                        <StarRating rating={review.rating}/>
+                                    </div>
+                                </li>
+                            ))
+                        ) : (
+                            <p>No reviews yet.</p>
+                        )}
+                    </ul>
+                </div>
+
                 <button onClick={onClose} className="close-modal">Close</button>
             </div>
             </div>
         );
     };
-
 
 
     const arrayBufferToBase64 = (array) => {
