@@ -11,7 +11,7 @@
       "^.+\\.[tj]sx?$": "jest-esm-transformer"
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!(axios)/)"
+      "node_modules/(?!(axios|react-leaflet|@react-leaflet|leaflet)/)"
     ]
   },
   "dependencies": {
