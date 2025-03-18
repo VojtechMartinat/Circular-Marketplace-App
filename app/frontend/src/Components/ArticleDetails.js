@@ -174,23 +174,16 @@ const ArticleDetails = () => {
     useEffect(() => {
         const getCoordinates = async () => {
             const postcode = articleUser?.location;
-            console.log(postcode)
+
             if (postcode) {
                 try {
-                    const response = await axios.get(`http://postcodeof.co.uk/postcode/${postcode}/`);
-                    const htmlData = response.data;
+                    const response = await axios.get(`https://api.postcodes.io/postcodes/${postcode}`);
+                    if (response.data.result) {
+                        const location = response.data.result;
+                        setCoordinates([parseFloat(location.latitude), parseFloat(location.longitude)]);
 
-                    // Extract coordinates from the HTML content using regex
-                    const match = htmlData.match(/GPS Coordinates for [A-Za-z0-9]+ are ([\d.]+), ([\d.]+)/);
-
-                    if (match) {
-                        // Extract latitude and longitude from the match
-                        const latitude = parseFloat(match[1]);
-                        const longitude = parseFloat(match[2]);
-
-                        setCoordinates([latitude, longitude]);
                     } else {
-                        console.error('No coordinates found in the response.');
+                        console.error('No coordinates found for postcode.');
                     }
                 } catch (error) {
                     console.error('Error fetching coordinates:', error);
@@ -398,18 +391,22 @@ const ArticleDetails = () => {
                                 </p>
                             </div>
 
-                            {/* OpenStreetMap Below Location */}
+                            {/* OpenStreetMap Location */}
                             <div className="seller-map">
 
-                                <p>{articleUser?.location}</p>
-                                <MapContainer center={coordinates} zoom={13}
-                                              style={{height: "200px", width: "100%", borderRadius: "10px"}}>
-                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-                                    <Circle center={coordinates} radius={500} color="blue" fillOpacity={0.3}/>
-                                </MapContainer>
+                                {coordinates ? (
+                                    <>
+                                        <MapContainer center={coordinates} zoom={13}
+                                                      style={{height: "200px", width: "100%", borderRadius: "10px"}}>
+                                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                                            <Circle center={coordinates} radius={500} color="blue" fillOpacity={0.3}/>
+                                        </MapContainer>
+                                    </>
+                                ) : (
+                                    <p>Loading location...</p>
+                                )}
                             </div>
                         </div>
-                        <div className="seller-location">📍{articleUser?.location}</div>
                     </div>
 
                     <button className="shipping-button" onClick={() => setIsModalOpen(true)}>Select Shipping Method
