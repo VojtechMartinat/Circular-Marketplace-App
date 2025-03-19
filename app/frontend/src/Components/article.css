@@ -131,10 +131,10 @@
 }
 .seller-info {
   display: flex;
-  align-items: flex-start; /* Aligns avatar and content */
+  align-items: flex-start; /* Align everything to the left */
   gap: 10px;
-  margin-bottom: 20px;
 }
+
 
 .seller-details-container {
   display: flex;
@@ -147,6 +147,17 @@
   flex-direction: column;
 }
 
+.seller-header {
+  display: flex;
+  align-items: center; /* Align avatar and name on the same line */
+  gap: 8px; /* Space between avatar and name */
+}
+
+.seller-avatar {
+  font-size: 20px; /* Adjust size if needed */
+  flex-shrink: 0; /* Prevent avatar from shrinking */
+}
+
 .seller-name {
   font-size: 16px;
   font-weight: bold;
@@ -154,10 +165,10 @@
   margin: 0;
 }
 
+
 .seller-rating {
   font-size: 14px;
   color: #666;
-  margin-top: 2px;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -166,11 +177,10 @@
 .seller-location {
   font-size: 14px;
   color: #666;
-  margin-top: 8px;
 }
 
 .seller-map {
-  margin-top: 10px;
+  width: 100%;
   border-radius: 10px;
   overflow: hidden;
 }

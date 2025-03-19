@@ -376,10 +376,14 @@ const ArticleDetails = () => {
 
                     {/* Seller info */}
                     <div className="seller-info">
-                        <div className="seller-avatar">👤</div>
+
                         <div className="seller-details-container">
+
                             <div className="seller-details">
-                                <p className="seller-name">{articleUser?.username}</p>
+                                <div className="seller-header">
+                                    <div className="seller-avatar">👤</div>
+                                    <p className="seller-name">{articleUser?.username}</p>
+                                </div>
                                 <p className="seller-rating">
                                     {rating ? (
                                         <>
@@ -391,6 +395,7 @@ const ArticleDetails = () => {
                                 </p>
                             </div>
 
+
                             {/* OpenStreetMap Location */}
                             <div className="seller-map">
 
@@ -398,7 +403,7 @@ const ArticleDetails = () => {
                                     <>
                                         <MapContainer center={coordinates} zoom={13}
                                                       style={{height: "200px", width: "100%", borderRadius: "10px"}}>
-                                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
                                             <Circle center={coordinates} radius={500} color="blue" fillOpacity={0.3}/>
                                         </MapContainer>
                                     </>
