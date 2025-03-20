@@ -1,53 +1,54 @@
 import React, { useEffect, useState } from 'react';
-
 import { useNavigate } from 'react-router-dom';
-import { getArticlePhoto, getUnsoldArticles } from '../services/articleService';
+import { getPhotosForArticleIds, getUnsoldArticles } from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
-
-
-
-function Home() {
-  const [search, setSearch] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
-  const [priceOrder, setPriceOrder] = useState('asc'); // New state to handle price sorting
-
-  useEffect(() => {
-    document.body.classList.toggle('dark', darkMode);
-  }, [darkMode]);
-
-
+import { FaMoon, FaRegSun, FaHeart } from "react-icons/fa6";
 
 
 const Home = () => {
     const [articles, setArticles] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [startTime, setStartTime] = useState(null);
-   
+    const [priceOrder, setPriceOrder] = useState('low-to-high');
+    const [theme, setTheme] = useState('light'); // New state to track the theme
 
     useEffect(() => {
         getUnsoldArticles()
             .then(async response => {
                 if (response && response.article) {
-                    const articlesWithPhotos = await Promise.all(response.article.map(async (article) => {
-                        const photosResponse = await getArticlePhoto(article.articleID);
-                        console.log('Fetched photos:', photosResponse);
-                        if (photosResponse && photosResponse.photo){
-                            const photoData = photosResponse.photo.image.data;
-                            const uint8Array = new Uint8Array(photoData);
-                            const blob = new Blob([uint8Array], { type: 'image/png' });
-                            const reader = new FileReader();
-                            return new Promise((resolve) => {
-                                reader.onloadend = () => {
-                                    article.imageUrl = reader.result;
-                                    resolve(article);
-                                };
-                                reader.readAsDataURL(blob);
+                    const articleIds = response.article.map(article => article.articleID);
+
+                    if (Array.isArray(articleIds) && articleIds.length > 0) {
+                        try {
+                            const photosResponse = await getPhotosForArticleIds(articleIds);
+
+                            const articlesWithPhotos = response.article.map((article) => {
+                                const photo = photosResponse[article.articleID];
+                                if (photo && photo.image) {
+                                    const photoData = photo.image.data;
+                                    const uint8Array = new Uint8Array(photoData);
+                                    const blob = new Blob([uint8Array], { type: 'image/png' });
+                                    const reader = new FileReader();
+                                    return new Promise((resolve) => {
+                                        reader.onloadend = () => {
+                                            article.imageUrl = reader.result;
+                                            resolve(article);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    });
+                                }
+                                return Promise.resolve(article);
                             });
+
+                            const resolvedArticles = await Promise.all(articlesWithPhotos);
+                            setArticles(resolvedArticles);
+                        } catch (error) {
+                            console.error('Error fetching photos:', error);
                         }
-                        return article;
-                    }));
-                    setArticles(articlesWithPhotos);
+                    } else {
+                        console.error("Invalid articleIds:", articleIds);
+                    }
                 } else {
                     console.error('No articles data found');
                 }
@@ -66,118 +67,113 @@ const Home = () => {
     };
 
     const handleArticleClick = async (articleID) => {
-        const endTime = Date.now();
-        const timeTaken = (endTime - startTime) ;
-        if (startTime){
-            await createTaskLog({
-                taskID: 4,
-                timeTaken: timeTaken,
-            });
-        }
+        if (!startTime) return;
+        const timeTaken = Date.now() - startTime;
+
+        await createTaskLog({
+            taskID: 4,
+            timeTaken,
+        });
     };
 
+    const handlePriceOrderChange = (event) => {
+        setPriceOrder(event.target.value);
+    };
 
-  // Sort products by price
-  const sortedProducts = [...sampleProducts].sort((a, b) => {
-    const priceA = parseFloat(a.price.replace('$', '').replace(',', ''));
-    const priceB = parseFloat(b.price.replace('$', '').replace(',', ''));
+    const handleThemeToggle = () => {
+        setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');  // Toggle between light and dark themes
+    };
 
+    const sortedArticles = [...articles].sort((a, b) => {
+        if (priceOrder === 'low-to-high') {
+            return a.price - b.price;
+        } else if (priceOrder === 'high-to-low') {
+            return b.price - a.price;
+        }
+        return 0;
+    });
 
-    return priceOrder === 'asc' ? priceA - priceB : priceB - priceA;
-  });
+    const filteredArticles = sortedArticles.filter(article =>
+        article.articleTitle.toLowerCase().includes(inputValue.trim().toLowerCase()) &&
+        article.state === "uploaded"
+    );
 
-  // Filter products based on search
-  const filteredProducts = sortedProducts.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  return (
-    <div className="app">
-      {/* Centered Search & Dark Mode Toggle */}
-      <section className="hero-section">
-        <div className="search-group">
-          <input
-            type="text"
-            className="search-bar"
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button
-            className="dark-mode-toggle inline-toggle"
-            onClick={() => setDarkMode(!darkMode)}
-            title="Toggle dark mode"
-          >
-            {darkMode ? '☀️' : '🌙'}
-          </button>
-        </div>
-
-        {/* Price Order Dropdown */}
-        <select
-          className="price-order"
-          value={priceOrder}
-          onChange={(e) => setPriceOrder(e.target.value)}
-        >
-          <option value="asc">Price: Low to High</option>
-          <option value="desc">Price: High to Low</option>
-        </select>
-
-        <div className="slogan">
-          <p className="line1">Give it a second life.</p>
-          <p className="line2">Help your unused stuffs find a new home.</p>
-        </div>
-      </section>
-
-      {/* Product Grid */}
-      <main className="product-grid">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
-            <div className="product-card" key={product.id}>
-              <button className="favorite-button">❤️</button>
-              {product.image ? (
-                <img src={product.image} alt={product.name} />
-              ) : (
-                <div className="product-image-placeholder">No Image</div>
-              )}
-              <div className="product-info">
-                <div className="product-name">{product.name}</div>
-                <div className="product-price">{product.price}</div>
-              </div>
+    return (
+        <div className={`app ${theme}`}> {/* Apply the theme dynamically */}
+            <Header 
+                handleInputChange={handleInputChange} 
+                handleInputFocus={handleInputFocus} 
+                handlePriceOrderChange={handlePriceOrderChange}
+                handleThemeToggle={handleThemeToggle}  // Pass down the new handler
+            />
+            <div className="product-grid">
+                {filteredArticles.map(article => (
+                    <ProductCard 
+                        key={article.articleID} 
+                        article={article} 
+                        onClick={() => handleArticleClick(article.articleID)} 
+                    />
+                ))}
             </div>
-          ))
-        ) : (
-          <p style={{ gridColumn: '1 / -1', textAlign: 'center' }}>
-            No products found.
-          </p>
-        )}
-      </main>
-    </div>
-  );
+        </div>
+    );
+};
 
-
+function Header({ handleInputChange, handleInputFocus, handlePriceOrderChange, handleThemeToggle, theme }) {
+    return (
+        <div className="header">
+            <div className="search-container">
+                <input 
+                    type="text" 
+                    className="search-bar" 
+                    onFocus={handleInputFocus} 
+                    onChange={handleInputChange} 
+                    placeholder="Search items..." 
+                />
+                <div className="header-buttons">
+                    <select className="price-order-select" onChange={handlePriceOrderChange}>
+                        <option value="low-to-high">Price: Low to High</option>
+                        <option value="high-to-low">Price: High to Low</option>
+                    </select>
+                    <button className="theme-toggle-button" onClick={handleThemeToggle}>
+                        {theme === 'dark' ? (
+                            <> <FaRegSun /> Light Mode </>
+                        ) : (
+                            <> <FaMoon />  Dark / <FaRegSun /> Light  </>
+                        )}
+                    </button>
+                </div>
+                <p className="slogan">Give it a second life.<br /> Help your unused stuff find a new home.</p>
+            </div>
+        </div>
+    );
+}
 
 function ProductCard({ article, onClick }) {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    const handleCardClick = () => {
+        onClick();
+        navigate(`/articles/${article.articleID}`);
+    };
+
     return (
-        <div className='product-card' onClick={() => navigate(`/articles/${article.articleID}`)}>
+        <div className="product-card" onClick={handleCardClick}>
             {article.imageUrl ? (
                 <img src={article.imageUrl} alt={article.articleTitle} />
             ) : (
                 <div className="product-image-placeholder">🖼️</div>
             )}
-            <div className='product-info'>
-                    <p className='product-name'>
-                        {article.articleTitle}
-                    </p>
-                <p className='product-price'>Price: £{article.price}</p>
+            <div className="product-info">
+                <p className="product-name">{article.articleTitle}</p>
+                <p className="product-price">Price: £{article.price}</p>
             </div>
-            <button className='favorite-button'>❤</button>
+            <button className="favorite-button">
+                <FaHeart />
+            </button>
         </div>
     );
 }
 
-
-
-}
 
 export default Home;
