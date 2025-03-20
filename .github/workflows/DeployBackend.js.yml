@@ -5,6 +5,7 @@ on:
     branches:
       - dev
       - CDTest
+      - BackendHosting
   workflow_dispatch:
 
 jobs:
@@ -21,6 +22,11 @@ jobs:
           unzip awscliv2.zip
           sudo ./aws/install --update
           aws --version
+
+      - name: Install Dependencies (npm)
+        run: |
+          cd app/backend
+          npm install
 
       - name: Zip Lambda Function Code
         run: |
