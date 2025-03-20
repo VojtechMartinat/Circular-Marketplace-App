@@ -182,7 +182,7 @@ const Profile = () => {
                 for (const order of orders) {
                     const article = await getArticleByOrderId(order.orderID);
                     if (article) {
-                        userIDMap[order.orderID] = article.articles[0];
+                        userIDMap[order.orderID] = article.article;
                     }
                 }
                 setBoughtArticles(userIDMap);
