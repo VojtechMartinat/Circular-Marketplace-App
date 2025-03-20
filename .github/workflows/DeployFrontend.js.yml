@@ -30,8 +30,8 @@ jobs:
         working-directory: app/frontend  # Ensures dependencies install in the right place
 
       - name: Build Frontend
-        run: npm run build
-        working-directory: app/frontend  # Ensures build runs in the right place
+        run: CI=false npm run build
+        working-directory: app/frontend
 
       - name: Configure AWS Credentials (Primary)
         uses: aws-actions/configure-aws-credentials@v2

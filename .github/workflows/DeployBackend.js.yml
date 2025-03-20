@@ -27,12 +27,15 @@ jobs:
           cd app/backend
           zip -r ../../lambda-app.zip . -x "*.git*" "*.log*" "*.env*"
 
+      - name: Configure AWS Credentials
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID_2 }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY_2 }}
+          aws configure set region eu-west-1
+
       - name: Deploy to AWS Lambda
         run: |
           aws lambda update-function-code \
             --function-name relist-backend \
             --zip-file fileb://lambda-app.zip \
             --region eu-west-1
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_2 }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_2 }}
