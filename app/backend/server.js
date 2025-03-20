@@ -1,37 +1,29 @@
-const serverless = require('serverless-http');
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
-const connection = require('./database/connect');
-
-const articles = require('./routes/Articles');
-const users = require('./routes/User');
-const orders = require('./routes/Order');
-const paymentcards = require('./routes/PaymentCard');
-const photos = require('./routes/Photo');
-const tags = require('./routes/Tag');
-const wishlists = require('./routes/Wishlist');
-const tasklog = require('./routes/TaskLog');
-const messages = require('./routes/Message');
-const errorHandler = require('./middleware/errorHandler');
-const reviews = require('./routes/Review');
 const app = express();
+const connection = require('./database/connect')
+const articles = require('./routes/Articles')
+const users = require('./routes/User')
+const orders = require('./routes/Order')
+const paymentcards = require('./routes/PaymentCard')
+const photos = require('./routes/Photo')
+const tags = require('./routes/Tag')
+const wishlists = require('./routes/Wishlist')
+const reviews = require('./routes/Review')
+const tasklog = require('./routes/TaskLog')
+const messages = require('./routes/Message')
+const errorHandler = require('../backend/middleware/errorHandler');  // Import error handler
+const cors = require('cors');
+connection.sync().then(r => console.log("Success")).catch((error) => {console.log(error)})
 
-// Database connection
-connection.sync()
-    .then(() => console.log("Database connected successfully"))
-    .catch(error => console.log("Database connection error:", error));
+app.use(express.json())
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(bodyParser.json({ limit: "10000mb" }));
-app.use(bodyParser.urlencoded({ limit: "10000mb", extended: true, parameterLimit: 50000 }));
-
-// Routes
+app.use(bodyParser.json({limit: "10000mb"}));
+app.use(bodyParser.urlencoded({limit: "10000mb", extended: true, parameterLimit:50000}));
 app.get('/hello', (req, res) => {
-    res.send('Circular MarketPlace App - Running on AWS Lambda!');
+    res.send('Circular MarketPlace App');
 });
+app.use(cors());
 app.use('/api/v1/articles', articles);
 app.use('/api/v1/users', users);
 app.use('/api/v1/orders', orders);
@@ -39,18 +31,20 @@ app.use('/api/v1/paymentcards', paymentcards);
 app.use('/api/v1/photos', photos);
 app.use('/api/v1/tags', tags);
 app.use('/api/v1/wishlists', wishlists);
-app.use('/api/v1/tasklog', tasklog);
-app.use('/api/v1/messages', messages);
 app.use('/api/v1/reviews', reviews);
-// Error handling middleware
+app.use('/api/v1/tasklog',tasklog)
+app.use('/api/v1/messages', messages)
 app.use(errorHandler);
 
-// AWS Lambda compatibility
-module.exports.handler = serverless(app);
-module.exports = app;
+const port = 8080;
 if (require.main === module) {
-    const PORT = process.env.PORT || 8080;
-    app.listen(PORT, () => {
-        console.log(`Server is running locally on http://localhost:${PORT}`);
+    app.listen(port, (err) => {
+        if (err) {
+            console.error('Error starting the server:', err);
+            return;
+        }
+        console.log(`Server is listening on port ${port}...`);
     });
 }
+module.exports = app;
+

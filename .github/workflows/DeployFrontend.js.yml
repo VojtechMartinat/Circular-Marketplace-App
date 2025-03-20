@@ -1,11 +1,10 @@
-name: Deploy to AWS S3
+name: Deploy to AWS EC2
 
 on:
   push:
     branches:
       - dev  # Existing trigger for dev branch
       - CDTest  # Add other branches here for testing
-  workflow_dispatch:
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,35 +14,27 @@ jobs:
         with:
           ref: dev
 
-      - name: Set Environment Variables
+      - name: Install SSH Key
+        # Set up SSH key for deployment
         run: |
-          echo "REACT_APP_FIREBASE_API=${{ secrets.REACT_APP_FIREBASE_API }}" >> $GITHUB_ENV
-          echo "REACT_APP_FIREBASE_APP_ID=${{ secrets.REACT_APP_FIREBASE_APP_ID }}" >> $GITHUB_ENV
+          mkdir -p ~/.ssh  # Ensure the .ssh directory exists
+          echo "-----BEGIN RSA PRIVATE KEY-----" > ~/.ssh/id_rsa.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" >> ~/.ssh/id_rsa.pem
+          echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa.pem
+          chmod 600 ~/.ssh/id_rsa.pem
 
-      - name: Install Node.js and Dependencies
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
 
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build Frontend
-        run: npm run build
-
-      - name: Configure AWS Credentials (Primary)
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-
-      - name: Deploy to S3 (Primary)
-        run: aws s3 sync ./build s3://relistserver --delete
-
-      - name: Invalidate CloudFront Cache
+      - name: Deploy to EC2
+        env:
+          HOST: 54.246.255.142
         run: |
-          aws cloudfront create-invalidation --distribution-id E2XRTWCIX87N --paths "/*"
-
-      - name: Deployment Completed
-        run: echo "Deployment to S3 Primary and CloudFront invalidation completed!"
+          ssh -i ~/.ssh/id_rsa.pem ec2-user@$HOST -o StrictHostKeyChecking=no << 'EOF'
+            cd /home/ec2-user/  # Navigate to your app's directory on the EC2 instance
+            git fetch origin dev  # Fetch the latest changes on the dev branch
+            git reset --hard origin/dev  # Reset to the latest commit on dev branch
+            cd app/frontend
+            npm install  # Install dependencies
+            sudo npm install -g pm2  # Install pm2 globally if it's not already installed
+            pm2 kill  # Stop the server if it’s running, ignoring errors if it’s not
+            npm run build
+            pm2 start npm --name "react-dev" -- start

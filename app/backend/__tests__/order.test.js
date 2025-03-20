@@ -212,8 +212,8 @@ describe('Order Controller Tests', () => {
             })
             const res = await request(app).get(`/api/v1/orders/${order.body.order.orderID}/articles`);
             expect(res.statusCode).toBe(200);
-            expect(res.body.articles[0].articleID).toBe(1);
-            expect(res.body.articles[0].articleTitle).toBe('Table');
+            expect(res.body.article.articleID).toBe(1);
+            expect(res.body.article.articleTitle).toBe('Table');
         });
 
 
