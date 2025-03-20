@@ -3,8 +3,8 @@ name: Deploy to AWS S3
 on:
   push:
     branches:
-      - dev  # Existing trigger for dev branch
-      - CDTest  # Add other branches here for testing
+      - dev
+      - CDTest
   workflow_dispatch:
 jobs:
   deploy:
@@ -27,11 +27,11 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        working-directory: app/frontend  # Ensures dependencies install in the right place
 
       - name: Build Frontend
-        run: |
-          cd app/frontend
-          npm run build
+        run: npm run build
+        working-directory: app/frontend  # Ensures build runs in the right place
 
       - name: Configure AWS Credentials (Primary)
         uses: aws-actions/configure-aws-credentials@v2
@@ -41,11 +41,11 @@ jobs:
           aws-region: eu-west-1
 
       - name: Deploy to S3 (Primary)
-        run: aws s3 sync ./build s3://relistserver --delete
+        run: aws s3 sync app/frontend/build s3://relistserver --delete
 
       - name: Invalidate CloudFront Cache
         run: |
           aws cloudfront create-invalidation --distribution-id E2XRTWCIX87N --paths "/*"
 
       - name: Deployment Completed
-        run: echo "Deployment to S3 Primary and CloudFront invalidation completed!"
+        run: echo "Deployment to S3 and CloudFront invalidation completed!"
