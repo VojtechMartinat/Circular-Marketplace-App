@@ -45,12 +45,12 @@ app.use('/api/v1/reviews', reviews);
 // Error handling middleware
 app.use(errorHandler);
 
-// AWS Lambda compatibility
-module.exports.handler = serverless(app);
-module.exports = app;
 if (require.main === module) {
     const PORT = process.env.PORT || 8080;
     app.listen(PORT, () => {
         console.log(`Server is running locally on http://localhost:${PORT}`);
     });
 }
+const handler = serverless(app);
+module.exports = app;
+module.exports.handler = handler;
