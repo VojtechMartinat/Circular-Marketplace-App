@@ -72,13 +72,15 @@ export async function getOrderArticlePhotos(orderID) {
 
     try {
         const articleResponse = await fetch(`${url}orders/${orderID}/articles`, requestOptions);
+        console.log(articleResponse);
 
         if (!articleResponse.ok) {
 
             throw new Error(`Failed to fetch article. Status: ${articleResponse.status}`);
         }
         const articleData = await articleResponse.json();
-        const articleID = articleData.articles[0].articleID;
+        console.log(articleData.article);
+        const articleID = articleData.article.articleID;
 
         const photoResponse = await fetch(`${url}articles/${articleID}/photos`);
         if (!photoResponse.ok) {
