@@ -29,7 +29,9 @@ jobs:
         run: npm install
 
       - name: Build Frontend
-        run: npm run build
+        run: |
+          cd app/frontend
+          npm run build
 
       - name: Configure AWS Credentials (Primary)
         uses: aws-actions/configure-aws-credentials@v2
