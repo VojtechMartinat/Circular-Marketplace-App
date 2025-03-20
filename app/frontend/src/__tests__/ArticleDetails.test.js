@@ -63,7 +63,7 @@ describe('ArticleDetails Component', () => {
 
 
         // Check if the "Buy" button is rendered
-        const buyButton = await screen.findByRole('button', { name: /buy for 100/i });
+        const buyButton = await screen.findByRole('button', { name: /buy now for £\s*100/i });
         expect(buyButton).toBeInTheDocument();
     });
 });
