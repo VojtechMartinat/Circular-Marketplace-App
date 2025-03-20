@@ -126,9 +126,8 @@ const getOrder = asyncErrorWrapper(async (req,res,next) =>{
     if (order){
         res.status(200).json({order})
 
-    }else{
-        next(new APIError(`No order with id : ${orderID}`),404)
     }
+    next(new APIError(`No order with id : ${orderID}`),404)
 })
 
 
