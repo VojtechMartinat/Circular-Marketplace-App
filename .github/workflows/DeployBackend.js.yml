@@ -29,8 +29,8 @@ jobs:
 
       - name: Configure AWS Credentials
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID_2 }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY_2 }}
+          aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID_2 }}"
+          aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY_2 }}"
           aws configure set region eu-west-1
 
       - name: Deploy to AWS Lambda

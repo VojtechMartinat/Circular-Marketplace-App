@@ -45,7 +45,7 @@ jobs:
 
       - name: Invalidate CloudFront Cache
         run: |
-          aws cloudfront create-invalidation --distribution-id E2XRTWCIX87N --paths "/*"
+          aws cloudfront create-invalidation --distribution-id E2XRTWCIX87NEX --paths "/*"
 
       - name: Deployment Completed
         run: echo "Deployment to S3 and CloudFront invalidation completed!"
