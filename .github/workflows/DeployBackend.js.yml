@@ -33,6 +33,11 @@ jobs:
           aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY_2 }}"
           aws configure set region eu-west-1
 
+      - name: Check AWS Credentials
+        run: |
+          aws sts get-caller-identity
+        continue-on-error: false
+
       - name: Deploy to AWS Lambda
         run: |
           aws lambda update-function-code \
