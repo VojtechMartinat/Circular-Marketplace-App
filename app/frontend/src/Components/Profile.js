@@ -28,6 +28,7 @@ const Profile = () => {
     const [comment, setComment] = useState("");
     const [selectedOrderID, setSelectedOrderID] = useState(null);
     const [isBought, setIsBought] = useState(false);
+    const [reviewedOrders, setReviewedOrders] = useState({});
 
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -266,23 +267,18 @@ const Profile = () => {
             console.log("Submitting Review:", reviewData);
             await publishReview(reviewData);
             alert("Review submitted successfully!");
+
+            setReviewedOrders(prev => ({
+                ...prev,
+                [selectedOrderID]: true
+            }));
             setRating(0);
             setComment("");
             setShowReviewModal(false);
         } catch (error) {
             console.log("Logged-in User:", user);
-
-            console.log("Submitting Review:", reviewData);
             console.error("Failed to submit review:", error.response?.data || error.message);
             alert("Failed to submit review.");
-            console.log("Selected Article ID:", selectedArticleID);
-            console.log("Selected Order ID:", selectedOrderID);
-            console.log("Rating:", rating);
-            console.log("Comment:", comment);
-            console.log("Logged-in User ID (Reviewer):", reviewer);
-            console.log("Bought Articles:", boughtArticles);
-            console.log("UserID from Bought Article:", boughtArticles[selectedOrderID]?.userID);
-
         }
     }
 
@@ -393,7 +389,8 @@ const Profile = () => {
                                             <p><strong>Status:</strong> {order.orderStatus}</p>
 
                                             {/* Show Review Button if status is "shipped" or "collected" */}
-                                            {(order.orderStatus === "shipped" || order.orderStatus === "collected") && (
+                                            {(order.orderStatus === "shipped" || order.orderStatus === "collected") &&
+                                                !reviewedOrders[order.orderID] && (
                                                 <button onClick={() => handleReviewClick(
                                                     boughtArticles[order.orderID].articleID,
                                                     order.orderID,
@@ -466,7 +463,8 @@ const Profile = () => {
                                                         </button>
                                                     )}
                                                 {(orderDetails[article.orderID]?.order?.orderStatus === 'shipped' ||
-                                                    orderDetails[article.orderID]?.order?.orderStatus === 'collected') && (
+                                                    orderDetails[article.orderID]?.order?.orderStatus === 'collected') &&
+                                                    !reviewedOrders[article.orderID] && (
                                                     <button onClick={() => handleReviewClick(article.articleID, article.orderID, false)}>
                                                         Write a Review
                                                     </button>
