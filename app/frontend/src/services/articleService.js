@@ -165,14 +165,13 @@ async function publishReview(reviewData) {
     }
     console.log(reviewData);
     try {
-        console.log("TEST");
         const response = await axios.post(`${url}reviews`, reviewData, {
             headers: {
                 'Content-Type': 'application/json',
             }
         });
 
-        console.log("Response:", response);
+        console.log("Response:", response.data);
 
         if (!response.data) {
             throw new Error("No review data returned!");

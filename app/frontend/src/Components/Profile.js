@@ -182,7 +182,7 @@ const Profile = () => {
                 for (const order of orders) {
                     const article = await getArticleByOrderId(order.orderID);
                     if (article) {
-                        userIDMap[order.orderID] = article.article;
+                        userIDMap[order.orderID] = article.articles[0];
                     }
                 }
                 setBoughtArticles(userIDMap);
@@ -244,10 +244,12 @@ const Profile = () => {
             alert("Cannot submit review without correct information.");
             return;
         }
+
         const reviewer = user?.uid;
         const userID = isBought
             ? boughtArticles[selectedOrderID]?.userID  // For bought articles, userID is the seller
             : orderDetails[selectedOrderID]?.order?.userID;  // For sold articles, userID is the buyer        const reviewer = user.userID;
+
         if (!userID) {
             console.error("User ID not found for order:", selectedOrderID);
             alert("Cannot submit review without user information.");
@@ -404,7 +406,9 @@ const Profile = () => {
                                             )}
                                         </div>
                                         <div className="icon">
+                                            {console.log(boughtArticles)}
                                             <Link
+
                                                 to={`/chat/${boughtArticles[order?.orderID]?.userID}`}>
                                                 <FaMessage size={30} style={{color: 'black'}}/>
                                             </Link>
