@@ -1,69 +1,114 @@
-/* Basic body color */
-body {
-    background-color: #f9f9f9;
-    color: #1d1d1f;
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-}
+/* Navbar.css*/
 
-/* Nav styling */
 nav {
     background-color: #ffffff;
-    padding: 1rem 2rem;
-    border-bottom: 1px solid #e5e5e5;
+    padding: 12px 40px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
-    z-index: 100;
-}
-
-.nav-container {
+    z-index: 1000;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
 }
 
-/* ReList logo */
-.nav-left .brand {
-    font-weight: 600;
-    font-size: 1.4rem;
-    color: #1d1d1f;
-    text-decoration: none;
-}
-
-/* Nav links right-aligned */
-.nav-right {
+/* Logo + Title container (ReList) */
+.logo-title {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 8px;
+    text-decoration: none;
+    color: #1c1c1e;
+}
+
+/* Logo image */
+.logo-img {
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+}
+
+/* Title text (ReList) */
+.title {
+    font-size: 25px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -0.3px;
+    color: #1c1c1e;
+}
+
+/* Nav list container (for links) */
+nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 24px;
 }
 
-.nav-right li {
-    display: inline;
+/* Nav items (links & buttons) */
+nav ul li {
+    position: relative;
 }
 
-.nav-right a,
-.nav-right button {
+nav ul li a,
+nav ul li button {
     background: none;
     border: none;
-    color: #1d1d1f;
     text-decoration: none;
-    font-size: 0.95rem;
+    color: #1c1c1e;
+    font-size: 20px;
     font-weight: 500;
+    letter-spacing: -0.2px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background-color 0.25s ease, color 0.25s ease;
     cursor: pointer;
-    padding: 0.25rem 0;
-    transition: color 0.2s ease, border-color 0.2s ease;
-    border-bottom: 2px solid transparent;
 }
 
-.nav-right a:hover,
-.nav-right button:hover {
+/* Hover effect */
+nav ul li a:hover,
+nav ul li button:hover {
+    background-color: rgba(60, 60, 67, 0.08);
+}
+
+/* Focus effect */
+nav ul li a:focus,
+nav ul li button:focus {
+    outline: none;
+    background-color: rgba(60, 60, 67, 0.15);
+}
+
+/* Active link effect (using Apple's blue) */
+nav ul li a.active {
     color: #007aff;
-    border-bottom: 2px solid #007aff;
+    font-weight: 600;
 }
 
-.nav-right button {
-    font-family: inherit;
+/* Responsive behavior for smaller screens */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 20px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-top: 12px;
+    }
+
+    nav ul li a,
+    nav ul li button {
+        font-size: 14.5px;
+    }
+
+    .title {
+        font-size: 16px;
+    }
 }
