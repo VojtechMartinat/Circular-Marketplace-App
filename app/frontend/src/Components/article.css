@@ -146,6 +146,12 @@
   align-items: center;
   font-size: 20px;
   margin-right: 10px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.seller-avatar:hover {
+  transform: scale(1.2);
 }
 
 .seller-details {

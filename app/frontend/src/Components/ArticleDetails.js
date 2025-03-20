@@ -408,7 +408,7 @@ const ArticleDetails = () => {
 
                     {/* Seller info */}
                     <div className="seller-info">
-                        <div className="seller-avatar"><RxAvatar size={55} /></div>
+                        <div className="seller-avatar" onClick={handleShowReviews}><RxAvatar size={55} /></div>
                         <div className="seller-details">
                             <p className="seller-name">{articleUser?.username}</p>
                             <p className="seller-rating">
@@ -421,9 +421,9 @@ const ArticleDetails = () => {
                                 )}
                             </p>
                         </div>
-                        <button onClick={handleShowReviews} className="show-reviews-btn">
-                            Show Reviews
-                        </button>
+                        {/*<button onClick={handleShowReviews} className="show-reviews-btn">*/}
+                        {/*    Show Reviews*/}
+                        {/*</button>*/}
                         <div className="seller-location"><GrMapLocation/>{articleUser?.location}</div>
                     </div>
                 {showReviews && <ReviewModal onClose={() => setShowReviews(false)} />}
