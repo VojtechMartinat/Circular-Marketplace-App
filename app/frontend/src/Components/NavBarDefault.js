@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './navbar.css';
 import { auth } from '../services/firebaseService';
 import { onAuthStateChanged } from 'firebase/auth';
-
+import logo from "./logo.png";
 
 const NavBarDefault = () => {
     const [user, setUser] = useState(null);
@@ -18,29 +18,26 @@ const NavBarDefault = () => {
 
     return (
         <nav>
-
-            <div className="nav-container">
-                <div className="nav-left">
-                    <Link to="/" className="brand">ReList</Link>
-                </div>
-                <ul className="nav-right">
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/create-article">Add Item</Link></li>
-                    {user ? (
-                        <>
-               <li>
+            <div className="navbar-left">
+                        <div className="logo-title">
+                            <img src={logo} alt="Logo" className="logo-img" />
+                            <p className="title">ReList</p>
+                        </div>
+            </div>
+            <ul>
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/create-article">Add Item</Link></li>
+                <li>
                     <Link to={user ? `/profile/${user.uid}` : "/login"}>
                         {user ? "Account" : "Login"}
                     </Link>
                 </li>
-                    )}
-                </ul>
-            </div>
-
+            </ul>
         </nav>
     );
 };
 
 export default NavBarDefault;
+
 
 
