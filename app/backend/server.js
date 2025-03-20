@@ -47,7 +47,7 @@ app.use(errorHandler);
 
 // AWS Lambda compatibility
 module.exports.handler = serverless(app);
-
+module.exports = app;
 if (require.main === module) {
     const PORT = process.env.PORT || 8080;
     app.listen(PORT, () => {
