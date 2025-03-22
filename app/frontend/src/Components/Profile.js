@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
-import {getUser, getUserArticles, getUserOrders, addMoney} from "../services/userService";
+import {getUser, getUserArticles, getUserOrders, getUserWrittenReviews, addMoney} from "../services/userService";
 import {changeOrderStatus, getOrder, getOrderArticlePhotos} from "../services/orderService"
 import {deleteArticle, getArticle, getArticleByOrderId} from "../services/articleService";
 import {getArticlePhotos} from '../services/articleService';
@@ -28,7 +28,8 @@ const Profile = () => {
     const [comment, setComment] = useState("");
     const [selectedOrderID, setSelectedOrderID] = useState(null);
     const [isBought, setIsBought] = useState(false);
-    const [reviewedOrders, setReviewedOrders] = useState({});
+    const [userReviews, setUserReviews] = useState([]);
+
 
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -192,8 +193,15 @@ const Profile = () => {
         }
     }, [orders]);
 
-
-
+    useEffect(() => {
+        if (user) {
+            getUserWrittenReviews(user.uid).then(response => {
+                if (response && response.reviews) {
+                    setUserReviews(response.reviews);
+                }
+            }).catch(error => console.error("Error fetching user reviews:", error));
+        }
+    }, [user]);
 
     const handleDeleteArticle = async (articleID) => {
         try {
@@ -264,14 +272,10 @@ const Profile = () => {
         };
 
         try {
-            console.log("Submitting Review:", reviewData);
             await publishReview(reviewData);
-            alert("Review submitted successfully!");
 
-            setReviewedOrders(prev => ({
-                ...prev,
-                [selectedOrderID]: true
-            }));
+
+            alert("Review submitted successfully!");
             setRating(0);
             setComment("");
             setShowReviewModal(false);
@@ -390,7 +394,10 @@ const Profile = () => {
 
                                             {/* Show Review Button if status is "shipped" or "collected" */}
                                             {(order.orderStatus === "shipped" || order.orderStatus === "collected") &&
-                                                !reviewedOrders[order.orderID] && (
+                                                boughtArticles[order.orderID]?.articleID &&
+                                                !userReviews.some(review => review.articleID === boughtArticles[order.orderID]?.articleID) &&
+                                                (
+
                                                 <button onClick={() => handleReviewClick(
                                                     boughtArticles[order.orderID].articleID,
                                                     order.orderID,
@@ -450,7 +457,8 @@ const Profile = () => {
 
                                             {orderDetails[article.orderID] && orderDetails[article.orderID]?.order &&
                                                     orderDetails[article.orderID]?.order?.orderStatus !== 'collected' &&
-                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' && (
+                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' &&
+                                                    (
                                                         <button
                                                             onClick={() =>
                                                                 handleChangeOrderStatus(article.orderID, orderDetails[article.orderID]?.order?.collectionMethod)
@@ -464,7 +472,8 @@ const Profile = () => {
                                                     )}
                                                 {(orderDetails[article.orderID]?.order?.orderStatus === 'shipped' ||
                                                     orderDetails[article.orderID]?.order?.orderStatus === 'collected') &&
-                                                    !reviewedOrders[article.orderID] && (
+                                                    !userReviews.some(review => review.articleID === article.articleID) &&
+                                                    (
                                                     <button onClick={() => handleReviewClick(article.articleID, article.orderID, false)}>
                                                         Write a Review
                                                     </button>
