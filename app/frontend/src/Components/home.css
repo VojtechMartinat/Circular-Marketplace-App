@@ -131,3 +131,30 @@
   border: none;
   font-size: 24px;
 }
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Animation for spinning effect */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.product-card img,
+.product-image-placeholder {
+  width: 100%;
+  height: 300px; /* Same as image height */
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

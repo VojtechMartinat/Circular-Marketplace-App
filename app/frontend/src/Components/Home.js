@@ -10,60 +10,70 @@ const Home = () => {
     const [inputValue, setInputValue] = useState('');
     const [startTime, setStartTime] = useState(null);
 
-
+    const [loading, setLoading] = useState(true);
+    const [photoBatchIndex, setPhotoBatchIndex] = useState(0);
+    const batchSize = 6;
+    const [articlesWithPhotos, setArticlesWithPhotos] = useState([]);
     useEffect(() => {
         // Fetch the unsold articles
         getUnsoldArticles()
-            .then(async response => {
+            .then(response => {
                 if (response && response.article) {
-                    // Extract article IDs to fetch photos for all at once
-                    const articleIds = response.article.map(article => article.articleID);
-
-                    console.log("Extracted Article IDs:", articleIds);
-
-                    // Check if articleIds is an array and contains values
-                    if (Array.isArray(articleIds) && articleIds.length > 0) {
-                        try {
-                            // Fetch photos for all articles
-                            const photosResponse = await getPhotosForArticleIds(articleIds);
-                            console.log('Fetched photos:', photosResponse);
-
-                            // Process the photos and associate with articles
-                            const articlesWithPhotos = response.article.map((article) => {
-                                const photo = photosResponse[article.articleID];
-                                if (photo && photo.image) {
-                                    const photoData = photo.image.data;
-                                    const uint8Array = new Uint8Array(photoData);
-                                    const blob = new Blob([uint8Array], { type: 'image/png' });
-                                    const reader = new FileReader();
-                                    return new Promise((resolve) => {
-                                        reader.onloadend = () => {
-                                            article.imageUrl = reader.result; // base64 encoded image
-                                            resolve(article);
-                                        };
-                                        reader.readAsDataURL(blob);
-                                    });
-                                }
-                                return article;
-                            });
-
-                            // Wait for all articles to be processed with their images
-                            const resolvedArticles = await Promise.all(articlesWithPhotos);
-                            setArticles(resolvedArticles);
-                        } catch (error) {
-                            console.error('Error fetching photos:', error);
-                        }
-                    } else {
-                        console.error("Invalid articleIds:", articleIds);
-                    }
-                } else {
-                    console.error('No articles data found');
+                    setArticles(response.article);
+                    setArticlesWithPhotos(response.article.map(article => ({ ...article, imageUrl: null })));
+                    setLoading(false);
+                    setPhotoBatchIndex(0); // Start loading photos from batch 0
                 }
             })
             .catch(error => {
                 console.error('Error fetching articles:', error);
+                setLoading(false);
             });
     }, []);
+
+    useEffect(() => {
+        if (articles.length > 0) {
+            loadNextPhotoBatch();
+        }
+    }, [photoBatchIndex, articles]);
+    const loadNextPhotoBatch = async () => {
+        const start = photoBatchIndex * batchSize;
+        const end = start + batchSize;
+        const batch = articles.slice(start, end);
+
+        if (batch.length === 0) return; // Stop if there are no more articles
+
+        try {
+            const articleIds = batch.map(article => article.articleID);
+            const photosResponse = await getPhotosForArticleIds(articleIds);
+
+            const updatedArticles = articlesWithPhotos.map(article => {
+                if (photosResponse[article.articleID]) {
+                    const photoData = photosResponse[article.articleID].image.data;
+                    const uint8Array = new Uint8Array(photoData);
+                    const blob = new Blob([uint8Array], { type: 'image/png' });
+                    const reader = new FileReader();
+
+                    return new Promise(resolve => {
+                        reader.onloadend = () => {
+                            resolve({ ...article, imageUrl: reader.result });
+                        };
+                        reader.readAsDataURL(blob);
+                    });
+                }
+                return article;
+            });
+
+            const resolvedArticles = await Promise.all(updatedArticles);
+            setArticlesWithPhotos(resolvedArticles);
+
+            // Load the next batch after a short delay
+            setTimeout(() => setPhotoBatchIndex(prev => prev + 1), 1000);
+        } catch (error) {
+            console.error('Error fetching photos:', error);
+        }
+    };
+
 
 
     const handleInputChange = (event) => {
@@ -92,11 +102,15 @@ const Home = () => {
     return (
         <div className="app">
             <Header handleInputChange={handleInputChange} handleInputFocus={handleInputFocus} />
-            <div className="product-grid">
-                {filteredArticles.map((article, index) => (
-                    <ProductCard key={article.articleID} article={article} onClick={() => handleArticleClick(article.articleID)} />
-                ))}
-            </div>
+            {loading ? (
+                <div className="loading-spinner">Loading articles...</div>
+            ) : (
+                <div className="product-grid">
+                    {articlesWithPhotos.map(article => (
+                        <ProductCard key={article.articleID} article={article} onClick={() => handleArticleClick(article.articleID)} />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
@@ -117,18 +131,19 @@ function ProductCard({ article, onClick }) {
             {article.imageUrl ? (
                 <img src={article.imageUrl} alt={article.articleTitle} />
             ) : (
-                <div className="product-image-placeholder">🖼️</div>
+                <div className="product-image-placeholder">
+                    <div className="loading-spinner"></div>
+                </div>
             )}
             <div className='product-info'>
-                    <p className='product-name'>
-                        {article.articleTitle}
-                    </p>
+                <p className='product-name'>{article.articleTitle}</p>
                 <p className='product-price'>Price: £{article.price}</p>
             </div>
             <button className='favorite-button'>❤</button>
         </div>
     );
 }
+
 
 
 
