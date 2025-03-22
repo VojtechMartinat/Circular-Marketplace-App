@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-
 import { useNavigate } from 'react-router-dom';
 import { getPhotosForArticleIds, getUnsoldArticles } from '../services/articleService';
-
 import { createTaskLog } from '../services/logService';
 import './home.css';
-import { FaMoon, FaRegSun, FaHeart } from "react-icons/fa6";
+import { FaMoon, FaRegSun, FaHeart, FaFileImage } from "react-icons/fa6";
 
 
 const Home = () => {
@@ -15,26 +13,15 @@ const Home = () => {
     const [priceOrder, setPriceOrder] = useState('low-to-high');
     const [theme, setTheme] = useState('light'); // New state to track the theme
 
-
     useEffect(() => {
-        // Fetch the unsold articles
         getUnsoldArticles()
             .then(async response => {
                 if (response && response.article) {
-
-                    // Extract article IDs to fetch photos for all at once
                     const articleIds = response.article.map(article => article.articleID);
 
-                    console.log("Extracted Article IDs:", articleIds);
-
-                    // Check if articleIds is an array and contains values
                     if (Array.isArray(articleIds) && articleIds.length > 0) {
                         try {
-                            // Fetch photos for all articles
                             const photosResponse = await getPhotosForArticleIds(articleIds);
-                            console.log('Fetched photos:', photosResponse);
-
-                            // Process the photos and associate with articles
 
                             const articlesWithPhotos = response.article.map((article) => {
                                 const photo = photosResponse[article.articleID];
@@ -45,19 +32,14 @@ const Home = () => {
                                     const reader = new FileReader();
                                     return new Promise((resolve) => {
                                         reader.onloadend = () => {
-
-                                            article.imageUrl = reader.result; // base64 encoded image
-
+                                            article.imageUrl = reader.result;
                                             resolve(article);
                                         };
                                         reader.readAsDataURL(blob);
                                     });
                                 }
-
                                 return article;
                             });
-
-                            // Wait for all articles to be processed with their images
 
                             const resolvedArticles = await Promise.all(articlesWithPhotos);
                             setArticles(resolvedArticles);
@@ -75,7 +57,6 @@ const Home = () => {
                 console.error('Error fetching articles:', error);
             });
     }, []);
-
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
@@ -181,7 +162,7 @@ function ProductCard({ article, onClick }) {
             {article.imageUrl ? (
                 <img src={article.imageUrl} alt={article.articleTitle} />
             ) : (
-                <div className="product-image-placeholder">🖼️</div>
+                <div className="product-image-placeholder"><FaFileImage /></div>
             )}
             <div className="product-info">
                 <p className="product-name">{article.articleTitle}</p>
@@ -193,7 +174,6 @@ function ProductCard({ article, onClick }) {
         </div>
     );
 }
-
 
 
 export default Home;
