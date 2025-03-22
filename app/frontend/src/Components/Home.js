@@ -68,7 +68,7 @@ const Home = () => {
             setArticlesWithPhotos(resolvedArticles);
 
             // Load the next batch after a short delay
-            setTimeout(() => setPhotoBatchIndex(prev => prev + 1), 1000);
+            setTimeout(() => setPhotoBatchIndex(prev => prev + 1), 10);
         } catch (error) {
             console.error('Error fetching photos:', error);
         }
