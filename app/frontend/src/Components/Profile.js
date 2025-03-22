@@ -29,6 +29,7 @@ const Profile = () => {
     const [selectedOrderID, setSelectedOrderID] = useState(null);
     const [isBought, setIsBought] = useState(false);
     const [userReviews, setUserReviews] = useState([]);
+    const [reviewedArticles, setReviewedArticles] = useState([]);
 
 
     // const [isModalOpen, setIsModalOpen] = useState(false);
@@ -274,8 +275,12 @@ const Profile = () => {
         try {
             await publishReview(reviewData);
 
-
+            setUserReviews((prevReviews) => [
+                ...prevReviews,
+                { articleID: selectedArticleID, userID, rating, comment, reviewer }
+            ]);
             alert("Review submitted successfully!");
+            setReviewedArticles(prevArticles => prevArticles.filter(article => article.articleID !== reviewData.id));
             setRating(0);
             setComment("");
             setShowReviewModal(false);
