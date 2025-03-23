@@ -14,6 +14,6 @@ router.route('/:id/rating').get(userRating);
 router.route('/:id/reviews').get(userWrittenReviews)
 router.route('/:id/topup').post(userTopUp);
 router.route('/:id/chats').get(getInteractedUsers);
-router.route('/:id/wishlists').get(getUserWishlists);
+router.route('/:id/wishlists').get(getUserWishlists); // Get all wishlists of a user
 
 module.exports = router;

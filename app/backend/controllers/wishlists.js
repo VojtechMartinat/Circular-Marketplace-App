@@ -96,7 +96,6 @@ const deleteWishlist = asyncErrorWrapper(async (req,res,next) =>{
 
 const getUserWishlists = asyncErrorWrapper(async (req,res,next) =>{
     try {
-        console.log("AAA")
         const {id:userID} = req.params
         console.log(userID)
 
@@ -105,7 +104,6 @@ const getUserWishlists = asyncErrorWrapper(async (req,res,next) =>{
                 userID: userID
             }
         })
-        console.log("AAA")
 
         if (!wishlists){
             res.status(404).json({ error: "Wishlists not found" });
