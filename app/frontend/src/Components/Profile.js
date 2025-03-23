@@ -7,6 +7,9 @@ import { getArticlePhotos } from '../services/articleService';
 import { FaGear, FaMessage } from "react-icons/fa6";
 import { FaWallet } from "react-icons/fa";
 import { auth } from "../services/firebaseService";
+import { publishReview } from "../services/articleService";
+
+
 import './Profile.css';
 
 const Profile = () => {
@@ -19,17 +22,27 @@ const Profile = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [topupAmount, setTopupAmount] = useState(0);
     const [boughtArticles, setBoughtArticles] = useState({});
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [selectedArticleID, setSelectedArticleID] = useState(null);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+    const [selectedOrderID, setSelectedOrderID] = useState(null);
+
+
+    // const [isModalOpen, setIsModalOpen] = useState(false);
+
     const [activeTab, setActiveTab] = useState('Posted Items');
     const [showTopupOptions, setShowTopupOptions] = useState(false);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             if (currentUser) {
+
                 setIsLoggedIn(true);
-                setUser(currentUser);
+                setUser(currentUser);  // Set user state here
             } else {
                 setIsLoggedIn(false);
-                setUser(null);
+                setUser(null);  // Reset user to null
             }
         });
         return () => unsubscribe();
@@ -45,7 +58,7 @@ const Profile = () => {
     }, [user]);
 
     useEffect(() => {
-        if (dbUser) {
+        if (dbUser){
             getUserArticles(dbUser.userID).then(response => {
                 if (response && response.articles) {
                     setArticles(response.articles);
@@ -57,14 +70,16 @@ const Profile = () => {
     }, [dbUser]);
 
     useEffect(() => {
-        if (dbUser) {
+        if (dbUser){
             getUserOrders(dbUser.userID).then(response => {
                 if (response && response.orders) {
+
                     setOrders(response.orders);
                 } else {
                     console.log("error");
                 }
-            });
+                }
+            );
         }
     }, [dbUser]);
 
@@ -78,30 +93,36 @@ const Profile = () => {
                             if (article.orderID) {
                                 details[article.orderID] = await getOrder(article.orderID);
                             }
-                            const photosResponse = await getArticlePhotos(article.articleID);
-                            if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
-                                const photoData = photosResponse.photos[0].image.data;
-                                const uint8Array = new Uint8Array(photoData);
-                                const blob = new Blob([uint8Array], { type: 'image/png' });
-                                const reader = new FileReader();
+                                // Fetch photos associated with the article
+                                const photosResponse = await getArticlePhotos(article.articleID);
+                                if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
+                                    const photoData = photosResponse.photos[0].image.data;
+                                    const uint8Array = new Uint8Array(photoData);
+                                    const blob = new Blob([uint8Array], {type: 'image/png'});
+                                    const reader = new FileReader();
 
-                                return new Promise((resolve) => {
-                                    reader.onloadend = () => {
-                                        article.imageUrl = reader.result;
-                                        resolve(article);
-                                    };
-                                    reader.readAsDataURL(blob);
-                                });
-                            }
-                            return article;
+                                    return new Promise((resolve) => {
+                                        reader.onloadend = () => {
+                                            article.imageUrl = reader.result; // Add image URL to article
+                                            resolve(article);
+                                        };
+                                        reader.readAsDataURL(blob);
+                                    });
+                                }
+
+                            return article; // Return article in case no photos are found
                         })
                     );
+
+                    // Update the articles with photos
                     setArticles(updatedArticles);
+                    // Set the fetched order details
                     setOrderDetails(details);
                 } catch (error) {
                     console.log("Error fetching order details or photos:", error);
                 }
             };
+
             fetchOrderDetails();
         }
     }, [articles]);
@@ -112,8 +133,11 @@ const Profile = () => {
                 if (!orders || orders.length === 0) return;
                 const updatedOrders = await Promise.all(
                     orders.map(async (order) => {
+
                         try {
                             const photosResponse = await getOrderArticlePhotos(order.orderID);
+
+
                             if (photosResponse?.photos?.[0]) {
                                 const photoData = photosResponse.photos[0].image.data;
                                 const uint8Array = new Uint8Array(photoData);
@@ -134,13 +158,16 @@ const Profile = () => {
                         return order;
                     })
                 );
+
                 setOrders(updatedOrders);
             } catch (error) {
                 console.error("Error fetching order photos:", error);
             }
         };
+
         fetchOrderPhotos();
         const interval = setInterval(fetchOrderPhotos, 30000);
+
         return () => clearInterval(interval);
     }, [articles]);
 
@@ -160,10 +187,13 @@ const Profile = () => {
         }
     }, [orders]);
 
+
+
+
     const handleDeleteArticle = async (articleID) => {
         try {
-            await deleteArticle(articleID);
-            setArticles(prevArticles => prevArticles.filter(article => article.articleID !== articleID));
+            await deleteArticle(articleID); // Call the service function to delete the article
+            setArticles(prevArticles => prevArticles.filter(article => article.articleID !== articleID)); // Update state
             alert("Article deleted successfully.");
             window.location.reload();
         } catch (error) {
@@ -191,9 +221,81 @@ const Profile = () => {
         }
     };
 
+    const handleReviewClick = (articleID, orderID) => {
+        setSelectedArticleID(articleID);
+        setSelectedOrderID(orderID);
+        setShowReviewModal(true);
+    };
+
+    async function handleSubmitReview() {
+        if (!selectedArticleID || !selectedOrderID) {
+            console.error("Missing article or order information.");
+            alert("Cannot submit review without correct information.");
+            return;
+        }
+
+        const userID = boughtArticles[selectedOrderID]?.userID; // Fetch userID using orderID
+        const reviewer = user.userID;
+        if (!userID) {
+            console.error("User ID not found for order:", selectedOrderID);
+            alert("Cannot submit review without user information.");
+            return;
+        }
+
+        const reviewData = {
+            articleID: selectedArticleID,
+            userID,  // Add userID to the request
+            rating,
+            comment,
+            reviewer,
+        };
+
+        try {
+            console.log("Submitting Review:", reviewData);
+            await publishReview(reviewData);
+            alert("Review submitted successfully!");
+            setRating(0);
+            setComment("");
+            setShowReviewModal(false);
+        } catch (error) {
+            console.error("Failed to submit review:", error.response?.data || error.message);
+            alert("Failed to submit review.");
+            console.log("Selected Article ID:", selectedArticleID);
+            console.log("Selected Order ID:", selectedOrderID);
+            console.log("Rating:", rating);
+            console.log("Comment:", comment);
+            console.log("Logged-in User ID (Reviewer):", reviewer);
+            console.log("Bought Articles:", boughtArticles);
+            console.log("UserID from Bought Article:", boughtArticles[selectedOrderID]?.userID);
+
+        }
+    }
+
+
+    const [dropdowns, setDropdowns] = useState({
+        bought: false,
+        sold: false,
+        posted: false,
+        favourited: false,
+    });
+
+    const toggleDropdown = (key) => {
+        setDropdowns((prev) => {
+
+            const newDropdowns = {
+                bought: false,
+                sold: false,
+                posted: false,
+                favourited: false,
+            };
+            newDropdowns[key] = !prev[key];
+            return newDropdowns;
+        });
+    };
+
     const handleChangeOrderStatus = async (orderID, collectionMethod) => {
         try {
-            const newStatus = collectionMethod === 'delivery' ? 'shipped' : 'collected';
+            const newStatus = collectionMethod === 'delivery' ? 'shipped' : 'collected'
             await changeOrderStatus(orderID, newStatus);
             setOrderDetails(prevDetails => ({
                 ...prevDetails,
@@ -205,14 +307,14 @@ const Profile = () => {
                     }
                 }
             }));
-            alert("Order status changed");
+            alert("Order status changed")
             window.location.reload();
         } catch (error) {
+            console.log(error)
             console.error("Error changing the status:", error);
             alert("Failed to change the status.");
         }
-    };
-
+    }
     return (
         <div className="dashboard-container">
             {/* Header */}
