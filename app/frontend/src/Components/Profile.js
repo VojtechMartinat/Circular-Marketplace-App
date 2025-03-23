@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from "react-router-dom";
-import { getUser, getUserArticles, getUserOrders, addMoney } from "../services/userService";
+import {Link, useNavigate, useParams} from "react-router-dom";
+import {getUser, getUserArticles, getUserOrders, addMoney, getUserRating} from "../services/userService";
 import { changeOrderStatus, getOrder, getOrderArticlePhotos } from "../services/orderService";
 import { deleteArticle, getArticle, getArticleByOrderId } from "../services/articleService";
 import { getArticlePhotos } from '../services/articleService';
-import { FaGear, FaMessage } from "react-icons/fa6";
-import { FaWallet } from "react-icons/fa";
+import {FaGear, FaMessage, FaRegStar} from "react-icons/fa6";
+import {FaStar, FaWallet,FaCheck} from "react-icons/fa";
 import { auth } from "../services/firebaseService";
 import { publishReview } from "../services/articleService";
-
+import { RxAvatar } from "react-icons/rx";
 
 import './Profile.css';
 
@@ -27,7 +27,8 @@ const Profile = () => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [selectedOrderID, setSelectedOrderID] = useState(null);
-
+    const [userRating, setUserRating] = useState(0);
+    const navigate = useNavigate();
 
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -80,6 +81,18 @@ const Profile = () => {
                 }
                 }
             );
+        }
+    }, [dbUser]);
+
+    useEffect(() => {
+        if (dbUser){
+            getUserRating(dbUser.userID).then(response => {
+                if (response && response.averageRating) {
+                    setUserRating(response.averageRating);
+                } else {
+                    console.log("error");
+                }
+            });
         }
     }, [dbUser]);
 
@@ -178,7 +191,7 @@ const Profile = () => {
                 for (const order of orders) {
                     const article = await getArticleByOrderId(order.orderID);
                     if (article) {
-                        userIDMap[order.orderID] = article.article;
+                        userIDMap[order.orderID] = article.articles[0];
                     }
                 }
                 setBoughtArticles(userIDMap);
@@ -251,7 +264,6 @@ const Profile = () => {
         };
 
         try {
-            console.log("Submitting Review:", reviewData);
             await publishReview(reviewData);
             alert("Review submitted successfully!");
             setRating(0);
@@ -260,13 +272,6 @@ const Profile = () => {
         } catch (error) {
             console.error("Failed to submit review:", error.response?.data || error.message);
             alert("Failed to submit review.");
-            console.log("Selected Article ID:", selectedArticleID);
-            console.log("Selected Order ID:", selectedOrderID);
-            console.log("Rating:", rating);
-            console.log("Comment:", comment);
-            console.log("Logged-in User ID (Reviewer):", reviewer);
-            console.log("Bought Articles:", boughtArticles);
-            console.log("UserID from Bought Article:", boughtArticles[selectedOrderID]?.userID);
 
         }
     }
@@ -326,16 +331,26 @@ const Profile = () => {
                     {/* Sidebar (Profile Section) */}
                     <div className="sidebar">
                         <div className="profile">
-                            <img
-                                src="path-to-user-image.jpg" // Replace with actual user image if available
-                                alt="User Avatar"
-                                className="profile-img"
-                            />
+                            <div className="avatar">
+                                <RxAvatar size={100} />
+                            </div>
                             <h2>{dbUser.username}</h2>
-                            <p className="member-since">Member since January 2025</p>
+                            <p className="member-since">
+                                Member since {new Date(dbUser.createdAt).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long"
+                            })}
+                            </p>
+
                             <div className="rating-verified">
-                                <span className="rating">★ 4.8</span>
-                                <span className="verified">✓ Verified</span>
+                                <span className="rating">
+                                    <FaStar className="star-icon"/>
+                                    <span className="rating-text">{userRating}</span>
+                                </span>
+                                <span className="verified">
+                                    <FaCheck className="verified-icon"/>
+                                    <span className="verified-text">Verified</span>
+                                </span>
                             </div>
                             <Link to="/settings">
                                 <button className="edit-profile-btn">Edit Profile</button>
@@ -344,7 +359,7 @@ const Profile = () => {
 
                         {/* Wallet Section */}
                         <div className="wallet">
-                            <h3>Wallet Balance</h3>
+                        <h3>Wallet Balance</h3>
                             <div className="balance">
                                 <FaWallet size={24} style={{ color: 'black' }} />
                                 <span>${dbUser?.wallet || 0}</span>
@@ -398,20 +413,32 @@ const Profile = () => {
                                 {articles && articles.some(article => article.state === "uploaded") ? (
                                     articles.map((article) =>
                                         article.orderID === null ? (
-                                            <div key={article.articleID} className="item-card">
+                                            <div
+                                                key={article.articleID}
+                                                className="item-card"
+                                                onClick={() => navigate(`/articles/${article.articleID}`)}
+                                                style={{ cursor: "pointer" }}
+                                            >
                                                 {article.imageUrl ? (
                                                     <img src={article.imageUrl} alt={article.articleTitle} className="item-image" />
                                                 ) : (
-                                                    <div className="item-image-placeholder">🖼️</div>
+                                                    <div className="item-image-placeholder">📷</div>
                                                 )}
-                                                <Link to={`/articles/${article.articleID}`}>
-                                                    <p>{article.articleTitle}</p>
-                                                </Link>
-                                                <p className="date">Posted on Feb 15, 2025</p>
+                                                <p className="item-title">{article.articleTitle}</p>
+                                                <p className="date">
+                                                    Posted on {new Date(dbUser.createdAt).toLocaleDateString("en-US", {
+                                                    year: "numeric",
+                                                    month: "long",
+                                                    day: "numeric"
+                                                })}
+                                                </p>
                                                 <p className="price">${article.price}</p>
-                                                <span className="status active">{article.state}</span>
+                                                <span className="status active">{article.state?.charAt(0).toUpperCase() + article.state?.slice(1)}</span>
                                                 <button
-                                                    onClick={() => handleDeleteArticle(article.articleID)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // Prevent navigation to article page
+                                                        handleDeleteArticle(article.articleID);
+                                                    }}
                                                     className="delete-button"
                                                 >
                                                     Delete
@@ -430,37 +457,54 @@ const Profile = () => {
                             <div className="items-grid">
                                 {articles && articles.some(article => article.state === "sold") ? (
                                     articles.map((article) =>
-                                        article.orderID !== null ? (
-                                            <div key={article.articleID} className="item-card">
-                                                {article.imageUrl ? (
-                                                    <img src={article.imageUrl} alt={article.articleTitle} className="item-image" />
-                                                ) : (
-                                                    <div className="item-image-placeholder">🖼️</div>
-                                                )}
-                                                <Link to={`/articles/${article.articleID}`}>
-                                                    <p>{article.articleTitle}</p>
-                                                </Link>
-                                                <p className="price">${article.price}</p>
-                                                <p><strong>Status:</strong> {orderDetails[article.orderID]?.order?.orderStatus}</p>
-                                                {orderDetails[article.orderID]?.order && (
-                                                    <p><strong>Collection Method:</strong> {orderDetails[article.orderID]?.order?.collectionMethod}</p>
-                                                )}
-                                                {orderDetails[article.orderID]?.order?.orderStatus !== 'collected' &&
-                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' && (
-                                                        <button
-                                                            onClick={() =>
-                                                                handleChangeOrderStatus(article.orderID, orderDetails[article.orderID]?.order?.collectionMethod)
-                                                            }
-                                                        >
-                                                            Change status to{' '}
-                                                            {orderDetails[article.orderID]?.order?.collectionMethod === 'delivery' ? 'shipped' : 'collected'}
-                                                        </button>
+                                            article.orderID !== null ? (
+                                                <div
+                                                    key={article.articleID}
+                                                    className="item-card"
+                                                    onClick={() => navigate(`/articles/${article.articleID}`)}
+                                                    style={{ cursor: "pointer" }}
+                                                >
+                                                    {article.imageUrl ? (
+                                                        <img src={article.imageUrl} alt={article.articleTitle} className="item-image" />
+                                                    ) : (
+                                                        <div className="item-image-placeholder">📷</div>
                                                     )}
-                                                <Link to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}>
-                                                    <FaMessage size={20} style={{ color: 'black' }} />
-                                                </Link>
-                                            </div>
-                                        ) : null
+                                                    <p className="item-title">{article.articleTitle}</p>
+                                                    <p className="date">
+                                                        Posted on {new Date(dbUser.createdAt).toLocaleDateString("en-US", {
+                                                        year: "numeric",
+                                                        month: "long",
+                                                        day: "numeric"
+                                                    })}
+                                                    </p>
+                                                    <p className="price">${article.price}</p>
+                                                    <span className={`status-badge status-${orderDetails[article.orderID]?.order?.orderStatus}`}>
+                            {orderDetails[article.orderID]?.order?.orderStatus?.charAt(0).toUpperCase() +
+                                orderDetails[article.orderID]?.order?.orderStatus?.slice(1)}
+                        </span>
+                                                    {orderDetails[article.orderID]?.order?.orderStatus !== 'collected' &&
+                                                        orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' && (
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation(); // Prevent navigation to article page
+                                                                    handleChangeOrderStatus(article.orderID, orderDetails[article.orderID]?.order?.collectionMethod);
+                                                                }}
+                                                                className="action-button"
+                                                            >
+                                                                Change status to{' '}
+                                                                {orderDetails[article.orderID]?.order?.collectionMethod === 'delivery' ? 'shipped' : 'collected'}
+                                                            </button>
+                                                        )}
+                                                    <Link
+                                                        to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}
+                                                        className="message-button"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <FaMessage size={24} style={{ color: 'white' }} />
+                                                        <span className="message-label">Message Buyer</span>
+                                                    </Link>
+                                                </div>
+                                            ) : null
                                     )
                                 ) : (
                                     <p>No articles found</p>
@@ -473,17 +517,36 @@ const Profile = () => {
                             <div className="items-grid">
                                 {orders && orders.length > 0 ? (
                                     orders.map((order) => (
-                                        <div key={order.orderID} className="item-card">
+                                        <div
+                                            key={order.orderID}
+                                            className="item-card"
+                                            onClick={() => navigate(`/articles/${boughtArticles[order?.orderID]?.articleID}`)}
+                                            style={{ cursor: "pointer" }}
+                                        >
                                             {order.imageUrl ? (
                                                 <img src={order.imageUrl} alt={order.orderID} className="item-image" />
                                             ) : (
-                                                <div className="item-image-placeholder">🖼️</div>
+                                                <div className="item-image-placeholder">📷</div>
                                             )}
-                                            <p><strong>Price:</strong> ${order.totalPrice}</p>
-                                            <p><strong>Shipping Method:</strong> {order.collectionMethod}</p>
-                                            <p><strong>Status:</strong> {order.orderStatus}</p>
-                                            <Link to={`/chat/${boughtArticles[order?.orderID]?.userID}`}>
-                                                <FaMessage size={20} style={{ color: 'black' }} />
+                                            <p className="item-title">{boughtArticles[order?.orderID]?.articleTitle || "Unknown Item"}</p>
+                                            <p className="date">
+                                                Purchased on {new Date(order.createdAt).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric"
+                                            })}
+                                            </p>
+                                            <p className="price">${order.totalPrice}</p>
+                                            <span className={`status-badge status-${order.orderStatus}`}>
+                                                {order.orderStatus?.charAt(0).toUpperCase() + order.orderStatus?.slice(1)}
+                                            </span>
+                                            <Link
+                                                to={`/chat/${boughtArticles[order?.orderID]?.userID}`}
+                                                className="message-button"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <FaMessage size={24} style={{ color: 'white' }} />
+                                                <span className="message-label">Message Seller</span>
                                             </Link>
                                         </div>
                                     ))

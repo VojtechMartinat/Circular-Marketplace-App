@@ -14,6 +14,7 @@ import { faHeart, faComment, faShoppingCart } from '@fortawesome/free-solid-svg-
 import OtherArticlesModal from './OtherArticlesModal';
 import { GrMapLocation } from "react-icons/gr";
 import { RxAvatar } from "react-icons/rx";
+import {createWishlist, getUserWishlists} from "../services/wishlistService";
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -32,7 +33,7 @@ const ArticleDetails = () => {
     const [shippingOptions, setShippingOptions] = useState([]);
     const [userArticles, setUserArticles] = useState([]);
     const [isOtherArticleModalOpen, setIsOtherArticleModalOpen] = useState(false);
-
+    const [userWishlists, setUserWishlists] = useState([]);
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             if (currentUser) {
@@ -165,6 +166,17 @@ const ArticleDetails = () => {
         }
     }, [article]);
 
+    useEffect(() => {
+        if (user) {
+            getUserWishlists(user.uid).then((response) => {
+                if (response) {
+                    setUserWishlists(response.wishlists);
+                    console.log("User wishlists:", response.wishlists);
+                }
+            });
+        }
+    }, [user]);
+
     const StarRating = ({ rating, totalStars = 5 }) => {
         return (
             <div style={{ display: "flex", gap: "2px" }}>
@@ -276,7 +288,27 @@ const ArticleDetails = () => {
     };
 
     function handleAddToWishlist() {
-        alert("Not implemented yet");
+        if (!isLoggedIn) {
+            alert('Please log in to add an article to your wishlist');
+            return;
+        }
+        if (dbUser.userID === article.userID) {
+            alert('You cannot add your own article to the wishlist');
+            return;
+        }
+
+        const wishlistData = {
+            userID: user.uid,
+            articleID: id,
+        };
+
+        createWishlist(wishlistData)
+            .then(() => {
+                alert('Article added to wishlist successfully!');
+            })
+            .catch((error) => {
+                alert(`Error: ${error}`);
+            });
     }
 
     const handleShippingSelection = (index) => {

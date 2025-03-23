@@ -94,6 +94,34 @@ const deleteWishlist = asyncErrorWrapper(async (req,res,next) =>{
     }
 })
 
+const getUserWishlists = asyncErrorWrapper(async (req,res,next) =>{
+    try {
+        console.log("AAA")
+        const {id:userID} = req.params
+        console.log(userID)
+
+        const wishlists = await Wishlist.findAll({
+            where:{
+                userID: userID
+            }
+        })
+        console.log("AAA")
+
+        if (!wishlists){
+            res.status(404).json({ error: "Wishlists not found" });
+            next(new APIError(`No wishlists with userID : ${userID}`),404)
+        }
+        else{
+            res.status(200).json({wishlists})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error);
+    }
+
+
+})
+
 module.exports = {
-    getAllWishlists,createWishlist,getWishlist,updateWishlist,deleteWishlist
+    getAllWishlists,createWishlist,getWishlist,updateWishlist,deleteWishlist, getUserWishlists
 }
