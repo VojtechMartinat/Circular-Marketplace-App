@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import 'react-multi-carousel/lib/styles.css';
 import {getArticle, getArticlePhotos, getPhotosForArticleIds} from '../services/articleService';
 import { createOrder } from '../services/orderService';
-import {getUser, getUserArticles, getUserRating} from '../services/userService';
+import {getUser, getUserArticles, getUserRating, getUserReviews} from '../services/userService';
 import './article.css';
 import { FaLongArrowAltRight } from "react-icons/fa";
 import {auth} from "../services/firebaseService";
@@ -25,6 +25,14 @@ const ArticleDetails = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isShipping, setIsShipping] = useState(false);
     const [isCollection, setIsCollection] = useState(false);
+    const [startTime, setStartTime] = useState(null);
+    const [backgroundGradient, setBackgroundGradient] = useState('linear-gradient(180deg, #f8f8f8, #e0e0e0)');
+    const [rating, setRating] = useState(null);
+    const [reviewAmount, setReviewAmount] = useState(null);
+    const [reviews, setReviews] = useState(null);
+    const [showReviews, setShowReviews] = useState(false);
+    const [reviewUser, setReviewUser] = useState(null);
+
     const [isOpen, setIsOpen] = useState(false); // To control Lightbox
     const [photoIndex, setPhotoIndex] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,8 +63,7 @@ const ArticleDetails = () => {
             });
         }
     }, [user]);
-    const [rating, setRating] = useState(null);
-    const [reviewAmount, setReviewAmount] = useState(null);
+
 
 
     useEffect(() => {
@@ -76,6 +83,20 @@ const ArticleDetails = () => {
             });
         }
     }, [article]);
+
+    useEffect(() => {
+        if (reviews && Array.isArray(reviews)) {
+            reviews.forEach((review) => {
+                if (review && review.reviewer) {
+                    getUser(review.reviewer).then((response) => {
+                        if (response) {
+                            setReviewUser(response.user);
+                        }
+                    });
+                }
+            });
+        }
+    }, [reviews]);
 
     useEffect(() => {
         if (article && article.userID) {
@@ -192,7 +213,47 @@ const ArticleDetails = () => {
         );
     };
 
+    const handleShowReviews = () => {
+        if (articleUser?.userID) {
+            getUserReviews(articleUser.userID)
+                .then((response) => {
+                    if (response) {
+                        setReviews(response.reviews || []);
+                        setShowReviews(true);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching reviews:", error);
+                });
+        }
+    };
+    const ReviewModal = ({onClose}) => {
+        return (
+            <div className="review-modal-overlay" onClick={onClose}>
+            <div className="review-modal-content">
+                <h2>Reviews for {articleUser?.username}</h2>
+                <div className="reviews">
+                    <ul className="review-list">
+                        {reviews.length > 0 ? (
+                            reviews.map((review, index) => (
+                                <li key={index}>
+                                    <span><strong>{reviewUser?.username}</strong>: {review.comment}</span>
+                                    <div className="star-rating-container">
+                                        <StarRating rating={review.rating}/>
+                                    </div>
+                                </li>
+                            ))
+                        ) : (
+                            <p>No reviews yet.</p>
+                        )}
+                    </ul>
+                </div>
 
+                <button onClick={onClose} className="close-modal">Close</button>
+            </div>
+            </div>
+        );
+    };
 
 
     const arrayBufferToBase64 = (array) => {
@@ -347,7 +408,7 @@ const ArticleDetails = () => {
 
                     {/* Seller info */}
                     <div className="seller-info">
-                        <div className="seller-avatar"><RxAvatar size={55} /></div>
+                        <div className="seller-avatar" onClick={handleShowReviews}><RxAvatar size={55} /></div>
                         <div className="seller-details">
                             <p className="seller-name">{articleUser?.username}</p>
                             <p className="seller-rating">
@@ -360,10 +421,15 @@ const ArticleDetails = () => {
                                 )}
                             </p>
                         </div>
+                        {/*<button onClick={handleShowReviews} className="show-reviews-btn">*/}
+                        {/*    Show Reviews*/}
+                        {/*</button>*/}
                         <div className="seller-location"><GrMapLocation/>{articleUser?.location}</div>
                     </div>
+                {showReviews && <ReviewModal onClose={() => setShowReviews(false)} />}
 
-                    <button className="shipping-button" onClick={() => setIsModalOpen(true)}>Select Shipping Method
+
+                <button className="shipping-button" onClick={() => setIsModalOpen(true)}>Select Shipping Method
                         <FaLongArrowAltRight/>
                     </button>
                     {selectedOption !== null && (
