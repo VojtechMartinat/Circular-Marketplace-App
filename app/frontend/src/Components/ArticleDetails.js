@@ -14,7 +14,7 @@ import { faHeart, faComment, faShoppingCart } from '@fortawesome/free-solid-svg-
 import OtherArticlesModal from './OtherArticlesModal';
 import { GrMapLocation } from "react-icons/gr";
 import { RxAvatar } from "react-icons/rx";
-import {createWishlist, getUserWishlists} from "../services/wishlistService";
+import {createWishlist, deleteWishlist, getUserWishlists} from "../services/wishlistService";
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -287,13 +287,19 @@ const ArticleDetails = () => {
         }
     };
 
-    function handleAddToWishlist() {
+    async function handleAddToWishlist() {
         if (!isLoggedIn) {
             alert('Please log in to add an article to your wishlist');
             return;
         }
         if (dbUser.userID === article.userID) {
             alert('You cannot add your own article to the wishlist');
+            return;
+        }
+        if (userWishlists.some((wishlist) => wishlist.articleID === id)) {
+            await deleteWishlist(userWishlists.find((wishlist) => wishlist.articleID === id).id)
+            setUserWishlists(userWishlists.filter((wishlist) => wishlist.articleID !== id));
+            alert('Article removed from wishlist successfully!');
             return;
         }
 
@@ -303,8 +309,9 @@ const ArticleDetails = () => {
         };
 
         createWishlist(wishlistData)
-            .then(() => {
+            .then((result) => {
                 alert('Article added to wishlist successfully!');
+                setUserWishlists([...userWishlists, result.data.wishlist]);
             })
             .catch((error) => {
                 alert(`Error: ${error}`);

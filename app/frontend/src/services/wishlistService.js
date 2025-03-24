@@ -65,10 +65,10 @@ async function deleteWishlist(wishlistID){
     }
     try {
         const response = await axios.delete(`${url}wishlists/${wishlistID}`, requestOptions);
-        if (!response.ok) {
+        if (!response.status === 204) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return await response.json();
+        return
     } catch (error) {
         console.error('Error:', error);
         throw error;

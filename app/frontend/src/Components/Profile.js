@@ -74,7 +74,6 @@ const Profile = () => {
         if (dbUser){
             getUserOrders(dbUser.userID).then(response => {
                 if (response && response.orders) {
-
                     setOrders(response.orders);
                 } else {
                     console.log("error");
