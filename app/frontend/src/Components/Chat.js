@@ -4,11 +4,13 @@ import { getUser } from '../services/userService';
 import { auth } from "../services/firebaseService";
 import { useNavigate } from 'react-router-dom';
 import './chat.css';
+import { useParams } from 'react-router-dom';
 
 export const ChatsPage = () => {
+    const {receiverID} = useParams();
     const [chats, setChats] = useState([]);
     const [userNames, setUserNames] = useState({});
-    const [selectedChat, setSelectedChat] = useState(null);
+    const [selectedChat, setSelectedChat] = useState(receiverID || null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [user, setUser] = useState(null);
@@ -16,12 +18,16 @@ export const ChatsPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
     const messagesEndRef = useRef(null);
+   
+
+
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             if (currentUser) {
                 setUser(currentUser);
                 setIsLoggedIn(true);
+                console.log('this is the useruid:', user.uid)
             } else {
                 setUser(null);
                 setIsLoggedIn(false);
@@ -58,6 +64,7 @@ export const ChatsPage = () => {
     }, [chats]);
 
     const openChat = async (chatID) => {
+        navigate(`/chats/${chatID}`)
         setSelectedChat(chatID);
         try {
             const chatMessages = await getMessages(user.uid, chatID);
@@ -71,15 +78,31 @@ export const ChatsPage = () => {
         }
     };
 
+    useEffect(() =>{
+        if (receiverID){
+            getUser(receiverID).then((response) => {
+                console.log('this is the response', response.user)
+                if (response) {
+                    openChat(response.user.userID)
+                } else {
+                    console.error("User not found")
+                }
+            });
+        }
+    }, [receiverID])
+
+
     const handleSend = async () => {
         if (!newMessage.trim()) return;
+        const timestamp = new Date().toISOString();
         try {
             await createMessage({
                 senderID: user.uid,
                 receiverID: selectedChat,
                 message: newMessage,
+                timestamp
             });
-            setMessages([...messages, { senderID: user.uid, message: newMessage, updatedAt: new Date() }]);
+            setMessages([...messages, { senderID: user.uid, message: newMessage, updatedAt: new Date(), timestamp }]);
             setNewMessage('');
         } catch (error) {
             console.error('Error sending message:', error);
@@ -109,7 +132,12 @@ export const ChatsPage = () => {
                         <div className="chat-messages">
                             {messages.map((msg, index) => (
                                 <div key={index} className={`message ${msg.senderID === user.uid ? 'sent' : 'received'}`}>
-                                    <div className="message-bubble">{msg.message}</div>
+                                    <div className="message-bubble">
+                                        {msg.message}
+                                    </div>
+                                    <div className='message-timestamp'>
+                                            {new Date(msg.timestamp).toLocaleString([],{ hour: '2-digit', minute: '2-digit'})}
+                                    </div>
                                 </div>
                             ))}
                             <div ref={messagesEndRef} />
