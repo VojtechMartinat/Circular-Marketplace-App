@@ -442,7 +442,8 @@ const ArticleDetails = () => {
 
                             <div className="seller-details">
                                 <div className="seller-header">
-                                    <div className="seller-avatar">👤</div>
+                                    <div className="seller-avatar" onClick={handleShowReviews}><RxAvatar size={55}/>
+                                    </div>
                                     <p className="seller-name">{articleUser?.username}</p>
                                 </div>
                                 <p className="seller-rating">
@@ -473,9 +474,7 @@ const ArticleDetails = () => {
                                 )}
                             </div>
                         </div>
-                        {/*<button onClick={handleShowReviews} className="show-reviews-btn">*/}
-                        {/*    Show Reviews*/}
-                        {/*</button>*/}
+
                         <div className="seller-location"><GrMapLocation/>{articleUser?.location}</div>
                     </div>
                 {showReviews && <ReviewModal onClose={() => setShowReviews(false)} />}
