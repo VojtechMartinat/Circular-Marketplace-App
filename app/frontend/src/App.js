@@ -29,7 +29,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/chats" element={<ChatsPage />} />
-                {/* <Route path="/chats/:receiverID" element={<ChatWindow />} /> */}
+                <Route path="/chats/:receiverID" element={<ChatsPage />} />
 
             </Routes>
 
