@@ -310,7 +310,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Dim background */
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -328,7 +328,9 @@
     animation: fadeIn 0.3s ease-in-out;
     position: relative;
 }
-
+.review-modal h2, .review-modal p {
+    color: gray;
+}
 .review-close-button {
     position: absolute;
     top: 10px;
@@ -379,7 +381,7 @@
 .review-buttons {
     display: flex;
     justify-content: space-between;
-    gap: 15px;
+    gap: 25px;
 }
 
 .review-buttons button {
@@ -389,25 +391,9 @@
     cursor: pointer;
     font-size: 18px;
     transition: background 0.3s ease;
+    background-color: #48A9FE;
 }
 
-.review-buttons .submit-btn {
-    background-color: #4CAF50; /* Green Submit Button */
-    color: white;
-}
-
-.review-buttons .submit-btn:hover {
-    background-color: #43a047;
-}
-
-.review-buttons .cancel-btn {
-    background-color: #666; /* Dark Cancel Button */
-    color: white;
-}
-
-.review-buttons .cancel-btn:hover {
-    background-color: #555;
-}
 
 @keyframes fadeIn {
     from {

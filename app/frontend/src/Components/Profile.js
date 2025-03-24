@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
-import {getUser, getUserArticles, getUserOrders, addMoney} from "../services/userService";
+import {getUser, getUserArticles, getUserOrders, getUserWrittenReviews, addMoney} from "../services/userService";
 import {changeOrderStatus, getOrder, getOrderArticlePhotos} from "../services/orderService"
 import {deleteArticle, getArticle, getArticleByOrderId} from "../services/articleService";
 import {getArticlePhotos} from '../services/articleService';
@@ -9,7 +9,6 @@ import './Profile.css';
 import {FaWallet} from "react-icons/fa";
 import {auth} from "../services/firebaseService";
 import { publishReview } from "../services/articleService";
-
 
 import { FaMessage } from "react-icons/fa6";
 
@@ -28,6 +27,9 @@ const Profile = () => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [selectedOrderID, setSelectedOrderID] = useState(null);
+    const [isBought, setIsBought] = useState(false);
+    const [userReviews, setUserReviews] = useState([]);
+    const [reviewedArticles, setReviewedArticles] = useState([]);
 
 
     // const [isModalOpen, setIsModalOpen] = useState(false);
@@ -126,22 +128,25 @@ const Profile = () => {
     }, [articles]);
 
     useEffect(() => {
+        console.log('Orders: ', orders);
+
         const fetchOrderPhotos = async () => {
             try {
-                if (!orders || orders.length === 0) return;
+                if (!orders || orders.length === 0) {
+                    console.log('No orders found to fetch photos');
+                    return;
+                }
+
                 const updatedOrders = await Promise.all(
                     orders.map(async (order) => {
-
                         try {
                             const photosResponse = await getOrderArticlePhotos(order.orderID);
-
 
                             if (photosResponse?.photos?.[0]) {
                                 const photoData = photosResponse.photos[0].image.data;
                                 const uint8Array = new Uint8Array(photoData);
                                 const blob = new Blob([uint8Array], { type: 'image/png' });
                                 const reader = new FileReader();
-
                                 return new Promise((resolve) => {
                                     reader.onloadend = () => {
                                         order.imageUrl = reader.result;
@@ -157,7 +162,11 @@ const Profile = () => {
                     })
                 );
 
-                setOrders(updatedOrders);
+
+                const ordersChanged = !updatedOrders.every((order, index) => order.imageUrl === orders[index]?.imageUrl);
+                if (ordersChanged) {
+                    setOrders([...updatedOrders]);
+                }
             } catch (error) {
                 console.error("Error fetching order photos:", error);
             }
@@ -167,7 +176,7 @@ const Profile = () => {
         const interval = setInterval(fetchOrderPhotos, 30000);
 
         return () => clearInterval(interval);
-    }, [articles]);
+    }, [orders]);
 
     useEffect(() => {
         if (orders) {
@@ -185,8 +194,15 @@ const Profile = () => {
         }
     }, [orders]);
 
-
-
+    useEffect(() => {
+        if (user) {
+            getUserWrittenReviews(user.uid).then(response => {
+                if (response && response.reviews) {
+                    setUserReviews(response.reviews);
+                }
+            }).catch(error => console.error("Error fetching user reviews:", error));
+        }
+    }, [user]);
 
     const handleDeleteArticle = async (articleID) => {
         try {
@@ -219,10 +235,17 @@ const Profile = () => {
         }
     };
 
-    const handleReviewClick = (articleID, orderID) => {
+    const handleReviewClick = (articleID, orderID, isBought) => {
+        if (!articleID) {
+            console.error("Article ID is undefined for order:", orderID);
+            alert("There was an issue retrieving the article. Please try again later.");
+            return;
+        }
         setSelectedArticleID(articleID);
         setSelectedOrderID(orderID);
         setShowReviewModal(true);
+        setIsBought(isBought);
+
     };
 
     async function handleSubmitReview() {
@@ -231,9 +254,10 @@ const Profile = () => {
             alert("Cannot submit review without correct information.");
             return;
         }
-
-        const userID = boughtArticles[selectedOrderID]?.userID; // Fetch userID using orderID
-        const reviewer = user.userID;
+        const reviewer = user?.uid;
+        const userID = isBought
+            ? boughtArticles[selectedOrderID]?.userID  // For bought articles, userID is the seller
+            : orderDetails[selectedOrderID]?.order?.userID;  // For sold articles, userID is the buyer        const reviewer = user.userID;
         if (!userID) {
             console.error("User ID not found for order:", selectedOrderID);
             alert("Cannot submit review without user information.");
@@ -242,30 +266,28 @@ const Profile = () => {
 
         const reviewData = {
             articleID: selectedArticleID,
-            userID,  // Add userID to the request
+            userID,
             rating,
             comment,
             reviewer,
         };
 
         try {
-            console.log("Submitting Review:", reviewData);
             await publishReview(reviewData);
+
+            setUserReviews((prevReviews) => [
+                ...prevReviews,
+                { articleID: selectedArticleID, userID, rating, comment, reviewer }
+            ]);
             alert("Review submitted successfully!");
+            setReviewedArticles(prevArticles => prevArticles.filter(article => article.articleID !== reviewData.id));
             setRating(0);
             setComment("");
             setShowReviewModal(false);
         } catch (error) {
+            console.log("Logged-in User:", user);
             console.error("Failed to submit review:", error.response?.data || error.message);
             alert("Failed to submit review.");
-            console.log("Selected Article ID:", selectedArticleID);
-            console.log("Selected Order ID:", selectedOrderID);
-            console.log("Rating:", rating);
-            console.log("Comment:", comment);
-            console.log("Logged-in User ID (Reviewer):", reviewer);
-            console.log("Bought Articles:", boughtArticles);
-            console.log("UserID from Bought Article:", boughtArticles[selectedOrderID]?.userID);
-
         }
     }
 
@@ -376,8 +398,18 @@ const Profile = () => {
                                             <p><strong>Status:</strong> {order.orderStatus}</p>
 
                                             {/* Show Review Button if status is "shipped" or "collected" */}
-                                            {(order.orderStatus === "shipped" || order.orderStatus === "collected") && (
-                                                <button onClick={() => handleReviewClick(boughtArticles[order.orderID].articleID, order.orderID)}>Write a Review</button>
+                                            {(order.orderStatus === "shipped" || order.orderStatus === "collected") &&
+                                                boughtArticles[order.orderID]?.articleID &&
+                                                !userReviews.some(review => review.articleID === boughtArticles[order.orderID]?.articleID) &&
+                                                (
+
+                                                <button onClick={() => handleReviewClick(
+                                                    boughtArticles[order.orderID].articleID,
+                                                    order.orderID,
+                                                    true
+                                                )}>
+                                                    Write a Review
+                                                </button>
                                             )}
                                         </div>
                                         <div className="icon">
@@ -430,7 +462,8 @@ const Profile = () => {
 
                                             {orderDetails[article.orderID] && orderDetails[article.orderID]?.order &&
                                                     orderDetails[article.orderID]?.order?.orderStatus !== 'collected' &&
-                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' && (
+                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' &&
+                                                    (
                                                         <button
                                                             onClick={() =>
                                                                 handleChangeOrderStatus(article.orderID, orderDetails[article.orderID]?.order?.collectionMethod)
@@ -442,6 +475,14 @@ const Profile = () => {
                                                                 : 'collected'}
                                                         </button>
                                                     )}
+                                                {(orderDetails[article.orderID]?.order?.orderStatus === 'shipped' ||
+                                                    orderDetails[article.orderID]?.order?.orderStatus === 'collected') &&
+                                                    !userReviews.some(review => review.articleID === article.articleID) &&
+                                                    (
+                                                    <button onClick={() => handleReviewClick(article.articleID, article.orderID, false)}>
+                                                        Write a Review
+                                                    </button>
+                                                )}
                                                 <div className="icon">
                                                     <Link
                                                         to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}>
@@ -530,8 +571,8 @@ const Profile = () => {
                     )}
 
                     {showReviewModal && (
-                        <div className="modal-overlay">
-                            <div className="modal">
+                        <div className="review-modal-overlay">
+                            <div className="review-modal">
                                 <h2>Write a Review</h2>
                                 <p>Rate this product:</p>
 
@@ -549,15 +590,17 @@ const Profile = () => {
                                 </div>
 
                                 {/* Comment Input */}
-                                <textarea
+                                <textarea className="review-textarea"
                                     placeholder="Write your review here..."
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
                                 />
+                                <div className="review-buttons">
+                                    {/* Submit & Close Buttons */}
+                                    <button onClick={() => handleSubmitReview()}>Submit Review</button>
+                                    <button onClick={() => setShowReviewModal(false)}>Cancel</button>
+                                </div>
 
-                                {/* Submit & Close Buttons */}
-                                <button onClick={() => handleSubmitReview()}>Submit Review</button>
-                                <button onClick={() => setShowReviewModal(false)}>Cancel</button>
                             </div>
                         </div>
                     )}
