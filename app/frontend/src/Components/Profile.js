@@ -11,6 +11,7 @@ import { publishReview } from "../services/articleService";
 import { RxAvatar } from "react-icons/rx";
 
 import './Profile.css';
+import {getUserWishlists} from "../services/wishlistService";
 
 const Profile = () => {
     const { id } = useParams();
@@ -29,8 +30,9 @@ const Profile = () => {
     const [selectedOrderID, setSelectedOrderID] = useState(null);
     const [userRating, setUserRating] = useState(0);
     const navigate = useNavigate();
-
-
+    const [wishlist, setWishlist] = useState([]);
+    const [favArticles, setFavArticles] = useState([]);
+    const [favArticlesWithPhotos, setFavArticlesWithPhotos] = useState([]);
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [activeTab, setActiveTab] = useState('Posted Items');
@@ -139,6 +141,73 @@ const Profile = () => {
             fetchOrderDetails();
         }
     }, [articles]);
+
+    useEffect(() => {
+        if (dbUser){
+            getUserWishlists(dbUser.userID).then(response => {
+                if (response && response.wishlists) {
+                    setWishlist(response.wishlists);
+                } else {
+                    console.log("error");
+                }
+            });
+        }
+    },[dbUser])
+
+    useEffect(() => {
+        if (wishlist){
+            const fetchFavArticles = async () => {
+                try {
+                    const updatedFavArticles = await Promise.all(
+                        wishlist.map(async (wishlist) => {
+                            const article = await getArticle(wishlist.articleID);
+                            if (article) {
+                                return article;
+                            }
+                            return wishlist;
+                        })
+                    );
+                    setFavArticles(updatedFavArticles);
+                } catch (error) {
+                    console.error("Error fetching favourite articles:", error);
+                }
+            };
+            fetchFavArticles();
+        }
+    }, [wishlist]);
+
+    useEffect(() => {
+        if (favArticles){
+            const fetchFavArticlePhotos = async () => {
+                try {
+                    const updatedFavArticles = await Promise.all(
+                        favArticles.map(async (article) => {
+                            const photosResponse = await getArticlePhotos(article.articleID);
+                            if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
+                                const photoData = photosResponse.photos[0].image.data;
+                                const uint8Array = new Uint8Array(photoData);
+                                const blob = new Blob([uint8Array], { type: 'image/png' });
+                                const reader = new FileReader();
+
+                                return new Promise((resolve) => {
+                                    reader.onloadend = () => {
+                                        article.imageUrl = reader.result;
+                                        resolve(article);
+                                    };
+                                    reader.readAsDataURL(blob);
+                                });
+                            }
+                            return article;
+                        })
+                    );
+                    setFavArticlesWithPhotos(updatedFavArticles);
+                } catch (error) {
+                    console.error("Error fetching favourite articles:", error);
+                }
+            };
+            fetchFavArticlePhotos()
+        }
+    },[favArticles])
 
     useEffect(() => {
         const fetchOrderPhotos = async () => {
@@ -559,7 +628,33 @@ const Profile = () => {
                         {/* Favourited Items */}
                         {activeTab === 'Favourited' && (
                             <div className="items-grid">
-                                <p>No favourited articles found</p>
+                                {favArticlesWithPhotos && favArticlesWithPhotos.length > 0 ? (
+                                    favArticlesWithPhotos.map((article) => (
+                                        <div
+                                            key={article.articleID}
+                                            className="item-card"
+                                            onClick={() => navigate(`/articles/${article.articleID}`)}
+                                            style={{ cursor: "pointer" }}
+                                        >
+                                            {article.imageUrl ? (
+                                                <img src={article.imageUrl} alt={article.articleTitle} className="item-image" />
+                                            ) : (
+                                                <div className="item-image-placeholder">📷</div>
+                                            )}
+                                            <p className="item-title">{article.articleTitle}</p>
+                                            <p className="date">
+                                                Added on {new Date(article.createdAt).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric"
+                                            })}
+                                            </p>
+                                            <p className="price">${article.price}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>No favourite articles found</p>
+                                )}
                             </div>
                         )}
                     </div>
