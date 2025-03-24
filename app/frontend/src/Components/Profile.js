@@ -30,6 +30,7 @@ const Profile = () => {
     const [userRating, setUserRating] = useState(0);
     const navigate = useNavigate();
 
+
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [activeTab, setActiveTab] = useState('Posted Items');
@@ -351,8 +352,8 @@ const Profile = () => {
                                     <span className="verified-text">Verified</span>
                                 </span>
                             </div>
-                            <Link to="/settings">
-                                <button className="edit-profile-btn">Edit Profile</button>
+                            <Link to="/logout">
+                                <button className="edit-profile-btn">Logout</button>
                             </Link>
                         </div>
 
