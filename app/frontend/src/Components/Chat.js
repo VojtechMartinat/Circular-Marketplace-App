@@ -68,6 +68,7 @@ export const ChatsPage = () => {
         setSelectedChat(chatID);
         try {
             const chatMessages = await getMessages(user.uid, chatID);
+            console.log('this is the useruid', user.uid)
             setMessages(chatMessages.messages);
             const response = await getUser(chatID);
             if (response) {
@@ -80,8 +81,9 @@ export const ChatsPage = () => {
 
     useEffect(() =>{
         if (receiverID){
+            console.log("ReceiverID from URL:", receiverID);
             getUser(receiverID).then((response) => {
-                console.log('this is the response', response.user)
+                console.log('this is the response.user.uid', response.user.userID)
                 if (response) {
                     openChat(response.user.userID)
                 } else {
