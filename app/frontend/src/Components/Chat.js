@@ -27,7 +27,7 @@ export const ChatsPage = () => {
             if (currentUser) {
                 setUser(currentUser);
                 setIsLoggedIn(true);
-                console.log('this is the useruid:', user.uid)
+                console.log('this is the useruids:', currentUser.uid)
             } else {
                 setUser(null);
                 setIsLoggedIn(false);
@@ -64,6 +64,10 @@ export const ChatsPage = () => {
     }, [chats]);
 
     const openChat = async (chatID) => {
+        if (!user) {
+            console.error("User is not set yet");
+            return;
+        }
         navigate(`/chats/${chatID}`)
         setSelectedChat(chatID);
         try {
@@ -80,7 +84,7 @@ export const ChatsPage = () => {
     };
 
     useEffect(() =>{
-        if (receiverID){
+        if (receiverID && user){
             console.log("ReceiverID from URL:", receiverID);
             getUser(receiverID).then((response) => {
                 console.log('this is the response.user.uid', response.user.userID)
