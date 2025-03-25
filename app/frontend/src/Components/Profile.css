@@ -498,3 +498,228 @@
     background-color: #f8d7da;
     color: #721c24; /* Red for unknown/error methods */
 }
+.review-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.review-modal {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+    animation: fadeIn 0.3s ease-in-out;
+    position: relative;
+}
+.review-modal h2, .review-modal p {
+    color: gray;
+}
+.review-close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: #333;
+}
+
+.review-title {
+    font-size: 26px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.review-stars {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.review-stars span {
+    font-size: 30px;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.3s ease;
+}
+
+.review-stars span:hover,
+.review-stars span.active {
+    color: #f4c542; /* Star highlight color */
+}
+
+.review-textarea {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    resize: none;
+    font-size: 16px;
+    outline: none;
+}
+
+.review-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+.review-buttons button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.3s ease;
+    background-color: #48A9FE;
+}
+.topup-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+/* Instructional text */
+.topup-subtext {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Larger buttons */
+.topup-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.topup-options button {
+    padding: 15px;
+    font-size: 22px;
+    border: none;
+    background-color: #2d7cd7;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.topup-options button:hover {
+    background-color: #36e83e;
+}
+
+/* Custom top-up input section */
+.custom-topup {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.custom-topup input {
+    width: 60%;
+    padding: 12px;
+    font-size: 18px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    height: 48px;
+}
+
+.custom-topup button {
+    width: 60%;
+    padding: 12px;
+    font-size: 18px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    height: 48px;
+}
+
+.custom-topup button:hover {
+    background-color: #43a047;
+}
+@media (max-width: 600px) {
+    .topup-modal {
+        width: 90%;
+        max-width: none;
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .topup-options {
+        gap: 10px;
+    }
+
+    .topup-options button {
+        font-size: 18px;
+        padding: 12px;
+    }
+
+    .custom-topup {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .custom-topup input {
+        width: 80%;
+    }
+
+    .custom-topup button {
+        width: 80%;
+    }
+}
+
+.topup-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.topup-container button {
+    background-color: #007BFF;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+
+.topup-container button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.topup-container button:active {
+    transform: scale(0.98);
+}
+
+
+@media (max-width: 600px) {
+    .topup-container button {
+        width: 80%;
+        font-size: 18px;
+    }
+}

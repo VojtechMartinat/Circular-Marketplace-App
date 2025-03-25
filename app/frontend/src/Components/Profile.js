@@ -15,7 +15,7 @@ import {getUserWishlists} from "../services/wishlistService";
 
 const Profile = () => {
     const { id } = useParams();
-    const [articles, setArticles] = useState(null);
+    const [articles, setArticles] = useState([]);
     const [articlesWithPhotos, setArticlesWithPhotos] = useState([]);
     const [orders, setOrders] = useState(null);
     const [orderDetails, setOrderDetails] = useState({});
@@ -37,6 +37,8 @@ const Profile = () => {
     const [isBought, setIsBought] = useState(false);
     const [userReviews, setUserReviews] = useState([]);
     const [reviewedArticles, setReviewedArticles] = useState([]);
+    const [photoBatchIndex, setPhotoBatchIndex] = useState(0);
+    const batchSize = 6;
 
 
     // const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,16 +69,71 @@ const Profile = () => {
     }, [user]);
 
     useEffect(() => {
-        if (dbUser){
+        if (dbUser) {
             getUserArticles(dbUser.userID).then(response => {
                 if (response && response.articles) {
                     setArticles(response.articles);
-                } else {
-                    console.log("error");
+                    setArticlesWithPhotos(response.articles.map(article => ({ ...article, imageUrl: null })));
+                    setPhotoBatchIndex(0);
                 }
             });
         }
     }, [dbUser]);
+
+    useEffect(() => {
+        if (articles.length > 0) {
+            loadNextArticlePhotoBatch();
+        }
+    }, [photoBatchIndex, articles]);
+
+    const loadNextArticlePhotoBatch = async () => {
+        const start = photoBatchIndex * batchSize;
+        const end = start + batchSize;
+        const batch = articles.slice(start, end);
+
+        if (batch.length === 0) return;
+
+        try {
+            const updatedArticles = await Promise.all(
+                batch.map(async (article) => {
+                    if (article.orderID) {
+                        const orderDetails = await getOrder(article.orderID);
+                        setOrderDetails(prev => ({ ...prev, [article.orderID]: orderDetails }));
+                    }
+                    const photosResponse = await getArticlePhotos(article.articleID);
+                    if (photosResponse?.photos?.[0]) {
+                        const photoData = photosResponse.photos[0].image.data;
+                        const uint8Array = new Uint8Array(photoData);
+                        const blob = new Blob([uint8Array], { type: 'image/png' });
+                        const reader = new FileReader();
+
+                        return new Promise((resolve) => {
+                            reader.onloadend = () => {
+                                resolve({ ...article, imageUrl: reader.result });
+                            };
+                            reader.readAsDataURL(blob);
+                        });
+                    }
+                    return { ...article };
+                })
+            );
+
+            setArticlesWithPhotos(prev => {
+                const newArticles = [...prev];
+                updatedArticles.forEach(updatedArticle => {
+                    const index = newArticles.findIndex(a => a.articleID === updatedArticle.articleID);
+                    if (index !== -1) {
+                        newArticles[index] = updatedArticle;
+                    }
+                });
+                return newArticles;
+            });
+
+            setTimeout(() => setPhotoBatchIndex(prev => prev + 1), 10);
+        } catch (error) {
+            console.error("Error fetching article photos:", error);
+        }
+    };
 
     useEffect(() => {
         if (dbUser){
@@ -160,20 +217,17 @@ const Profile = () => {
     },[dbUser])
 
     useEffect(() => {
-        if (wishlist){
+        if (wishlist) {
             const fetchFavArticles = async () => {
                 try {
                     const updatedFavArticles = await Promise.all(
                         wishlist.map(async (wishlist) => {
                             const article = await getArticle(wishlist.articleID);
-                            if (article) {
-                                return article.article;
-                            }
-                            return wishlist;
+                            return article ? article.article : wishlist;
                         })
                     );
                     setFavArticles(updatedFavArticles);
-                    console.log("Fav", updatedFavArticles);
+                    setFavArticlesWithPhotos(updatedFavArticles.map(article => ({ ...article, imageUrl: null })));
                 } catch (error) {
                     console.error("Error fetching favourite articles:", error);
                 }
@@ -181,6 +235,54 @@ const Profile = () => {
             fetchFavArticles();
         }
     }, [wishlist]);
+
+    useEffect(() => {
+        if (favArticles.length > 0) {
+            const loadFavPhotos = async () => {
+                const start = photoBatchIndex * batchSize;
+                const end = start + batchSize;
+                const batch = favArticles.slice(start, end);
+
+                if (batch.length === 0) return;
+
+                try {
+                    const updatedFavArticles = await Promise.all(
+                        batch.map(async (article) => {
+                            const photosResponse = await getArticlePhotos(article.articleID);
+                            if (photosResponse?.photos?.[0]) {
+                                const photoData = photosResponse.photos[0].image.data;
+                                const uint8Array = new Uint8Array(photoData);
+                                const blob = new Blob([uint8Array], { type: 'image/png' });
+                                const reader = new FileReader();
+
+                                return new Promise((resolve) => {
+                                    reader.onloadend = () => {
+                                        resolve({ ...article, imageUrl: reader.result });
+                                    };
+                                    reader.readAsDataURL(blob);
+                                });
+                            }
+                            return { ...article };
+                        })
+                    );
+
+                    setFavArticlesWithPhotos(prev => {
+                        const newArticles = [...prev];
+                        updatedFavArticles.forEach(updatedArticle => {
+                            const index = newArticles.findIndex(a => a.articleID === updatedArticle.articleID);
+                            if (index !== -1) {
+                                newArticles[index] = updatedArticle;
+                            }
+                        });
+                        return newArticles;
+                    });
+                } catch (error) {
+                    console.error("Error fetching favorite article photos:", error);
+                }
+            };
+            loadFavPhotos();
+        }
+    }, [favArticles, photoBatchIndex]);
 
     useEffect(() => {
         if (favArticles){
@@ -599,6 +701,17 @@ const Profile = () => {
                                                                 {orderDetails[article.orderID]?.order?.collectionMethod === 'delivery' ? 'shipped' : 'collected'}
                                                             </button>
                                                         )}
+                                                    {(orderDetails[article.orderID]?.order?.orderStatus === 'shipped' ||
+                                                            orderDetails[article.orderID]?.order?.orderStatus === 'collected') &&
+                                                        !userReviews.some(review => review.articleID === article.articleID) &&
+                                                        (
+                                                            <button onClick={(e) => {
+                                                                e.stopPropagation(); // Prevent click from bubbling up
+                                                                handleReviewClick(article.articleID, article.orderID, false);
+                                                            }}>
+                                                                Write a Review
+                                                            </button>
+                                                        )}
                                                     <Link
                                                         to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}
                                                         className="message-button"
@@ -644,6 +757,23 @@ const Profile = () => {
                                             <span className={`status-badge status-${order.orderStatus}`}>
                                                 {order.orderStatus?.charAt(0).toUpperCase() + order.orderStatus?.slice(1)}
                                             </span>
+                                            {(order.orderStatus === "shipped" || order.orderStatus === "collected") &&
+                                                boughtArticles[order.orderID]?.articleID &&
+                                                !userReviews.some(review => review.articleID === boughtArticles[order.orderID]?.articleID) &&
+                                                (
+
+                                                    <button onClick={(e) => {
+                                                        e.stopPropagation(); // Prevent click from bubbling up
+                                                        handleReviewClick(
+                                                            boughtArticles[order.orderID].articleID,
+                                                            order.orderID,
+                                                            true
+                                                        );
+                                                    }}>
+                                                        Write a Review
+                                                    </button>
+                                                )}
+
                                             <Link
                                                 to={`/chat/${boughtArticles[order?.orderID]?.userID}`}
                                                 className="message-button"
@@ -692,8 +822,43 @@ const Profile = () => {
                                 )}
                             </div>
                         )}
+                        {showReviewModal && (
+                            <div className="review-modal-overlay">
+                                <div className="review-modal">
+                                    <h2>Write a Review</h2>
+                                    <p>Rate this product:</p>
+
+                                    {/* Rating Input */}
+                                    <div className="rating-stars">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <span
+                                                key={star}
+                                                onClick={() => setRating(star)}
+                                                style={{ cursor: "pointer", fontSize: "24px", color: star <= rating ? "gold" : "gray" }}
+                                            >
+                                            ★
+                                        </span>
+                                        ))}
+                                    </div>
+
+                                    {/* Comment Input */}
+                                    <textarea className="review-textarea"
+                                              placeholder="Write your review here..."
+                                              value={comment}
+                                              onChange={(e) => setComment(e.target.value)}
+                                    />
+                                    <div className="review-buttons">
+                                        {/* Submit & Close Buttons */}
+                                        <button onClick={() => handleSubmitReview()}>Submit Review</button>
+                                        <button onClick={() => setShowReviewModal(false)}>Cancel</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
+
             ) : dbUser ? (
                 <p>ERROR: USERS NOT MATCHING</p>
             ) : (
