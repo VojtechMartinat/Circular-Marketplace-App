@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {Link, useNavigate, useParams} from "react-router-dom";
-import {getUser, getUserArticles, getUserOrders, addMoney, getUserRating} from "../services/userService";
+import {getUser, getUserArticles, getUserOrders, addMoney, getUserRating,getUserWrittenReviews} from "../services/userService";
 import { changeOrderStatus, getOrder, getOrderArticlePhotos } from "../services/orderService";
 import { deleteArticle, getArticle, getArticleByOrderId } from "../services/articleService";
 import { getArticlePhotos } from '../services/articleService';
@@ -34,10 +34,14 @@ const Profile = () => {
     const [wishlist, setWishlist] = useState([]);
     const [favArticles, setFavArticles] = useState([]);
     const [favArticlesWithPhotos, setFavArticlesWithPhotos] = useState([]);
+    const [isBought, setIsBought] = useState(false);
+    const [userReviews, setUserReviews] = useState([]);
+    const [reviewedArticles, setReviewedArticles] = useState([]);
+
+
     // const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [activeTab, setActiveTab] = useState('Posted Items');
-    const [showTopupOptions, setShowTopupOptions] = useState(false);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -215,20 +219,21 @@ const Profile = () => {
     useEffect(() => {
         const fetchOrderPhotos = async () => {
             try {
-                if (!orders || orders.length === 0) return;
+                if (!orders || orders.length === 0) {
+                    console.log('No orders found to fetch photos');
+                    return;
+                }
+
                 const updatedOrders = await Promise.all(
                     orders.map(async (order) => {
-
                         try {
                             const photosResponse = await getOrderArticlePhotos(order.orderID);
-
 
                             if (photosResponse?.photos?.[0]) {
                                 const photoData = photosResponse.photos[0].image.data;
                                 const uint8Array = new Uint8Array(photoData);
                                 const blob = new Blob([uint8Array], { type: 'image/png' });
                                 const reader = new FileReader();
-
                                 return new Promise((resolve) => {
                                     reader.onloadend = () => {
                                         order.imageUrl = reader.result;
@@ -244,7 +249,11 @@ const Profile = () => {
                     })
                 );
 
-                setOrders(updatedOrders);
+
+                const ordersChanged = !updatedOrders.every((order, index) => order.imageUrl === orders[index]?.imageUrl);
+                if (ordersChanged) {
+                    setOrders([...updatedOrders]);
+                }
             } catch (error) {
                 console.error("Error fetching order photos:", error);
             }
@@ -272,8 +281,15 @@ const Profile = () => {
         }
     }, [orders]);
 
-
-
+    useEffect(() => {
+        if (user) {
+            getUserWrittenReviews(user.uid).then(response => {
+                if (response && response.reviews) {
+                    setUserReviews(response.reviews);
+                }
+            }).catch(error => console.error("Error fetching user reviews:", error));
+        }
+    }, [user]);
 
     const handleDeleteArticle = async (articleID) => {
         try {
@@ -306,10 +322,17 @@ const Profile = () => {
         }
     };
 
-    const handleReviewClick = (articleID, orderID) => {
+    const handleReviewClick = (articleID, orderID, isBought) => {
+        if (!articleID) {
+            console.error("Article ID is undefined for order:", orderID);
+            alert("There was an issue retrieving the article. Please try again later.");
+            return;
+        }
         setSelectedArticleID(articleID);
         setSelectedOrderID(orderID);
         setShowReviewModal(true);
+        setIsBought(isBought);
+
     };
 
     async function handleSubmitReview() {
@@ -318,9 +341,10 @@ const Profile = () => {
             alert("Cannot submit review without correct information.");
             return;
         }
-
-        const userID = boughtArticles[selectedOrderID]?.userID; // Fetch userID using orderID
-        const reviewer = user.userID;
+        const reviewer = user?.uid;
+        const userID = isBought
+            ? boughtArticles[selectedOrderID]?.userID  // For bought articles, userID is the seller
+            : orderDetails[selectedOrderID]?.order?.userID;  // For sold articles, userID is the buyer        const reviewer = user.userID;
         if (!userID) {
             console.error("User ID not found for order:", selectedOrderID);
             alert("Cannot submit review without user information.");
@@ -329,7 +353,7 @@ const Profile = () => {
 
         const reviewData = {
             articleID: selectedArticleID,
-            userID,  // Add userID to the request
+            userID,
             rating,
             comment,
             reviewer,
@@ -337,11 +361,18 @@ const Profile = () => {
 
         try {
             await publishReview(reviewData);
+
+            setUserReviews((prevReviews) => [
+                ...prevReviews,
+                { articleID: selectedArticleID, userID, rating, comment, reviewer }
+            ]);
             alert("Review submitted successfully!");
+            setReviewedArticles(prevArticles => prevArticles.filter(article => article.articleID !== reviewData.id));
             setRating(0);
             setComment("");
             setShowReviewModal(false);
         } catch (error) {
+            console.log("Logged-in User:", user);
             console.error("Failed to submit review:", error.response?.data || error.message);
             alert("Failed to submit review.");
 
@@ -392,6 +423,7 @@ const Profile = () => {
             alert("Failed to change the status.");
         }
     }
+    const [showTopupOptions, setShowTopupOptions] = useState(false);
     return (
         <div className="dashboard-container">
             {/* Header */}
