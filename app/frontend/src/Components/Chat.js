@@ -68,14 +68,14 @@ export const ChatsPage = () => {
             console.error("User is not set yet");
             return;
         }
-        navigate(`/chats/${chatID}`)
+        navigate(`/chats/${chatID}`);
         setSelectedChat(chatID);
+        setChatUser({username: "Loading..."});
         try {
             const chatMessages = await getMessages(user.uid, chatID);
-            console.log('this is the useruid', user.uid)
             setMessages(chatMessages.messages);
             const response = await getUser(chatID);
-            if (response) {
+            if (response && response.user) {
                 setChatUser(response.user);
             }
         } catch (error) {
@@ -95,7 +95,7 @@ export const ChatsPage = () => {
                 }
             });
         }
-    }, [receiverID])
+    }, [receiverID, user])
 
 
     const handleSend = async () => {
