@@ -73,6 +73,7 @@ export const ChatsPage = () => {
         setChatUser({username: "Loading..."});
         try {
             const chatMessages = await getMessages(user.uid, chatID);
+            console.log('this is the useruid', user.uid)
             setMessages(chatMessages.messages);
             const response = await getUser(chatID);
             if (response && response.user) {
