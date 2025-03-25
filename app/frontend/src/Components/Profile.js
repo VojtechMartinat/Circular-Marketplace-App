@@ -16,6 +16,7 @@ import {getUserWishlists} from "../services/wishlistService";
 const Profile = () => {
     const { id } = useParams();
     const [articles, setArticles] = useState(null);
+    const [articlesWithPhotos, setArticlesWithPhotos] = useState([]);
     const [orders, setOrders] = useState(null);
     const [orderDetails, setOrderDetails] = useState({});
     const [user, setUser] = useState(null);
@@ -130,7 +131,7 @@ const Profile = () => {
                     );
 
                     // Update the articles with photos
-                    setArticles(updatedArticles);
+                    setArticlesWithPhotos(updatedArticles);
                     // Set the fetched order details
                     setOrderDetails(details);
                 } catch (error) {
@@ -162,12 +163,13 @@ const Profile = () => {
                         wishlist.map(async (wishlist) => {
                             const article = await getArticle(wishlist.articleID);
                             if (article) {
-                                return article;
+                                return article.article;
                             }
                             return wishlist;
                         })
                     );
                     setFavArticles(updatedFavArticles);
+                    console.log("Fav", updatedFavArticles);
                 } catch (error) {
                     console.error("Error fetching favourite articles:", error);
                 }
@@ -201,6 +203,7 @@ const Profile = () => {
                         })
                     );
                     setFavArticlesWithPhotos(updatedFavArticles);
+                    console.log("FavPhotos",updatedFavArticles);
                 } catch (error) {
                     console.error("Error fetching favourite articles:", error);
                 }
@@ -251,7 +254,7 @@ const Profile = () => {
         const interval = setInterval(fetchOrderPhotos, 30000);
 
         return () => clearInterval(interval);
-    }, [articles]);
+    }, [articlesWithPhotos]);
 
     useEffect(() => {
         if (orders) {
@@ -629,7 +632,7 @@ const Profile = () => {
                         {activeTab === 'Favourited' && (
                             <div className="items-grid">
                                 {favArticlesWithPhotos && favArticlesWithPhotos.length > 0 ? (
-                                    favArticlesWithPhotos.map((article) => (
+                                    favArticlesWithPhotos.filter(x => x.state === "uploaded").map((article) => (
                                         <div
                                             key={article.articleID}
                                             className="item-card"
