@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {Link, useNavigate, useParams} from "react-router-dom";
-import {getUser, getUserArticles, getUserOrders, addMoney, getUserRating,getUserWrittenReviews} from "../services/userService";
+import {
+    getUser,
+    getUserArticles,
+    getUserOrders,
+    addMoney,
+    getUserRating,
+    getUserWrittenReviews,
+    getUserReviews
+} from "../services/userService";
 import { changeOrderStatus, getOrder, getOrderArticlePhotos } from "../services/orderService";
 import { deleteArticle, getArticle, getArticleByOrderId } from "../services/articleService";
 import { getArticlePhotos } from '../services/articleService';
@@ -39,6 +47,10 @@ const Profile = () => {
     const [reviewedArticles, setReviewedArticles] = useState([]);
     const [photoBatchIndex, setPhotoBatchIndex] = useState(0);
     const batchSize = 6;
+
+    const [reviews, setReviews] = useState([]);
+    const [reviewsWithUsers, setReviewsWithUsers] = useState([]);
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
 
     // const [isModalOpen, setIsModalOpen] = useState(false);
@@ -309,7 +321,6 @@ const Profile = () => {
                         })
                     );
                     setFavArticlesWithPhotos(updatedFavArticles);
-                    console.log("FavPhotos",updatedFavArticles);
                 } catch (error) {
                     console.error("Error fetching favourite articles:", error);
                 }
@@ -317,6 +328,7 @@ const Profile = () => {
             fetchFavArticlePhotos()
         }
     },[favArticles])
+
 
     useEffect(() => {
         const fetchOrderPhotos = async () => {
@@ -405,6 +417,33 @@ const Profile = () => {
         }
     };
 
+    const StarRating = ({ rating, totalStars = 5 }) => {
+        return (
+            <div style={{ display: "flex", gap: "2px" }}>
+                {Array.from({ length: totalStars }, (_, index) => {
+                    const fillPercentage = Math.max(0, Math.min(1, rating - index)); // 1 for full, 0.5 for half, etc.
+                    return (
+                        <span key={index} style={{ position: "relative", fontSize: "20px" }}>
+                        <span style={{ color: "gray" }}>★</span> {/* Background star */}
+                            <span
+                                style={{
+                                    color: "gold",
+                                    position: "absolute",
+                                    left: 0,
+                                    width: `${fillPercentage * 100}%`, // Dynamic width
+                                    overflow: "hidden",
+                                    display: "inline-block",
+                                }}
+                            >
+                            ★
+                        </span> {/* Foreground star (partially filled) */}
+                    </span>
+                    );
+                })}
+            </div>
+        );
+    };
+
     const handleTopup = async (amount) => {
         if (amount <= 0) {
             alert("Please enter a valid amount.");
@@ -489,6 +528,33 @@ const Profile = () => {
         favourited: false,
     });
 
+    const ReviewModal = ({onClose}) => {
+        return (
+            <div className="review-modal-overlay" onClick={onClose}>
+                <div className="review-modal-content">
+                    <h2>Reviews for {dbUser?.username}</h2>
+                    <div className="reviews">
+                        <ul className="review-list">
+                            {reviews.length > 0 ? (
+                                reviews.map((review, index) => (
+                                    <li key={index}>
+                                        <span><strong>{reviewsWithUsers[review?.reviewID]?.user?.username}</strong>: {review.comment}</span>
+                                        <div className="star-rating-container">
+                                            <StarRating rating={review.rating}/>
+                                        </div>
+                                    </li>
+                                ))
+                            ) : (
+                                <p>No reviews yet.</p>
+                            )}
+                        </ul>
+                    </div>
+
+                    <button onClick={onClose} className="close-modal">Close</button>
+                </div>
+            </div>
+        );
+    };
     const toggleDropdown = (key) => {
         setDropdowns((prev) => {
 
@@ -526,6 +592,37 @@ const Profile = () => {
         }
     }
     const [showTopupOptions, setShowTopupOptions] = useState(false);
+
+
+    useEffect(() => {
+        if (dbUser){
+            getUserReviews(dbUser.userID).then(response => {
+                if (response && response.reviews) {
+                    setReviews(response.reviews);
+                }
+            });
+        }
+    }, [dbUser]);
+    useEffect(() => {
+        if (reviews){
+            const fetchUserIDs = async () => {
+                const userIDMap = {};
+                for (const review of reviews) {
+                    const user = await getUser(review.reviewer);
+                    if (user) {
+                        userIDMap[review.reviewID] = user;
+                    }
+                }
+                setReviewsWithUsers(userIDMap);
+            };
+            fetchUserIDs();
+        }
+    },[reviews])
+
+    const handleShowReviews = () => {
+        setIsReviewModalOpen(true);
+
+    }
     return (
         <div className="dashboard-container">
             {/* Header */}
@@ -537,12 +634,12 @@ const Profile = () => {
                     {/* Sidebar (Profile Section) */}
                     <div className="sidebar">
                         <div className="profile">
-                            <div className="avatar">
-                                <RxAvatar size={100} />
+                            <div className="avatar-container">
+                                <RxAvatar size={100} className="avatar" onClick={handleShowReviews}/>
                             </div>
                             <h2>{dbUser.username}</h2>
                             <p className="member-since">
-                                Member since {new Date(dbUser.createdAt).toLocaleDateString("en-US", {
+                            Member since {new Date(dbUser.createdAt).toLocaleDateString("en-US", {
                                 year: "numeric",
                                 month: "long"
                             })}
@@ -597,7 +694,7 @@ const Profile = () => {
                             </div>
                         )}
                     </div>
-
+                    {isReviewModalOpen && <ReviewModal onClose={() => setIsReviewModalOpen(false)} />}
                     {/* Items Section */}
                     <div className="items-section">
                         {/* Tabs */}

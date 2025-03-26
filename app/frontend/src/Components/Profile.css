@@ -69,9 +69,17 @@
     text-align: center;
 }
 
+.avatar-container {
+    display: inline-block;
+}
+
 .avatar {
-    border-radius: 50%;
-    margin-bottom: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.avatar-container:hover .avatar {
+    transform: scale(1.15);
+    transition: transform 0.3s ease-in-out;
 }
 
 .profile h2 {
