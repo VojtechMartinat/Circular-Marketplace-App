@@ -1,22 +1,32 @@
-import React, {useEffect, useState} from 'react';
-import {Link, useParams} from "react-router-dom";
-import {getUser, getUserArticles, getUserOrders, getUserWrittenReviews, addMoney} from "../services/userService";
-import {changeOrderStatus, getOrder, getOrderArticlePhotos} from "../services/orderService"
-import {deleteArticle, getArticle, getArticleByOrderId} from "../services/articleService";
-import {getArticlePhotos} from '../services/articleService';
-import { FaGear } from "react-icons/fa6";
-import './Profile.css';
-import {FaWallet} from "react-icons/fa";
-import {auth} from "../services/firebaseService";
+import React, { useEffect, useState } from 'react';
+import {Link, useNavigate, useParams} from "react-router-dom";
+import {
+    getUser,
+    getUserArticles,
+    getUserOrders,
+    addMoney,
+    getUserRating,
+    getUserWrittenReviews,
+    getUserReviews
+} from "../services/userService";
+import { changeOrderStatus, getOrder, getOrderArticlePhotos } from "../services/orderService";
+import { deleteArticle, getArticle, getArticleByOrderId } from "../services/articleService";
+import { getArticlePhotos } from '../services/articleService';
+import {FaGear, FaMessage, FaRegStar} from "react-icons/fa6";
+import {FaStar, FaWallet,FaCheck} from "react-icons/fa";
+import { auth } from "../services/firebaseService";
 import { publishReview } from "../services/articleService";
+import { RxAvatar } from "react-icons/rx";
 
-import { FaMessage } from "react-icons/fa6";
+import './Profile.css';
+import {getUserWishlists} from "../services/wishlistService";
 
 const Profile = () => {
     const { id } = useParams();
-    const [articles, setArticles] = useState(null);
+    const [articles, setArticles] = useState([]);
+    const [articlesWithPhotos, setArticlesWithPhotos] = useState([]);
     const [orders, setOrders] = useState(null);
-    const [orderDetails, setOrderDetails] = useState({}); // State to store order details for each user article
+    const [orderDetails, setOrderDetails] = useState({});
     const [user, setUser] = useState(null);
     const [dbUser, setDbUser] = useState(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,12 +37,25 @@ const Profile = () => {
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [selectedOrderID, setSelectedOrderID] = useState(null);
+    const [userRating, setUserRating] = useState(0);
+    const navigate = useNavigate();
+    const [wishlist, setWishlist] = useState([]);
+    const [favArticles, setFavArticles] = useState([]);
+    const [favArticlesWithPhotos, setFavArticlesWithPhotos] = useState([]);
     const [isBought, setIsBought] = useState(false);
     const [userReviews, setUserReviews] = useState([]);
     const [reviewedArticles, setReviewedArticles] = useState([]);
+    const [photoBatchIndex, setPhotoBatchIndex] = useState(0);
+    const batchSize = 6;
+
+    const [reviews, setReviews] = useState([]);
+    const [reviewsWithUsers, setReviewsWithUsers] = useState([]);
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
 
     // const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [activeTab, setActiveTab] = useState('Posted Items');
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -58,28 +81,94 @@ const Profile = () => {
     }, [user]);
 
     useEffect(() => {
-        if (dbUser){
+        if (dbUser) {
             getUserArticles(dbUser.userID).then(response => {
                 if (response && response.articles) {
                     setArticles(response.articles);
-                } else {
-                    console.log("error");
+                    setArticlesWithPhotos(response.articles.map(article => ({ ...article, imageUrl: null })));
+                    setPhotoBatchIndex(0);
                 }
             });
         }
     }, [dbUser]);
 
     useEffect(() => {
+        if (articles.length > 0) {
+            loadNextArticlePhotoBatch();
+        }
+    }, [photoBatchIndex, articles]);
+
+    const loadNextArticlePhotoBatch = async () => {
+        const start = photoBatchIndex * batchSize;
+        const end = start + batchSize;
+        const batch = articles.slice(start, end);
+
+        if (batch.length === 0) return;
+
+        try {
+            const updatedArticles = await Promise.all(
+                batch.map(async (article) => {
+                    if (article.orderID) {
+                        const orderDetails = await getOrder(article.orderID);
+                        setOrderDetails(prev => ({ ...prev, [article.orderID]: orderDetails }));
+                    }
+                    const photosResponse = await getArticlePhotos(article.articleID);
+                    if (photosResponse?.photos?.[0]) {
+                        const photoData = photosResponse.photos[0].image.data;
+                        const uint8Array = new Uint8Array(photoData);
+                        const blob = new Blob([uint8Array], { type: 'image/png' });
+                        const reader = new FileReader();
+
+                        return new Promise((resolve) => {
+                            reader.onloadend = () => {
+                                resolve({ ...article, imageUrl: reader.result });
+                            };
+                            reader.readAsDataURL(blob);
+                        });
+                    }
+                    return { ...article };
+                })
+            );
+
+            setArticlesWithPhotos(prev => {
+                const newArticles = [...prev];
+                updatedArticles.forEach(updatedArticle => {
+                    const index = newArticles.findIndex(a => a.articleID === updatedArticle.articleID);
+                    if (index !== -1) {
+                        newArticles[index] = updatedArticle;
+                    }
+                });
+                return newArticles;
+            });
+
+            setTimeout(() => setPhotoBatchIndex(prev => prev + 1), 10);
+        } catch (error) {
+            console.error("Error fetching article photos:", error);
+        }
+    };
+
+    useEffect(() => {
         if (dbUser){
             getUserOrders(dbUser.userID).then(response => {
                 if (response && response.orders) {
-
                     setOrders(response.orders);
                 } else {
                     console.log("error");
                 }
                 }
             );
+        }
+    }, [dbUser]);
+
+    useEffect(() => {
+        if (dbUser){
+            getUserRating(dbUser.userID).then(response => {
+                if (response && response.averageRating) {
+                    setUserRating(response.averageRating);
+                } else {
+                    console.log("error");
+                }
+            });
         }
     }, [dbUser]);
 
@@ -115,7 +204,7 @@ const Profile = () => {
                     );
 
                     // Update the articles with photos
-                    setArticles(updatedArticles);
+                    setArticlesWithPhotos(updatedArticles);
                     // Set the fetched order details
                     setOrderDetails(details);
                 } catch (error) {
@@ -128,8 +217,120 @@ const Profile = () => {
     }, [articles]);
 
     useEffect(() => {
-        console.log('Orders: ', orders);
+        if (dbUser){
+            getUserWishlists(dbUser.userID).then(response => {
+                if (response && response.wishlists) {
+                    setWishlist(response.wishlists);
+                } else {
+                    console.log("error");
+                }
+            });
+        }
+    },[dbUser])
 
+    useEffect(() => {
+        if (wishlist) {
+            const fetchFavArticles = async () => {
+                try {
+                    const updatedFavArticles = await Promise.all(
+                        wishlist.map(async (wishlist) => {
+                            const article = await getArticle(wishlist.articleID);
+                            return article ? article.article : wishlist;
+                        })
+                    );
+                    setFavArticles(updatedFavArticles);
+                    setFavArticlesWithPhotos(updatedFavArticles.map(article => ({ ...article, imageUrl: null })));
+                } catch (error) {
+                    console.error("Error fetching favourite articles:", error);
+                }
+            };
+            fetchFavArticles();
+        }
+    }, [wishlist]);
+
+    useEffect(() => {
+        if (favArticles.length > 0) {
+            const loadFavPhotos = async () => {
+                const start = photoBatchIndex * batchSize;
+                const end = start + batchSize;
+                const batch = favArticles.slice(start, end);
+
+                if (batch.length === 0) return;
+
+                try {
+                    const updatedFavArticles = await Promise.all(
+                        batch.map(async (article) => {
+                            const photosResponse = await getArticlePhotos(article.articleID);
+                            if (photosResponse?.photos?.[0]) {
+                                const photoData = photosResponse.photos[0].image.data;
+                                const uint8Array = new Uint8Array(photoData);
+                                const blob = new Blob([uint8Array], { type: 'image/png' });
+                                const reader = new FileReader();
+
+                                return new Promise((resolve) => {
+                                    reader.onloadend = () => {
+                                        resolve({ ...article, imageUrl: reader.result });
+                                    };
+                                    reader.readAsDataURL(blob);
+                                });
+                            }
+                            return { ...article };
+                        })
+                    );
+
+                    setFavArticlesWithPhotos(prev => {
+                        const newArticles = [...prev];
+                        updatedFavArticles.forEach(updatedArticle => {
+                            const index = newArticles.findIndex(a => a.articleID === updatedArticle.articleID);
+                            if (index !== -1) {
+                                newArticles[index] = updatedArticle;
+                            }
+                        });
+                        return newArticles;
+                    });
+                } catch (error) {
+                    console.error("Error fetching favorite article photos:", error);
+                }
+            };
+            loadFavPhotos();
+        }
+    }, [favArticles, photoBatchIndex]);
+
+    useEffect(() => {
+        if (favArticles){
+            const fetchFavArticlePhotos = async () => {
+                try {
+                    const updatedFavArticles = await Promise.all(
+                        favArticles.map(async (article) => {
+                            const photosResponse = await getArticlePhotos(article.articleID);
+                            if (photosResponse && photosResponse.photos && photosResponse.photos[0]) {
+                                const photoData = photosResponse.photos[0].image.data;
+                                const uint8Array = new Uint8Array(photoData);
+                                const blob = new Blob([uint8Array], { type: 'image/png' });
+                                const reader = new FileReader();
+
+                                return new Promise((resolve) => {
+                                    reader.onloadend = () => {
+                                        article.imageUrl = reader.result;
+                                        resolve(article);
+                                    };
+                                    reader.readAsDataURL(blob);
+                                });
+                            }
+                            return article;
+                        })
+                    );
+                    setFavArticlesWithPhotos(updatedFavArticles);
+                } catch (error) {
+                    console.error("Error fetching favourite articles:", error);
+                }
+            };
+            fetchFavArticlePhotos()
+        }
+    },[favArticles])
+
+
+    useEffect(() => {
         const fetchOrderPhotos = async () => {
             try {
                 if (!orders || orders.length === 0) {
@@ -176,7 +377,7 @@ const Profile = () => {
         const interval = setInterval(fetchOrderPhotos, 30000);
 
         return () => clearInterval(interval);
-    }, [orders]);
+    }, [articlesWithPhotos]);
 
     useEffect(() => {
         if (orders) {
@@ -185,7 +386,7 @@ const Profile = () => {
                 for (const order of orders) {
                     const article = await getArticleByOrderId(order.orderID);
                     if (article) {
-                        userIDMap[order.orderID] = article.article;
+                        userIDMap[order.orderID] = article.articles[0];
                     }
                 }
                 setBoughtArticles(userIDMap);
@@ -214,6 +415,33 @@ const Profile = () => {
             console.error("Error deleting article:", error);
             alert("Failed to delete article.");
         }
+    };
+
+    const StarRating = ({ rating, totalStars = 5 }) => {
+        return (
+            <div style={{ display: "flex", gap: "2px" }}>
+                {Array.from({ length: totalStars }, (_, index) => {
+                    const fillPercentage = Math.max(0, Math.min(1, rating - index)); // 1 for full, 0.5 for half, etc.
+                    return (
+                        <span key={index} style={{ position: "relative", fontSize: "20px" }}>
+                        <span style={{ color: "gray" }}>★</span> {/* Background star */}
+                            <span
+                                style={{
+                                    color: "gold",
+                                    position: "absolute",
+                                    left: 0,
+                                    width: `${fillPercentage * 100}%`, // Dynamic width
+                                    overflow: "hidden",
+                                    display: "inline-block",
+                                }}
+                            >
+                            ★
+                        </span> {/* Foreground star (partially filled) */}
+                    </span>
+                    );
+                })}
+            </div>
+        );
     };
 
     const handleTopup = async (amount) => {
@@ -288,6 +516,7 @@ const Profile = () => {
             console.log("Logged-in User:", user);
             console.error("Failed to submit review:", error.response?.data || error.message);
             alert("Failed to submit review.");
+
         }
     }
 
@@ -299,6 +528,33 @@ const Profile = () => {
         favourited: false,
     });
 
+    const ReviewModal = ({onClose}) => {
+        return (
+            <div className="review-modal-overlay" onClick={onClose}>
+                <div className="review-modal-content">
+                    <h2>Reviews for {dbUser?.username}</h2>
+                    <div className="reviews">
+                        <ul className="review-list">
+                            {reviews.length > 0 ? (
+                                reviews.map((review, index) => (
+                                    <li key={index}>
+                                        <span><strong>{reviewsWithUsers[review?.reviewID]?.user?.username}</strong>: {review.comment}</span>
+                                        <div className="star-rating-container">
+                                            <StarRating rating={review.rating}/>
+                                        </div>
+                                    </li>
+                                ))
+                            ) : (
+                                <p>No reviews yet.</p>
+                            )}
+                        </ul>
+                    </div>
+
+                    <button onClick={onClose} className="close-modal">Close</button>
+                </div>
+            </div>
+        );
+    };
     const toggleDropdown = (key) => {
         setDropdowns((prev) => {
 
@@ -336,321 +592,382 @@ const Profile = () => {
         }
     }
     const [showTopupOptions, setShowTopupOptions] = useState(false);
+
+
+    useEffect(() => {
+        if (dbUser){
+            getUserReviews(dbUser.userID).then(response => {
+                if (response && response.reviews) {
+                    setReviews(response.reviews);
+                }
+            });
+        }
+    }, [dbUser]);
+    useEffect(() => {
+        if (reviews){
+            const fetchUserIDs = async () => {
+                const userIDMap = {};
+                for (const review of reviews) {
+                    const user = await getUser(review.reviewer);
+                    if (user) {
+                        userIDMap[review.reviewID] = user;
+                    }
+                }
+                setReviewsWithUsers(userIDMap);
+            };
+            fetchUserIDs();
+        }
+    },[reviews])
+
+    const handleShowReviews = () => {
+        setIsReviewModalOpen(true);
+
+    }
     return (
+        <div className="dashboard-container">
+            {/* Header */}
 
 
-        <div className="profile-back">
-            {dbUser && (dbUser.userID = user.uid)  ?
+            {/* Main Content */}
+            {dbUser && dbUser.userID === user?.uid ? (
+                <div className="main-content">
+                    {/* Sidebar (Profile Section) */}
+                    <div className="sidebar">
+                        <div className="profile">
+                            <div className="avatar-container">
+                                <RxAvatar size={100} className="avatar" onClick={handleShowReviews}/>
+                            </div>
+                            <h2>{dbUser.username}</h2>
+                            <p className="member-since">
+                            Member since {new Date(dbUser.createdAt).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long"
+                            })}
+                            </p>
 
-        <div className="profile-box">
-            <header className="header2">
-                <b>{dbUser ? <p>Hi {dbUser.username}!</p> : <p>Loading...</p>}</b>
+                            <div className="rating-verified">
+                                <span className="rating">
+                                    <FaStar className="star-icon"/>
+                                    <span className="rating-text">{userRating}</span>
+                                </span>
+                                <span className="verified">
+                                    <FaCheck className="verified-icon"/>
+                                    <span className="verified-text">Verified</span>
+                                </span>
+                            </div>
+                            <Link to="/logout">
+                                <button className="edit-profile-btn">Logout</button>
+                            </Link>
+                        </div>
 
+                        {/* Wallet Section */}
+                        <div className="wallet">
+                        <h3>Wallet Balance</h3>
+                            <div className="balance">
+                                <FaWallet size={24} style={{ color: 'black' }} />
+                                <span>${dbUser?.wallet || 0}</span>
+                            </div>
+                            <button className="top-up-btn" onClick={() => setShowTopupOptions(true)}>+ Top Up</button>
+                        </div>
 
-            </header>
-
-            <div className="dropdown-container">
-
-            <div className="top-items">
-                    <div className="dropdown" onClick={() => toggleDropdown('wallet')}>
-                        <h2 style={{
-                            display: "flex",
-                            alignItems: "center",
-                            textAlign: "left",
-                            paddingLeft: 20,
-                            gap: 20
-                        }}>
-                            <FaWallet size={30} style={{color: "black"}}/>
-                            {dbUser?.wallet}£
-                        </h2>
-
+                        {/* Top-up Modal */}
+                        {showTopupOptions && (
+                            <div className="topup-overlay">
+                                <div className="topup-modal">
+                                    <button className="close-button" onClick={() => setShowTopupOptions(false)}>✖</button>
+                                    <p className="topup-subtext">Select an option below or enter a custom amount</p>
+                                    <div className="topup-options">
+                                        <button onClick={() => handleTopup(5)}>$5</button>
+                                        <button onClick={() => handleTopup(10)}>$10</button>
+                                        <button onClick={() => handleTopup(20)}>$20</button>
+                                        <div className="custom-topup">
+                                            <input
+                                                type="number"
+                                                value={topupAmount === 0 ? "" : topupAmount}
+                                                onChange={(e) => setTopupAmount(Number(e.target.value) || 0)}
+                                                placeholder="Enter custom amount"
+                                            />
+                                            <button onClick={() => handleTopup(topupAmount)}>Add Money</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
-                    <div className="icon">
-                        <Link to="/chats">
-                            <FaMessage size={30} style={{color: 'black'}}/>
-                        </Link>
-                    </div>
-                    <div className="dropdown" onClick={() => toggleDropdown('settings')}>
-                        <FaGear size={30} style={{color: 'black'}}/>
-                    </div>
-                </div>
+                    {isReviewModalOpen && <ReviewModal onClose={() => setIsReviewModalOpen(false)} />}
+                    {/* Items Section */}
+                    <div className="items-section">
+                        {/* Tabs */}
+                        <div className="tabs">
+                            {['Posted Items', 'Sold Items', 'Bought Items', 'Favourited'].map((tab) => (
+                                <button
+                                    key={tab}
+                                    className={`tab ${activeTab === tab ? 'active' : ''}`}
+                                    onClick={() => setActiveTab(tab)}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
 
-                <div className="dropdown" onClick={() => toggleDropdown('favourited')}>
-                    <h2>Favourited Articles</h2>
-                </div>
+                        {/* Posted Items */}
+                        {activeTab === 'Posted Items' && (
+                            <div className="items-grid">
+                                {articles && articles.some(article => article.state === "uploaded") ? (
+                                    articles.map((article) =>
+                                        article.orderID === null ? (
+                                            <div
+                                                key={article.articleID}
+                                                className="item-card"
+                                                onClick={() => navigate(`/articles/${article.articleID}`)}
+                                                style={{ cursor: "pointer" }}
+                                            >
+                                                {article.imageUrl ? (
+                                                    <img src={article.imageUrl} alt={article.articleTitle} className="item-image" />
+                                                ) : (
+                                                    <div className="item-image-placeholder">📷</div>
+                                                )}
+                                                <p className="item-title">{article.articleTitle}</p>
+                                                <p className="date">
+                                                    Posted on {new Date(dbUser.createdAt).toLocaleDateString("en-US", {
+                                                    year: "numeric",
+                                                    month: "long",
+                                                    day: "numeric"
+                                                })}
+                                                </p>
+                                                <p className="price">${article.price}</p>
+                                                <span className="status active">{article.state?.charAt(0).toUpperCase() + article.state?.slice(1)}</span>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // Prevent navigation to article page
+                                                        handleDeleteArticle(article.articleID);
+                                                    }}
+                                                    className="delete-button"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        ) : null
+                                    )
+                                ) : (
+                                    <p>No articles found</p>
+                                )}
+                            </div>
+                        )}
 
-                <div className="dropdown" onClick={() => toggleDropdown('bought')}>
-                    <h2>Articles Bought</h2>
-                    {dropdowns.bought && (
-                        orders && orders.length > 0 ? (
-                            <div className="orders-gallery">
-                                {orders.map((order) => (
-                                    <div key={order.orderID} className="order-box">
-                                        {order.imageUrl ? (
-                                            <img src={order.imageUrl} alt={order.orderID} className="order-image"/>
-                                        ) : (
-                                            <div className="product-image-placeholder">🖼️</div>
-                                        )}
+                        {/* Sold Items */}
+                        {activeTab === 'Sold Items' && (
+                            <div className="items-grid">
+                                {articles && articles.some(article => article.state === "sold") ? (
+                                    articles.map((article) =>
+                                            article.orderID !== null ? (
+                                                <div
+                                                    key={article.articleID}
+                                                    className="item-card"
+                                                    onClick={() => navigate(`/articles/${article.articleID}`)}
+                                                    style={{ cursor: "pointer" }}
+                                                >
+                                                    {article.imageUrl ? (
+                                                        <img src={article.imageUrl} alt={article.articleTitle} className="item-image" />
+                                                    ) : (
+                                                        <div className="item-image-placeholder">📷</div>
+                                                    )}
+                                                    <p className="item-title">{article.articleTitle}</p>
+                                                    <p className="date">
+                                                        Posted on {new Date(dbUser.createdAt).toLocaleDateString("en-US", {
+                                                        year: "numeric",
+                                                        month: "long",
+                                                        day: "numeric"
+                                                    })}
+                                                    </p>
+                                                    <p className="price">${article.price}</p>
+                                                    <span className={`status-badge status-${orderDetails[article.orderID]?.order?.orderStatus}`}>
+                            {orderDetails[article.orderID]?.order?.orderStatus?.charAt(0).toUpperCase() +
+                                orderDetails[article.orderID]?.order?.orderStatus?.slice(1)}
+                        </span>
+                                                    {orderDetails[article.orderID]?.order?.orderStatus !== 'collected' &&
+                                                        orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' && (
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation(); // Prevent navigation to article page
+                                                                    handleChangeOrderStatus(article.orderID, orderDetails[article.orderID]?.order?.collectionMethod);
+                                                                }}
+                                                                className="action-button"
+                                                            >
+                                                                Change status to{' '}
+                                                                {orderDetails[article.orderID]?.order?.collectionMethod === 'delivery' ? 'shipped' : 'collected'}
+                                                            </button>
+                                                        )}
+                                                    {(orderDetails[article.orderID]?.order?.orderStatus === 'shipped' ||
+                                                            orderDetails[article.orderID]?.order?.orderStatus === 'collected') &&
+                                                        !userReviews.some(review => review.articleID === article.articleID) &&
+                                                        (
+                                                            <button onClick={(e) => {
+                                                                e.stopPropagation(); // Prevent click from bubbling up
+                                                                handleReviewClick(article.articleID, article.orderID, false);
+                                                            }}>
+                                                                Write a Review
+                                                            </button>
+                                                        )}
+                                                    <Link
+                                                        to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}
+                                                        className="message-button"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        <FaMessage size={24} style={{ color: 'white' }} />
+                                                        <span className="message-label">Message Buyer</span>
+                                                    </Link>
+                                                </div>
+                                            ) : null
+                                    )
+                                ) : (
+                                    <p>No articles found</p>
+                                )}
+                            </div>
+                        )}
 
-                                        <div className="order-details">
-                                            <p><strong>Price:</strong> ${order.totalPrice}</p>
-                                            <p><strong>Shipping Method:</strong> {order.collectionMethod}</p>
-                                            <p><strong>Status:</strong> {order.orderStatus}</p>
-
-                                            {/* Show Review Button if status is "shipped" or "collected" */}
+                        {/* Bought Items */}
+                        {activeTab === 'Bought Items' && (
+                            <div className="items-grid">
+                                {orders && orders.length > 0 ? (
+                                    orders.map((order) => (
+                                        <div
+                                            key={order.orderID}
+                                            className="item-card"
+                                            onClick={() => navigate(`/articles/${boughtArticles[order?.orderID]?.articleID}`)}
+                                            style={{ cursor: "pointer" }}
+                                        >
+                                            {order.imageUrl ? (
+                                                <img src={order.imageUrl} alt={order.orderID} className="item-image" />
+                                            ) : (
+                                                <div className="item-image-placeholder">📷</div>
+                                            )}
+                                            <p className="item-title">{boughtArticles[order?.orderID]?.articleTitle || "Unknown Item"}</p>
+                                            <p className="date">
+                                                Purchased on {new Date(order.createdAt).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric"
+                                            })}
+                                            </p>
+                                            <p className="price">${order.totalPrice}</p>
+                                            <span className={`status-badge status-${order.orderStatus}`}>
+                                                {order.orderStatus?.charAt(0).toUpperCase() + order.orderStatus?.slice(1)}
+                                            </span>
                                             {(order.orderStatus === "shipped" || order.orderStatus === "collected") &&
                                                 boughtArticles[order.orderID]?.articleID &&
                                                 !userReviews.some(review => review.articleID === boughtArticles[order.orderID]?.articleID) &&
                                                 (
 
-                                                <button onClick={() => handleReviewClick(
-                                                    boughtArticles[order.orderID].articleID,
-                                                    order.orderID,
-                                                    true
-                                                )}>
-                                                    Write a Review
-                                                </button>
-                                            )}
-                                        </div>
-                                        <div className="icon">
-                                            <Link
-                                                to={`/chat/${boughtArticles[order?.orderID]?.userID}`}>
-                                                <FaMessage size={30} style={{color: 'black'}}/>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p>No orders found</p>
-                        )
-                    )}
-                </div>
-
-
-                <div className="dropdown" onClick={() => toggleDropdown('sold')}>
-                    <h2>Articles Sold</h2>
-                    {dropdowns.sold && (
-                        articles && articles.some(article => article.state === "sold") > 0 ? (
-                            <div className="orders-gallery">
-
-
-                                {articles.map((article) => {
-
-                                    return article.orderID !== null ? (
-                                        <div key={article.articleID} className="order-box">
-                                            {article.imageUrl ? (
-                                                <img src={article.imageUrl} alt={article.articleTitle}
-                                                     className="order-image"/>
-                                            ) : (
-                                                <div className="product-image-placeholder">🖼️</div>
-                                            )}
-
-                                            <div className="order-details">
-                                                <Link to={`/articles/${article.articleID}`}>
-                                                    <p className="product-name">{article.articleTitle}</p>
-                                                </Link>
-                                                <p><strong>Price:</strong> ${article.price}</p>
-                                                <p>
-                                                    <strong>Status:</strong> {orderDetails[article.orderID]?.order?.orderStatus}
-                                                </p>
-                                                {orderDetails[article.orderID]?.order && (
-                                                    <p><strong>Collection
-                                                        Method:</strong> {orderDetails[article.orderID]?.order?.collectionMethod}
-                                                    </p>
-                                                )}
-
-                                            {orderDetails[article.orderID] && orderDetails[article.orderID]?.order &&
-                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'collected' &&
-                                                    orderDetails[article.orderID]?.order?.orderStatus !== 'shipped' &&
-                                                    (
-                                                        <button
-                                                            onClick={() =>
-                                                                handleChangeOrderStatus(article.orderID, orderDetails[article.orderID]?.order?.collectionMethod)
-                                                            }
-                                                        >
-                                                            Change status to{' '}
-                                                            {orderDetails[article.orderID]?.order?.collectionMethod === 'delivery'
-                                                                ? 'shipped'
-                                                                : 'collected'}
-                                                        </button>
-                                                    )}
-                                                {(orderDetails[article.orderID]?.order?.orderStatus === 'shipped' ||
-                                                    orderDetails[article.orderID]?.order?.orderStatus === 'collected') &&
-                                                    !userReviews.some(review => review.articleID === article.articleID) &&
-                                                    (
-                                                    <button onClick={() => handleReviewClick(article.articleID, article.orderID, false)}>
+                                                    <button onClick={(e) => {
+                                                        e.stopPropagation(); // Prevent click from bubbling up
+                                                        handleReviewClick(
+                                                            boughtArticles[order.orderID].articleID,
+                                                            order.orderID,
+                                                            true
+                                                        );
+                                                    }}>
                                                         Write a Review
                                                     </button>
                                                 )}
-                                                <div className="icon">
-                                                    <Link
-                                                        to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}>
-                                                    <FaMessage size={30} style={{color: 'black'}}/>
-                                                    </Link>
-                                                </div>
-                                            </div>
+
+                                            <Link
+                                                to={`/chat/${boughtArticles[order?.orderID]?.userID}`}
+                                                className="message-button"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <FaMessage size={24} style={{ color: 'white' }} />
+                                                <span className="message-label">Message Seller</span>
+                                            </Link>
                                         </div>
-                                    ) : null;
-                                })}
-
-                            </div>
-                        ) : (
-                            <p>No articles found</p>
-                        )
-                    )}
-                </div>
-
-
-                <div className="dropdown" onClick={() => toggleDropdown('posted')}>
-                    <h2>Articles Posted</h2>
-                    {dropdowns.posted && (
-                        articles && articles.some(article => article.state === "uploaded") ? (
-                            <div className="orders-gallery">
-                                {articles.map((article) =>
-                                    article.orderID === null ? (
-                                        <div key={article.articleID} className="order-box">
-
-                                            {article.imageUrl ? (
-                                                <img src={article.imageUrl} alt={article.articleTitle}
-                                                     className="order-image"/>
-                                            ) : (
-                                                <div className="product-image-placeholder">🖼️</div>
-                                            )}
-
-                                            <div className="order-details">
-                                                <Link to={`/articles/${article.articleID}`}>
-                                                    <p className="product-name">{article.articleTitle}</p>
-                                                </Link>
-                                                <p><strong>Price:</strong> ${article.price}</p>
-                                                <p><strong>Status:</strong> {article.state}</p>
-                                                <button
-                                                    onClick={() => handleDeleteArticle(article.articleID)}
-                                                    className="delete-button"
-                                                >
-                                                    Delete article
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ) : null
+                                    ))
+                                ) : (
+                                    <p>No orders found</p>
                                 )}
                             </div>
-                        ) : (
-                            <p>No articles found</p>
-                        )
-                    )}
+                        )}
 
-                </div>
-                <div className="topup-container">
-                    <button onClick={() => setShowTopupOptions(true)}>Add Money</button>
-
-                    {showTopupOptions && (
-                        <div className="topup-overlay">
-                            <div className="topup-modal">
-                                <button className="close-button" onClick={() => setShowTopupOptions(false)}>✖</button>
-
-                                <p className="topup-subtext">Select an option below or enter a custom amount</p>
-
-                                <div className="topup-options">
-                                    <button onClick={() => handleTopup(5)}>5£</button>
-                                    <button onClick={() => handleTopup(10)}>10£</button>
-                                    <button onClick={() => handleTopup(20)}>20£</button>
-
-                                    <div className="custom-topup">
-                                        <input
-                                            type="number"
-                                            value={topupAmount === 0 ? "" : topupAmount}
-                                            onChange={(e) => setTopupAmount(Number(e.target.value) || 0)}
-                                            placeholder="Enter custom amount"
-                                        />
-                                        <button onClick={() => handleTopup(topupAmount)}>Add Money</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {showReviewModal && (
-                        <div className="review-modal-overlay">
-                            <div className="review-modal">
-                                <h2>Write a Review</h2>
-                                <p>Rate this product:</p>
-
-                                {/* Rating Input */}
-                                <div className="rating-stars">
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                        <span
-                                            key={star}
-                                            onClick={() => setRating(star)}
-                                            style={{ cursor: "pointer", fontSize: "24px", color: star <= rating ? "gold" : "gray" }}
+                        {/* Favourited Items */}
+                        {activeTab === 'Favourited' && (
+                            <div className="items-grid">
+                                {favArticlesWithPhotos && favArticlesWithPhotos.length > 0 ? (
+                                    favArticlesWithPhotos.filter(x => x.state === "uploaded").map((article) => (
+                                        <div
+                                            key={article.articleID}
+                                            className="item-card"
+                                            onClick={() => navigate(`/articles/${article.articleID}`)}
+                                            style={{ cursor: "pointer" }}
                                         >
+                                            {article.imageUrl ? (
+                                                <img src={article.imageUrl} alt={article.articleTitle} className="item-image" />
+                                            ) : (
+                                                <div className="item-image-placeholder">📷</div>
+                                            )}
+                                            <p className="item-title">{article.articleTitle}</p>
+                                            <p className="date">
+                                                Added on {new Date(article.createdAt).toLocaleDateString("en-US", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric"
+                                            })}
+                                            </p>
+                                            <p className="price">${article.price}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>No favourite articles found</p>
+                                )}
+                            </div>
+                        )}
+                        {showReviewModal && (
+                            <div className="review-modal-overlay">
+                                <div className="review-modal">
+                                    <h2>Write a Review</h2>
+                                    <p>Rate this product:</p>
+
+                                    {/* Rating Input */}
+                                    <div className="rating-stars">
+                                        {[1, 2, 3, 4, 5].map((star) => (
+                                            <span
+                                                key={star}
+                                                onClick={() => setRating(star)}
+                                                style={{ cursor: "pointer", fontSize: "24px", color: star <= rating ? "gold" : "gray" }}
+                                            >
                                             ★
                                         </span>
-                                    ))}
-                                </div>
+                                        ))}
+                                    </div>
 
-                                {/* Comment Input */}
-                                <textarea className="review-textarea"
-                                    placeholder="Write your review here..."
-                                    value={comment}
-                                    onChange={(e) => setComment(e.target.value)}
-                                />
-                                <div className="review-buttons">
-                                    {/* Submit & Close Buttons */}
-                                    <button onClick={() => handleSubmitReview()}>Submit Review</button>
-                                    <button onClick={() => setShowReviewModal(false)}>Cancel</button>
-                                </div>
+                                    {/* Comment Input */}
+                                    <textarea className="review-textarea"
+                                              placeholder="Write your review here..."
+                                              value={comment}
+                                              onChange={(e) => setComment(e.target.value)}
+                                    />
+                                    <div className="review-buttons">
+                                        {/* Submit & Close Buttons */}
+                                        <button onClick={() => handleSubmitReview()}>Submit Review</button>
+                                        <button onClick={() => setShowReviewModal(false)}>Cancel</button>
+                                    </div>
 
+                                </div>
                             </div>
-                        </div>
-                    )}
-
+                        )}
+                    </div>
                 </div>
 
+            ) : dbUser ? (
+                <p>ERROR: USERS NOT MATCHING</p>
+            ) : (
+                <p>Loading...</p>
+            )}
 
-            </div>
-
+            {/* Chat Button */}
+            <Link to="/chats" className="chat-btn">
+                <FaMessage size={24} style={{ color: 'white' }} />
+            </Link>
         </div>
-                : dbUser ? (
-                    <p>ERROR USERS NOT MATCHING</p>
-                ) : (
-                    <div className="profile-box">
-                        <header className="header2"></header>
-                        <div className="dropdown-container">
-                            <div className="top-items">
-                                <div className="dropdown" onClick={() => toggleDropdown('wallet')}>
-                                    <h2 style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        textAlign: "left",
-                                        paddingLeft: 20,
-                                        gap: 20
-                                    }}>
-                                        <FaWallet size={30} style={{color: "black"}}/>
-                                    </h2>
-                                </div>
-                                <div className="dropdown" onClick={() => toggleDropdown('settings')}>
-                                    <FaGear size={30} style={{color: 'black'}}/>
-                                </div>
-                            </div>
-                            <div className="dropdown" onClick={() => toggleDropdown('favourited')}>
-                                <h2>Favourited Articles</h2></div>
-                            <div className="dropdown" onClick={() => toggleDropdown('bought')}>
-                                <h2>Articles Bought</h2></div>
-                            <div className="dropdown" onClick={() => toggleDropdown('sold')}>
-                                <h2>Articles Sold</h2>
-                            </div>
-                            <div className="dropdown" onClick={() => toggleDropdown('posted')}>
-                                <h2>Articles Posted</h2>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                )}
-        </div>
-    )
-        ;
+    );
 };
+
 export default Profile;

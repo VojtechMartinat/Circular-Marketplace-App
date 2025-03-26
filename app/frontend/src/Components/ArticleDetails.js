@@ -14,6 +14,7 @@ import { faHeart, faComment, faShoppingCart } from '@fortawesome/free-solid-svg-
 import OtherArticlesModal from './OtherArticlesModal';
 import { GrMapLocation } from "react-icons/gr";
 import { RxAvatar } from "react-icons/rx";
+import {createWishlist, deleteWishlist, getUserWishlists} from "../services/wishlistService";
 const ArticleDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -40,7 +41,7 @@ const ArticleDetails = () => {
     const [shippingOptions, setShippingOptions] = useState([]);
     const [userArticles, setUserArticles] = useState([]);
     const [isOtherArticleModalOpen, setIsOtherArticleModalOpen] = useState(false);
-
+    const [userWishlists, setUserWishlists] = useState([]);
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
             if (currentUser) {
@@ -185,6 +186,17 @@ const ArticleDetails = () => {
             });
         }
     }, [article]);
+
+    useEffect(() => {
+        if (user) {
+            getUserWishlists(user.uid).then((response) => {
+                if (response) {
+                    setUserWishlists(response.wishlists);
+                    console.log("User wishlists:", response.wishlists);
+                }
+            });
+        }
+    }, [user]);
 
     const StarRating = ({ rating, totalStars = 5 }) => {
         return (
@@ -336,8 +348,35 @@ const ArticleDetails = () => {
         }
     };
 
-    function handleAddToWishlist() {
-        alert("Not implemented yet");
+    async function handleAddToWishlist() {
+        if (!isLoggedIn) {
+            alert('Please log in to add an article to your wishlist');
+            return;
+        }
+        if (dbUser.userID === article.userID) {
+            alert('You cannot add your own article to the wishlist');
+            return;
+        }
+        if (userWishlists.some((wishlist) => wishlist.articleID === id)) {
+            await deleteWishlist(userWishlists.find((wishlist) => wishlist.articleID === id).id)
+            setUserWishlists(userWishlists.filter((wishlist) => wishlist.articleID !== id));
+            alert('Article removed from wishlist successfully!');
+            return;
+        }
+
+        const wishlistData = {
+            userID: user.uid,
+            articleID: id,
+        };
+
+        createWishlist(wishlistData)
+            .then((result) => {
+                alert('Article added to wishlist successfully!');
+                setUserWishlists([...userWishlists, result.data.wishlist]);
+            })
+            .catch((error) => {
+                alert(`Error: ${error}`);
+            });
     }
 
     const handleShippingSelection = (index) => {
