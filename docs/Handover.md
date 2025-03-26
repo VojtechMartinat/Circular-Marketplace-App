@@ -1,4 +1,4 @@
-# Social Housing Tenant Portal Handover
+# Circular Marketplaces Handover
 
 ## Contents
 - [Introduction](#introduction)
@@ -225,7 +225,7 @@ The structure within the ```./app/frontend/public``` directory can be found belo
 ## Database Structure
 Find the database structure UML diagram below:
 
-ADD DATABASE STRUCTURE
+![DB_design drawio-2](https://github.com/user-attachments/assets/58be311b-cf0f-458a-a397-8127112e65bf)
 
 ### Quick Links
 Use the following quick links to navigate between explanations of the different database objects:
