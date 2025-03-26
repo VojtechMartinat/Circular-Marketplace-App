@@ -1,37 +1,107 @@
 * {
-  font-family: 'Inter', sans-serif; /* A modern, clean font */
+  font-family: Arial, sans-serif; /* Change to your preferred font */
 }
 
 .add-item-container {
-  background-color: #f9f9f9;
+  background-color: #ffffff;
   color: #333;
-  font-family: 'Inter', sans-serif;
-  padding: 2%;
-  border-radius: 12px;
-  max-width: 35%;
-  margin: auto;
-  margin-top: 2%;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  font-family: 'Poppins', sans-serif;
+  padding: 1.5%;
+  border-radius: 10px;
+  max-width: 50%;
+  margin: 1% auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
 .background {
-  background-color: #f3f4f6; /* Light grey background */
-  min-height: 100vh;
-  width: 100%;
-  position: absolute;
-}
-
-/* Header */
-.header {
   display: flex;
-  flex-direction: row;
+  justify-content: center;
   align-items: center;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #ddd;
+  min-height: 100vh;
+  background-color: #EDF2F2;
 }
 
-.back-button, .ai-suggest-button {
+.article-header-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%; /* Ensures it occupies full width */
+}
+
+.article-header {
+    display: flex;
+    justify-content: space-between; /* Keeps the header and button on the same row */
+    align-items: center;
+    margin-top: 15px;
+    margin-bottom: 5px; /* Reduced bottom margin */
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    width: 100%; /* Ensures it takes the full width */
+}
+
+.article-header h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 22px;
+    font-weight: bold;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.article-subheader h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    font-weight: normal;
+    justify-content: flex-start;
+}
+
+.ai-suggest-button {
+    margin-left: auto;
+    padding: 12px 24px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600; /* Slightly bolder text */
+    border-radius: 30px; /* Rounded corners for a smoother look */
+    transition: all 0.3s ease-in-out; /* Smooth transition on hover */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Space between icon and text */
+    width: 150px;
+}
+
+.ai-suggest-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px); /* Subtle hover effect */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Add shadow on hover */
+}
+
+.ai-suggest-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed; /* Change cursor when button is disabled */
+    box-shadow: none; /* Remove shadow on disabled state */
+}
+
+.ai-suggest-button svg {
+    width: 18px;
+    height: 18px;
+    color: white;
+    transition: transform 0.3s ease-in-out;
+}
+
+.ai-suggest-button:hover svg {
+    transform: rotate(20deg); /* Small rotation animation for the icon on hover */
+}
+
+
+
+.back-button{
   display: flex;
   background: none;
   border: none;
@@ -41,130 +111,263 @@
   color: #333;
 }
 
-.ai-suggest-button {
-  background-color: #4A90E2;
-  color: white;
-  border-radius: 10px;
-  padding: 10px 18px;
-  font-weight: 600;
-  transition: background 0.3s, transform 0.2s;
-  box-shadow: 0 3px 6px rgba(74, 144, 226, 0.2);
-}
 
-.ai-suggest-button:hover {
-  background-color: #357ABD;
-  transform: scale(1.05);
-}
-
-h1 {
-  font-size: 22px;
-  font-weight: bold;
-  margin: auto;
-  text-align: center;
-} 
 
 /* Photo section */
 .photo-section {
   display: flex;
-  gap: 12px;
-  margin: 20px 0;
-  justify-content: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.photo-section label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
 }
 
 .photo-box {
-  width: 70px;
-  height: 70px;
-  background-color: #e0e0e0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  overflow: hidden;
-  cursor: pointer;
-  border: 2px dashed #aaa;
+    width: 150px;
+    height: 150px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: border 0.3s ease-in-out; /* Smooth transition for border visibility */
 }
 
+
+
 .photo-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the area of the box without distortion */
 }
 
 .upload-label {
-  color: #4A90E2;
+  color: #007bff;
   font-weight: bold;
   cursor: pointer;
 }
 
 /* Input groups */
 .input-group {
-  width: 90%;
-  margin: auto;
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    gap: 10px;
+    justify-content: flex-start;
+
 }
 
 .input-group label {
+  display: flex;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0.3%;
+  justify-content: flex-start;
+}
+
+.choice{
+  margin-top: 1%;
   display: block;
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 5px;
-  text-align: left;
+  margin-left: 2%;
 }
 
-input[type="text"], textarea, input[type="number"] {
+.description{
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    max-height: 320px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+input[type="text"], textarea, input[type="number"]{
+  display: flex;
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 5px;
   font-size: 14px;
-  background-color: #fff;
+  justify-content: left;
+    max-height: 100%;
 }
 
 /* Shipping options */
 .shipping-options {
   display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 15px;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
 }
 
 .option-button {
-  padding: 12px 18px;
-  border-radius: 8px;
-  border: 2px solid #4A90E2;
-  background-color: white;
-  color: #4A90E2;
-  font-weight: 600;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: 2px solid #007bff;
+  background-color: transparent;
+  color: #007bff;
   cursor: pointer;
   transition: 0.3s;
 }
 
-.option-button.selected, .option-button:hover {
-  background-color: #4A90E2;
+.option-button.selected {
+  background-color: #007bff;
   color: white;
 }
 
-/* Publish button */
-.publish-button {
-  background-color: #28a745;
+.option-button:hover {
+  background-color: #0056b3;
   color: white;
-  font-size: 16px;
-  padding: 14px;
-  text-align: center;
-  border-radius: 8px;
-  border: none;
-  width: 100%;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: 0.3s;
 }
 
-.publish-button:hover {
-  background-color: #218838;
+.cost-info {
+  font-size: 14px;
+  color: #555;
 }
+
 
 .subtext {
   font-size: 12px;
-  color: #888;
-  text-align: center;
-  margin-top: 10px;
+  color: #ddd;
+}
+
+/* Shipping Method Section */
+.shipping-method {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.shipping-method label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Shipping Options */
+.shipping-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #fff;
+    transition: background-color 0.3s, border-color 0.3s;
+    width: 100%;
+}
+
+.shipping-option input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2); /* Makes the checkbox slightly larger */
+}
+
+.shipping-option span {
+    font-size: 16px;
+    color: #333;
+}
+
+/* Hover and Selected States */
+.shipping-option:hover {
+    background-color: #f9f9f9;
+}
+
+.shipping-option input[type="checkbox"]:checked + span {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.separator {
+    height: 1px;
+    background-color: #ccc;
+    margin: 15px 0;
+}
+
+.total-and-publish {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    padding-bottom: 10px;
+}
+
+/* Total Price */
+.total-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+
+}
+
+/* Publish Button */
+.publish-button {
+    background-color: #28a745;
+    color: white;
+    font-size: 14px;
+    padding: 10px 20px;
+    width: 150px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.publish-button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+    transition: 0.3s ease;
+}
+.ai-suggest-button {
+    margin-left: auto;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.ai-suggest-button:disabled {
+    background-color: #cccccc;
+}
+
+/* Keyframes for the fading effect */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Class to apply the animation */
+.fade-in {
+    animation: fadeIn 0.5s ease-in forwards; /* Change duration and easing as needed */
+}
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
