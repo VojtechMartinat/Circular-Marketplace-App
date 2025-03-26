@@ -82,7 +82,8 @@ const updateWishlist = asyncErrorWrapper(async (req,res,next) =>{
  * */
 const deleteWishlist = asyncErrorWrapper(async (req,res,next) =>{
     try {
-        const id = req.params.id;
+        const {id:id} = req.params
+        console.log(id)
         const deleted = await Wishlist.destroy({ where: { id: id } });
         if (deleted) {
             return res.status(204).send(); // No content
@@ -90,10 +91,37 @@ const deleteWishlist = asyncErrorWrapper(async (req,res,next) =>{
             return res.status(404).json({ error: "Wishlist not found" });
         }
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ error: "Internal Server Error" });
     }
 })
 
+const getUserWishlists = asyncErrorWrapper(async (req,res,next) =>{
+    try {
+        const {id:userID} = req.params
+        console.log(userID)
+
+        const wishlists = await Wishlist.findAll({
+            where:{
+                userID: userID
+            }
+        })
+
+        if (!wishlists){
+            res.status(404).json({ error: "Wishlists not found" });
+            next(new APIError(`No wishlists with userID : ${userID}`),404)
+        }
+        else{
+            res.status(200).json({wishlists})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error);
+    }
+
+
+})
+
 module.exports = {
-    getAllWishlists,createWishlist,getWishlist,updateWishlist,deleteWishlist
+    getAllWishlists,createWishlist,getWishlist,updateWishlist,deleteWishlist, getUserWishlists
 }

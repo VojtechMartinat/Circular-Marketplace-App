@@ -14,6 +14,9 @@ const Home = () => {
     const [photoBatchIndex, setPhotoBatchIndex] = useState(0);
     const batchSize = 6;
     const [articlesWithPhotos, setArticlesWithPhotos] = useState([]);
+    const [priceOrder, setPriceOrder] = useState('low-to-high');
+    const [theme, setTheme] = useState('light'); // New state to track the theme
+
     useEffect(() => {
         // Fetch the unsold articles
         getUnsoldArticles()
@@ -85,49 +88,98 @@ const Home = () => {
     };
 
     const handleArticleClick = async (articleID) => {
-        const endTime = Date.now();
-        const timeTaken = (endTime - startTime) ;
-        if (startTime){
-            await createTaskLog({
-                taskID: 4,
-                timeTaken: timeTaken,
-            });
-        }
+        if (!startTime) return;
+        const timeTaken = Date.now() - startTime;
+
+        await createTaskLog({
+            taskID: 4,
+            timeTaken,
+        });
     };
 
-    const filteredArticles = articles.filter(article =>
-        article.articleTitle.toLowerCase().includes(inputValue.toLowerCase()) && article.state === "uploaded"
+    const handlePriceOrderChange = (event) => {
+        setPriceOrder(event.target.value);
+    };
+
+    const handleThemeToggle = () => {
+        setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');  // Toggle between light and dark themes
+    };
+
+    const sortedArticles = [...articles].sort((a, b) => {
+        if (priceOrder === 'low-to-high') {
+            return a.price - b.price;
+        } else if (priceOrder === 'high-to-low') {
+            return b.price - a.price;
+        }
+        return 0;
+    });
+
+    const filteredArticles = sortedArticles.filter(article =>
+        article.articleTitle.toLowerCase().includes(inputValue.trim().toLowerCase()) &&
+        article.state === "uploaded"
     );
 
     return (
-        <div className="app">
-            <Header handleInputChange={handleInputChange} handleInputFocus={handleInputFocus} />
-            {loading ? (
-                <div className="loading-spinner">Loading articles...</div>
-            ) : (
-                <div className="product-grid">
-                    {articlesWithPhotos.map(article => (
-                        <ProductCard key={article.articleID} article={article} onClick={() => handleArticleClick(article.articleID)} />
-                    ))}
-                </div>
-            )}
+        <div className={`app ${theme}`}> {/* Apply the theme dynamically */}
+            <Header
+                handleInputChange={handleInputChange}
+                handleInputFocus={handleInputFocus}
+                handlePriceOrderChange={handlePriceOrderChange}
+                handleThemeToggle={handleThemeToggle}  // Pass down the new handler
+            />
+            <div className="product-grid">
+                {filteredArticles.map(article => (
+                    <ProductCard
+                        key={article.articleID}
+                        article={article}
+                        onClick={() => handleArticleClick(article.articleID)}
+                    />
+                ))}
+            </div>
         </div>
     );
-}
+};
 
-function Header({ handleInputChange, handleInputFocus }) {
+function Header({ handleInputChange, handleInputFocus, handlePriceOrderChange, handleThemeToggle, theme }) {
     return (
         <div className="header">
-            <p className='title'>ReList</p>
-            <input type="text" className="search-bar" onFocus={handleInputFocus} onChange={handleInputChange} placeholder="Search" />
+            <div className="search-container">
+                <input
+                    type="text"
+                    className="search-bar"
+                    onFocus={handleInputFocus}
+                    onChange={handleInputChange}
+                    placeholder="Search items..."
+                />
+                <div className="header-buttons">
+                    <select className="price-order-select" onChange={handlePriceOrderChange}>
+                        <option value="low-to-high">Price: Low to High</option>
+                        <option value="high-to-low">Price: High to Low</option>
+                    </select>
+                    <button className="theme-toggle-button" onClick={handleThemeToggle}>
+                        {theme === 'dark' ? (
+                            <> <FaRegSun /> Light Mode </>
+                        ) : (
+                            <> <FaMoon />  Dark / <FaRegSun /> Light  </>
+                        )}
+                    </button>
+                </div>
+                <p className="slogan">Give it a second life.<br /> Help your unused stuff find a new home.</p>
+            </div>
         </div>
     );
 }
 
 function ProductCard({ article, onClick }) {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    const handleCardClick = () => {
+        onClick();
+        navigate(`/articles/${article.articleID}`);
+    };
+
     return (
-        <div className='product-card' onClick={() => navigate(`/articles/${article.articleID}`)}>
+        <div className="product-card" onClick={handleCardClick}>
             {article.imageUrl ? (
                 <img src={article.imageUrl} alt={article.articleTitle} />
             ) : (
@@ -135,15 +187,16 @@ function ProductCard({ article, onClick }) {
                     <div className="loading-spinner"></div>
                 </div>
             )}
-            <div className='product-info'>
-                <p className='product-name'>{article.articleTitle}</p>
-                <p className='product-price'>Price: £{article.price}</p>
+            <div className="product-info">
+                <p className="product-name">{article.articleTitle}</p>
+                <p className="product-price">Price: £{article.price}</p>
             </div>
-            <button className='favorite-button'>❤</button>
+            <button className="favorite-button">
+                <FaHeart />
+            </button>
         </div>
     );
 }
-
 
 
 

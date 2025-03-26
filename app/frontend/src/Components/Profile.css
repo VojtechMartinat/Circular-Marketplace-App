@@ -1,136 +1,512 @@
-
-.profile-back {
-    /* background-color: #1481a3; */
-    background-image: linear-gradient(#48A9FE, #0BEEF9);
-    bottom: 0; /* Starts from the bottom */
-    left: 0; /* Align to the left (or adjust as needed) */
-    min-height: 100vh; /* Allows it to grow when content expands */
-    padding-top: 20px;
-
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
 }
 
-.profile-box {
-    background-color: #666;
-    color: #fff;
-    font-family: Arial, sans-serif;
+.dashboard-container {
+    background-color: #f5f7fa;
+    min-height: 100vh;
     padding: 20px;
-    border-radius: 10px;
-    max-width: 700px;
-    margin: 20px auto 0 auto;
 }
 
 /* Header */
-.header2 {
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #6c5ce7;
+}
+
+.nav a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.header-icons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-icons span, .header-icons a {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Main Content */
+.main-content {
+    display: flex;
+    margin-top: 20px;
+    gap: 20px;
+}
+
+/* Sidebar (Profile Section) */
+.sidebar {
+    flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 20px;
+}
+
+.profile {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.avatar-container {
+    display: inline-block;
+}
+
+.avatar {
+    transition: transform 0.3s ease-in-out;
+}
+
+.avatar-container:hover .avatar {
+    transform: scale(1.15);
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile h2 {
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.member-since {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.rating-verified {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.rating {
+    background-color: #e0f7e9;
+    color: #28a745;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.star-icon {
+    color: #28a745;
+    fill: #28a745;
+    font-size: 16px;
+}
+
+.rating-text {
+    line-height: 1;
+}
+
+.verified {
+    background-color: #e0e7ff;
+    color: #6c5ce7;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    display: flex; /* Use flexbox to align icon and text */
+    align-items: center; /* Vertically center the icon and text */
+    gap: 5px; /* Add a small gap between the icon and the text */
+}
+
+.verified-icon {
+    color: #6c5ce7; /* Purple color for the checkmark */
+    font-size: 14px; /* Adjust size to match the text */
+}
+
+.verified-text {
+    line-height: 1; /* Ensure the text aligns properly with the icon */
+}
+
+.edit-profile-btn {
+    background-color: #6c5ce7;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    text-decoration: none;
+    transition: transform 0.2s ease; /* Animation for button */
+}
+.edit-profile-btn:hover {
+    background-color: #6c5ce7; /* Remove any gray background on hover */
+    transform: scale(1.03); /* Slight bounce effect */
+}
+
+/* Wallet Section */
+.wallet {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.wallet h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.balance {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+.topup-options button {
+    background-color: #6c5ce7;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease; /* Animation for button */
+}
+.topup-options button:hover {
+    background-color: #6c5ce7; /* Remove any gray background on hover */
+    transform: scale(1.03); /* Slight bounce effect */
+}
+.custom-topup button {
+    background-color: #28a745;
+    transition: transform 0.2s ease; /* Animation for button */
+}
+.top-up-btn {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: transform 0.2s ease; /* Animation for button */
+}
+
+.top-up-btn:hover {
+    background-color: #28a745; /* Remove any gray background on hover */
+    transform: scale(1.03); /* Slight bounce effect */
+}
+.custom-topup button:hover {
+    background-color: #28a745; /* Remove any gray background on hover */
+    transform: scale(1.03); /* Slight bounce effect */
+}
+
+/* Top-up Modal */
+.topup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
     justify-content: center;
     align-items: center;
-    color: gray;
-    background-color: white;
-    border-radius: 10px;
-    padding: 10px;
+    z-index: 1000;
 }
 
-.dropdown-container {
-    background-color: #333; /* Dark gray background */
-    border-radius: 15px; /* Rounded corners for the entire box */
+.topup-modal {
+    background: #fff;
     padding: 20px;
-    margin: 20px;
-}
-
-/* Each dropdown box with sharp corners */
-.dropdown {
-    background-color: #fff; /* White background for each dropdown */
-    border: 1px solid #000; /* Black border */
-    padding: 15px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    overflow-y: auto;
-    max-height:500px;
-}
-
-.icon{
-    background-color: #fff;
-    border: 1px solid #000; /* Black border */
-    padding: 15px;
-    margin-bottom: 10px;
-    cursor: pointer;
-}
-
-
-/* Optionally, change the text color to make it consistent */
-.dropdown h2 {
-    color: #000000;
-    margin: 0;
-}
-
-.dropdown p {
-    color: #000;
-}
-.dropdown a {
-    color: #000;
-}
-
-.orders-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    padding-top: 20px;
-}
-
-
-.order-box {
-    background-color: white;
-    color: #fff;
-    padding: 15px;
     border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.topup-subtext {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.topup-options {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.8);
+    gap: 10px;
 }
 
-/* Order image */
-.order-image {
-    width: 100%;
-    height: auto;
-    max-height: 200px; /* Limit image height */
+.topup-options button {
+    background-color: #6c5ce7;
+    color: #fff;
+    border: none;
+    padding: 10px;
     border-radius: 5px;
-    object-fit: cover; /* Maintain aspect ratio while filling container */
+    cursor: pointer;
+}
+
+.custom-topup {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.custom-topup input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.custom-topup button {
+    background-color: #28a745;
+}
+
+/* Items Section */
+.items-section {
+    flex: 3;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #e0e7ff;
+    margin-bottom: 20px;
+}
+
+.tab {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #777;
+    transition: color 0.3s ease, border-bottom 0.3s ease; /* Smooth transition for color and border */
+}
+
+.tab:hover {
+    background: none; /* Remove any gray background on hover */
+    transform: scale(1.1);
+    transition: 0.3s ease;
+    color: #6c5ce7; /* Change color on hover */
+}
+
+.tab.active {
+    color: #6c5ce7;
+    border-bottom: 2px solid #6c5ce7;
+}
+
+/* Items Grid */
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.item-card {
+    background-color: #f5f7fa;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation for scale and shadow */
+}
+.item-card:hover {
+    background-color: #f5f7fa; /* Ensure no gray background on hover */
+    transform: scale(1.05); /* Slightly scale up on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Add a shadow on hover */
+}
+.item-image, .item-image-placeholder {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
     margin-bottom: 10px;
 }
 
-/* Order details */
-.order-details {
-    text-align: center;
-}
-
-/* Responsive design for smaller screens */
-@media (max-width: 600px) {
-    .orders-gallery {
-        grid-template-columns: 1fr; /* Single column for small screens */
-    }
-}
-
-.top-items {
+.item-image-placeholder {
+    background-color: #e0e7ff;
     display: flex;
-    width: 100%;
-    padding: 10px 0;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
 }
 
-.top-items .dropdown:nth-child(1) {
-    flex: 2;
+.item-card p {
+    margin: 5px 0;
 }
 
-.top-items .dropdown:nth-child(2) {
-    flex: 1;
+.item-card a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
 }
 
-.top-items .dropdown {
-    text-align: center;
+.date {
+    color: #777;
+    font-size: 14px;
 }
 
-.topup-overlay {
+.price {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+}
+
+.status.active {
+    background-color: #e0f7e9;
+    color: #28a745;
+}
+
+.delete-button {
+    background-color: #ff4d4f;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.2s ease; /* Animation for button */
+}
+
+.delete-button:hover {
+    background-color: #ff4d4f; /* Remove any gray background on hover */
+    transform: scale(1.05); /* Slight bounce effect */
+}
+
+/* Chat Button */
+.chat-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #6c5ce7;
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    transition: transform 0.3s ease; /* Animation for chat button */
+}
+
+.chat-btn:hover {
+    background-color: #6c5ce7; /* Remove any gray background on hover */
+    transform: scale(1.1); /* Slightly larger scale for the chat button */
+}
+
+/* Message Button */
+.message-button {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between icon and label */
+    background-color: #1560bd;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 10px;
+    transition: transform 0.2s ease, background-color 0.3s ease; /* Animation for hover */
+}
+
+.message-button:hover {
+    background-color: #1560bd;
+    transform: scale(1.05); /* Slight bounce effect on hover */
+}
+
+.message-label {
+    font-size: 14px;
+    color: black;
+    font-weight: 500;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-shipped,
+.status-collected {
+    background-color: #e0f7e9;
+    color: #28a745; /* Green for completed statuses */
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #d39e00; /* Orange for pending */
+}
+
+/* Default status styling for unknown statuses */
+.status-badge:not(.status-shipped):not(.status-collected):not(.status-pending) {
+    background-color: #f8d7da;
+    color: #721c24; /* Red for unknown/error statuses */
+}
+
+/* Collection Method Badge */
+.collection-method {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.collection-delivery {
+    background-color: #e6e3ff;
+    color: #8b7ef5; /* Light purple for delivery */
+}
+
+.collection-pickup {
+    background-color: #e9ecef;
+    color: #495057; /* Gray for pickup */
+}
+
+/* Default collection method styling for unknown methods */
+.collection-method:not(.collection-delivery):not(.collection-pickup) {
+    background-color: #f8d7da;
+    color: #721c24; /* Red for unknown/error methods */
+}
+.review-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -143,30 +519,82 @@
     z-index: 1000;
 }
 
-/* Larger modal */
-.topup-modal {
+.review-modal {
     background: white;
-    padding: 40px;
-    border-radius: 20px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
     text-align: center;
-    width: 50%;
+    width: 90%;
     max-width: 600px;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
     position: relative;
 }
-
-.close-button {
-    position: page;
+.review-modal h2, .review-modal p {
+    color: gray;
+}
+.review-close-button {
+    position: absolute;
     top: 10px;
-    right: 10px;
-    font-size: 28px;
+    right: 15px;
+    font-size: 24px;
     cursor: pointer;
     border: none;
     background: none;
-    color: black;
+    color: #333;
 }
 
-/* Title */
+.review-title {
+    font-size: 26px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.review-stars {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.review-stars span {
+    font-size: 30px;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.3s ease;
+}
+
+.review-stars span:hover,
+.review-stars span.active {
+    color: #f4c542; /* Star highlight color */
+}
+
+.review-textarea {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    resize: none;
+    font-size: 16px;
+    outline: none;
+}
+
+.review-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+.review-buttons button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background 0.3s ease;
+    background-color: #48A9FE;
+}
 .topup-title {
     font-size: 28px;
     margin-bottom: 10px;
@@ -301,132 +729,5 @@
     .topup-container button {
         width: 80%;
         font-size: 18px;
-    }
-}
-
-.review-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Dim background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.review-modal {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    width: 90%;
-    max-width: 600px;
-    animation: fadeIn 0.3s ease-in-out;
-    position: relative;
-}
-
-.review-close-button {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 24px;
-    cursor: pointer;
-    border: none;
-    background: none;
-    color: #333;
-}
-
-.review-title {
-    font-size: 26px;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.review-stars {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.review-stars span {
-    font-size: 30px;
-    cursor: pointer;
-    color: #ccc;
-    transition: color 0.3s ease;
-}
-
-.review-stars span:hover,
-.review-stars span.active {
-    color: #f4c542; /* Star highlight color */
-}
-
-.review-textarea {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    resize: none;
-    font-size: 16px;
-    outline: none;
-}
-
-.review-buttons {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-}
-
-.review-buttons button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background 0.3s ease;
-}
-
-.review-buttons .submit-btn {
-    background-color: #4CAF50; /* Green Submit Button */
-    color: white;
-}
-
-.review-buttons .submit-btn:hover {
-    background-color: #43a047;
-}
-
-.review-buttons .cancel-btn {
-    background-color: #666; /* Dark Cancel Button */
-    color: white;
-}
-
-.review-buttons .cancel-btn:hover {
-    background-color: #555;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@media (max-width: 600px) {
-    .review-modal {
-        width: 95%;
-        padding: 20px;
-    }
-
-    .review-stars span {
-        font-size: 24px;
     }
 }
