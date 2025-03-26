@@ -3,7 +3,7 @@ import {useNavigate } from 'react-router-dom';
 import {getPhotosForArticleIds, getUnsoldArticles} from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
-
+import { FaMoon, FaRegSun, FaHeart, FaFileImage } from "react-icons/fa6";
 
 const Home = () => {
     const [articles, setArticles] = useState([]);
@@ -105,7 +105,7 @@ const Home = () => {
         setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');  // Toggle between light and dark themes
     };
 
-    const sortedArticles = [...articles].sort((a, b) => {
+    const sortedArticles = [...articlesWithPhotos].sort((a, b) => {
         if (priceOrder === 'low-to-high') {
             return a.price - b.price;
         } else if (priceOrder === 'high-to-low') {
