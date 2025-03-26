@@ -1,24 +1,23 @@
 * {
-  font-family: Arial, sans-serif; /* Change to your preferred font */
+  font-family: 'Inter', sans-serif; /* A modern, clean font */
 }
 
 .add-item-container {
-  background-color: #ffffff;
+  background-color: #f9f9f9;
   color: #333;
-  font-family: 'Poppins', sans-serif;
-  padding: 1.5%;
-  border-radius: 10px;
-  max-width: 30%;
+  font-family: 'Inter', sans-serif;
+  padding: 2%;
+  border-radius: 12px;
+  max-width: 35%;
   margin: auto;
-  margin-top: 1%;
-  margin-bottom: 1%;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 2%;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
 .background {
-  background-image: linear-gradient(#48A9FE, #0BEEF9);
-  min-height: 100vh; 
+  background-color: #f3f4f6; /* Light grey background */
+  min-height: 100vh;
   width: 100%;
   position: absolute;
 }
@@ -27,9 +26,9 @@
 .header {
   display: flex;
   flex-direction: row;
-  align-items:center;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #ddd;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ddd;
 }
 
 .back-button, .ai-suggest-button {
@@ -43,140 +42,105 @@
 }
 
 .ai-suggest-button {
-  background-color: #007bff;
+  background-color: #4A90E2;
   color: white;
-  border-radius: 8px;
-  padding: 8px 16px;
+  border-radius: 10px;
+  padding: 10px 18px;
   font-weight: 600;
   transition: background 0.3s, transform 0.2s;
-  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: auto;
-  margin-top: 1%;
+  box-shadow: 0 3px 6px rgba(74, 144, 226, 0.2);
 }
 
 .ai-suggest-button:hover {
-  background-color: #0056b3;
+  background-color: #357ABD;
   transform: scale(1.05);
 }
 
 h1 {
-  display: flex;
   font-size: 22px;
-  margin: 10px 0;
   font-weight: bold;
   margin: auto;
-  justify-content: flex-start;
+  text-align: center;
 } 
 
 /* Photo section */
 .photo-section {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin: 20px 0;
-}
-
-.photo-section label {
-  display: block;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 5px;
+  justify-content: center;
 }
 
 .photo-box {
-  width: 60px;
-  height: 60px;
-  background-color: #e9ecef;
+  width: 70px;
+  height: 70px;
+  background-color: #e0e0e0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
-  border: 2px dashed #ccc;
+  border: 2px dashed #aaa;
 }
 
-.photo-box img{
+.photo-box img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
 .upload-label {
-  color: #007bff;
+  color: #4A90E2;
   font-weight: bold;
   cursor: pointer;
 }
 
 /* Input groups */
 .input-group {
-  margin-left: 2%;
-  margin-right: 2%;
-
+  width: 90%;
+  margin: auto;
 }
 
 .input-group label {
-  display: flex;
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0.3%;
-  justify-content: flex-start;
-}
-
-.choice{
-  margin-top: 1%;
   display: block;
   font-size: 14px;
   font-weight: 600;
-  margin-left: 2%;
+  margin-bottom: 5px;
+  text-align: left;
 }
 
-
-input[type="text"], textarea, input[type="number"]{
-  display: flex;
+input[type="text"], textarea, input[type="number"] {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 6px;
   font-size: 14px;
-  justify-content: left;
+  background-color: #fff;
 }
-input[type="number"]{
-  max-width: fit-content;
-}
+
 /* Shipping options */
 .shipping-options {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 20px 0;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
 }
 
 .option-button {
-  padding: 10px 15px;
-  border-radius: 20px;
-  border: 2px solid #007bff;
-  background-color: transparent;
-  color: #007bff;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: 2px solid #4A90E2;
+  background-color: white;
+  color: #4A90E2;
+  font-weight: 600;
   cursor: pointer;
   transition: 0.3s;
 }
 
-.option-button.selected {
-  background-color: #007bff;
+.option-button.selected, .option-button:hover {
+  background-color: #4A90E2;
   color: white;
-}
-
-.option-button:hover {
-  background-color: #0056b3;
-  color: white;
-}
-
-.cost-info {
-  font-size: 14px;
-  color: #555;
 }
 
 /* Publish button */
@@ -184,13 +148,13 @@ input[type="number"]{
   background-color: #28a745;
   color: white;
   font-size: 16px;
-  padding: 12px;
+  padding: 14px;
   text-align: center;
   border-radius: 8px;
   border: none;
   width: 100%;
   cursor: pointer;
-  margin: 10%;
+  margin-top: 20px;
   transition: 0.3s;
 }
 
@@ -200,5 +164,7 @@ input[type="number"]{
 
 .subtext {
   font-size: 12px;
-  color: #ddd;
+  color: #888;
+  text-align: center;
+  margin-top: 10px;
 }
