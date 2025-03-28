@@ -193,6 +193,17 @@ const ArticleDetails = () => {
     }, [article]);
 
     useEffect(() => {
+        if (user) {
+            getUserWishlists(user.uid).then((response) => {
+                if (response) {
+                    setUserWishlists(response.wishlists);
+                    console.log("User wishlists:", response.wishlists);
+                }
+            });
+        }
+    }, [user]);
+
+    useEffect(() => {
         const getCoordinates = async () => {
             const postcode = articleUser?.location;
 
