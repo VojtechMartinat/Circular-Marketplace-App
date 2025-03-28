@@ -32,34 +32,33 @@ const ProjectOverview = () => {
 
             <section className="user-stories-section">
                 <h2>User Stories</h2>
+                
+                <h3>As a buyer:</h3>
                 <ul>
-                    <li>
-                        <strong>As a buyer:</strong> I want to easily and simply upload items I no longer need, so I can declutter my home and contribute to a sustainable lifestyle.
-                    </li>
-                    <li>
-                        <strong>As a buyer:</strong> I want to search for specific items quickly via a simple yet powerful search tool, so I can find what I need without searching through irrelevant listings.
-                    </li>
-                    <li>
-                        <strong>As a seller:</strong> I want to interact with a chatbot for assistance, so I can get help with uploading items or navigating the app.
-                    </li>
-                    <li>
-                        <strong>As a seller:</strong> I want photos of my wares to be easy to find by other users, so I have a better chance of selling them.
-                    </li>
+                    <li>I want to easily and simply upload items I no longer need, so I can declutter my home and contribute to a sustainable lifestyle.</li>
+                    <li>I want to search for specific items quickly via a simple yet powerful search tool, so I can find what I need without searching through irrelevant listings.</li>
+                </ul>
+
+                <h3>As a seller:</h3>
+                <ul>
+                    <li>I want to interact with a chatbot for assistance, so I can get help with uploading items or navigating the app.</li>
+                    <li>I want photos of my wares to be easy to find by other users, so I have a better chance of selling them.</li>
                 </ul>
             </section>
 
             <footer className="team-footer">
-                <h3>Brought to you By: (UoBristol students)</h3>
+                <h3>Brought to you by: (UoBristol students)</h3>
                 <ul>
                     <li>Lukasz Krepa</li>
                     <li>Karena Ho</li>
                     <li>Vojtech Martinat</li>
                     <li>Herman Tsoi</li>
                     <li>Jagannath Sankar</li>
+                </ul>
 
-                    <h3>Own By:</h3>
+                <h3>Owned by:</h3>
+                <ul>
                     <li>Marius Jurt & Flurin Jurt</li>
-
                 </ul>
             </footer>
         </div>
@@ -67,3 +66,4 @@ const ProjectOverview = () => {
 };
 
 export default ProjectOverview;
+
