@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getPhotosForArticleIds, getUnsoldArticles } from '../services/articleService';
+import {useNavigate } from 'react-router-dom';
+import {getPhotosForArticleIds, getUnsoldArticles} from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
 import { FaMoon, FaRegSun, FaHeart, FaFileImage } from "react-icons/fa6";
@@ -9,6 +9,7 @@ const Home = () => {
     const [articles, setArticles] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [startTime, setStartTime] = useState(null);
+
     const [loading, setLoading] = useState(true);
     const [photoBatchIndex, setPhotoBatchIndex] = useState(0);
     const batchSize = 6;
@@ -18,13 +19,18 @@ const Home = () => {
     const [appMode, setAppMode] = useState(false); // New state for layout mode
 
     useEffect(() => {
+        // Fetch the unsold articles
         getUnsoldArticles()
             .then(response => {
                 if (response && response.article) {
                     setArticles(response.article);
                     setArticlesWithPhotos(response.article.map(article => ({ ...article, imageUrl: null })));
                     setLoading(false);
+
                     setPhotoBatchIndex(0);
+
+                    setPhotoBatchIndex(0); // Start loading photos from batch 0
+
                 }
             })
             .catch(error => {
@@ -44,7 +50,11 @@ const Home = () => {
         const end = start + batchSize;
         const batch = articles.slice(start, end);
 
+
         if (batch.length === 0) return;
+
+        if (batch.length === 0) return; // Stop if there are no more articles
+
 
         try {
             const articleIds = batch.map(article => article.articleID);
@@ -67,6 +77,7 @@ const Home = () => {
                 return article;
             });
 
+
             const resolvedArticles = await Promise.all(updatedArticles);
             setArticlesWithPhotos(resolvedArticles);
 
@@ -85,7 +96,9 @@ const Home = () => {
     };
 
     const sortedArticles = [...articlesWithPhotos].sort((a, b) => {
+
         return priceOrder === 'low-to-high' ? a.price - b.price : b.price - a.price;
+
     });
 
     const filteredArticles = sortedArticles.filter(article =>
@@ -94,6 +107,7 @@ const Home = () => {
     );
 
     return (
+
         <div className={`app ${theme} ${appMode ? 'app-mode' : ''}`}>
             <Header
                 handleInputChange={(e) => setInputValue(e.target.value)}
@@ -105,6 +119,7 @@ const Home = () => {
             <div className="product-grid">
                 {filteredArticles.map(article => (
                     <ProductCard key={article.articleID} article={article} />
+
                 ))}
             </div>
         </div>
@@ -115,7 +130,9 @@ function Header({ handleInputChange, handleThemeToggle, handleModeToggle, theme,
     return (
         <div className="header">
             <div className="search-container">
+
                 <input type="text" className="search-bar" onChange={handleInputChange} placeholder="Search items..." />
+
                 <div className="header-buttons">
                     <button className="theme-toggle-button" onClick={handleThemeToggle}>
                         {theme === 'dark' ? <FaRegSun /> : <FaMoon />}
@@ -155,6 +172,7 @@ function ProductCard({ article }) {
 }
 
 export default Home;
+
 
 
 export default Home;
