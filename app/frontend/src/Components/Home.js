@@ -3,34 +3,29 @@ import {useNavigate } from 'react-router-dom';
 import {getPhotosForArticleIds, getUnsoldArticles} from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
-import { FaMoon, FaRegSun, FaHeart, FaFileImage } from "react-icons/fa6";
+import { FaMoon, FaRegSun, FaHeart} from "react-icons/fa6";
 
 const Home = () => {
     const [articles, setArticles] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [startTime, setStartTime] = useState(null);
 
+    const [theme, setTheme] = useState('light');
+    const [appMode, setAppMode] = useState(false);
     const [loading, setLoading] = useState(true);
     const [photoBatchIndex, setPhotoBatchIndex] = useState(0);
     const batchSize = 6;
     const [articlesWithPhotos, setArticlesWithPhotos] = useState([]);
-    const [priceOrder, setPriceOrder] = useState('low-to-high');
-    const [theme, setTheme] = useState('light'); // Theme state
-    const [appMode, setAppMode] = useState(false); // New state for layout mode
+    const [sortOrder, setSortOrder] = useState('low-to-high'); // Sorting state
 
     useEffect(() => {
-        // Fetch the unsold articles
         getUnsoldArticles()
             .then(response => {
                 if (response && response.article) {
                     setArticles(response.article);
                     setArticlesWithPhotos(response.article.map(article => ({ ...article, imageUrl: null })));
                     setLoading(false);
-
                     setPhotoBatchIndex(0);
-
-                    setPhotoBatchIndex(0); // Start loading photos from batch 0
-
                 }
             })
             .catch(error => {
@@ -50,17 +45,13 @@ const Home = () => {
         const end = start + batchSize;
         const batch = articles.slice(start, end);
 
-
         if (batch.length === 0) return;
-
-        if (batch.length === 0) return; // Stop if there are no more articles
-
 
         try {
             const articleIds = batch.map(article => article.articleID);
             const photosResponse = await getPhotosForArticleIds(articleIds);
 
-            const updatedArticles = articlesWithPhotos.map(article => {
+            const updatedArticles = await Promise.all(articlesWithPhotos.map(async (article) => {
                 if (photosResponse[article.articleID]) {
                     const photoData = photosResponse[article.articleID].image.data;
                     const uint8Array = new Uint8Array(photoData);
@@ -68,23 +59,36 @@ const Home = () => {
                     const reader = new FileReader();
 
                     return new Promise(resolve => {
-                        reader.onloadend = () => {
-                            resolve({ ...article, imageUrl: reader.result });
-                        };
+                        reader.onloadend = () => resolve({ ...article, imageUrl: reader.result });
                         reader.readAsDataURL(blob);
                     });
                 }
                 return article;
-            });
+            }));
 
-
-            const resolvedArticles = await Promise.all(updatedArticles);
-            setArticlesWithPhotos(resolvedArticles);
-
+            setArticlesWithPhotos(updatedArticles);
             setTimeout(() => setPhotoBatchIndex(prev => prev + 1), 10);
         } catch (error) {
             console.error('Error fetching photos:', error);
         }
+    };
+
+    const handleInputChange = (event) => {
+        setInputValue(event.target.value);
+    };
+
+    const handleInputFocus = () => {
+        setStartTime(Date.now());
+    };
+
+    const handleArticleClick = async (articleID) => {
+        if (!startTime) return;
+        const timeTaken = Date.now() - startTime;
+
+        await createTaskLog({
+            taskID: 4,
+            timeTaken,
+        });
     };
 
     const handleThemeToggle = () => {
@@ -95,10 +99,16 @@ const Home = () => {
         setAppMode(prevMode => !prevMode);
     };
 
+    const handleSortChange = (order) => {
+        setSortOrder(order);
+    };
+
     const sortedArticles = [...articlesWithPhotos].sort((a, b) => {
-
-        return priceOrder === 'low-to-high' ? a.price - b.price : b.price - a.price;
-
+        if (sortOrder === 'low-to-high') return a.price - b.price;
+        if (sortOrder === 'high-to-low') return b.price - a.price;
+        if (sortOrder === 'az') return a.articleTitle.localeCompare(b.articleTitle);
+        if (sortOrder === 'za') return b.articleTitle.localeCompare(a.articleTitle);
+        return 0;
     });
 
     const filteredArticles = sortedArticles.filter(article =>
@@ -107,46 +117,52 @@ const Home = () => {
     );
 
     return (
-
         <div className={`app ${theme} ${appMode ? 'app-mode' : ''}`}>
             <Header
                 handleInputChange={(e) => setInputValue(e.target.value)}
                 handleThemeToggle={handleThemeToggle}
-                handleModeToggle={handleModeToggle} // Pass mode toggle handler
+                handleModeToggle={handleModeToggle}
+                handleSortChange={handleSortChange}
                 theme={theme}
                 appMode={appMode}
             />
             <div className="product-grid">
                 {filteredArticles.map(article => (
                     <ProductCard key={article.articleID} article={article} />
-
                 ))}
             </div>
         </div>
     );
 };
 
-function Header({ handleInputChange, handleThemeToggle, handleModeToggle, theme, appMode }) {
+function Header({ handleInputChange, handleThemeToggle, handleModeToggle, handleSortChange, theme, appMode }) {
     return (
         <div className="header">
             <div className="search-container">
-
                 <input type="text" className="search-bar" onChange={handleInputChange} placeholder="Search items..." />
-
-                <div className="header-buttons">
-                    <button className="theme-toggle-button" onClick={handleThemeToggle}>
-                        {theme === 'dark' ? <FaRegSun /> : <FaMoon />}
-                        {theme === 'dark' ? " Light Mode" : " Dark Mode"}
-                    </button>
-                    <button className="mode-toggle-button" onClick={handleModeToggle}>
-                        {appMode ? "Switch to Desktop Mode" : "Switch to App Mode"}
-                    </button>
-                </div>
-                <p className="slogan">Give it a second life.<br /> Help your unused stuff find a new home.</p>
+                <select className="sort-dropdown" onChange={(e) => handleSortChange(e.target.value)}>
+                    <option value="low-to-high">Price: Low to High</option>
+                    <option value="high-to-low">Price: High to Low</option>
+                    <option value="az">Alphabet: A-Z</option>
+                    <option value="za">Alphabet: Z-A</option>
+                </select>
             </div>
+
+            <div className="header-buttons">
+                <button className="theme-toggle-button" onClick={handleThemeToggle}>
+                    {theme === 'dark' ? <FaRegSun /> : <FaMoon />}
+                    {theme === 'dark' ? " Light Mode" : " Dark Mode"}
+                </button>
+                <button className="mode-toggle-button" onClick={handleModeToggle}>
+                    {appMode ? "Switch to Desktop Mode" : "Switch to App Mode"}
+                </button>
+            </div>
+
+            <p className="slogan">Give it a second life.<br /> Help your unused stuff find a new home.</p>
         </div>
     );
 }
+
 
 function ProductCard({ article }) {
     const navigate = useNavigate();
