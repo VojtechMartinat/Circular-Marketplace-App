@@ -142,7 +142,7 @@ export const ChatsPage = () => {
                                         {msg.message}
                                     </div>
                                     <div className='message-timestamp'>
-                                            {new Date(msg.timestamp).toLocaleString([],{ hour: '2-digit', minute: '2-digit'})}
+                                            {new Date(msg.updatedAt).toLocaleString([],{ hour: '2-digit', minute: '2-digit'})}
                                     </div>
                                 </div>
                             ))}
