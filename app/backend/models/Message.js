@@ -27,7 +27,18 @@ module.exports = (sequelize) => {
             messageType: {
                 type: DataTypes.ENUM('text','bargain'),
                 allowNull: false,
-                defaultValue: 'text'
+                defaultValue: 'text',
+            },
+            articleID: {
+                type: DataTypes.STRING(30),
+                allowNull: true,
+            },
+            newPrice: {
+                type: DataTypes.FLOAT,
+                allowNull: true,
+            },
+            status: {
+                type: DataTypes.ENUM('pending', 'accepted', 'declined'),               
             }
         },
         {
