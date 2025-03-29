@@ -142,6 +142,39 @@ const sendBaragin = asyncErrorWrapper(async(req, res, next) => {
     res.status(201).JSON({bargainMessage});
 });
 
+/**
+ * Update Bargain Status
+ * @param req Request from the client (req.body should contain messageID, status)
+ * @param res Response containing updated bargain message
+ */
+
+const updateBargainStatus = asyncErrorWrapper(async(req, res, next) => {
+    const {messageID, status} = req.body;
+
+    if (!messageID || !["accepted","rejected"].includes(status)){
+        return next(new APIError("Invalid status update", 400));
+    }
+
+    const bargainMessage = await Message.findOne({where:{messageID}});
+
+    if (!bargainMessage){
+        return next(new APIError(`No message found with id: ${messageID}`,404))
+    }
+
+    let updatedMessageData = JSON.parse(bargainMessage.message);
+    updatedMessageData.status = status;
+
+    await Message.update(
+        { message: JSON.stringify(updatedMessageData)},
+        { where: {messageID}}
+    );
+
+    res.status(200).json({
+        message: "Bargain status updated successfully",
+        updatedMessageData
+    });
+})
+
 module.exports = {
     getAllMessages,createMessage,getMessage,updateMessage,deleteMessage, getMessages, sendBaragin
 }
