@@ -126,7 +126,7 @@ const getMessages = asyncErrorWrapper(async (req, res, next) => {
  * @param res Response containing the bargain message
  */
 
-const sendBaragin = asyncErrorWrapper(async(req, res, next) => {
+const sendBargain = asyncErrorWrapper(async(req, res, next) => {
     const { senderId, receiverID, itemId, newPrice} = req.body;
 
     if (!senderId || !receiverID || !itemId || !newPrice){
@@ -176,5 +176,5 @@ const updateBargainStatus = asyncErrorWrapper(async(req, res, next) => {
 })
 
 module.exports = {
-    getAllMessages,createMessage,getMessage,updateMessage,deleteMessage, getMessages, sendBaragin
+    getAllMessages,createMessage,getMessage,updateMessage,deleteMessage, getMessages, sendBargain, updateBargainStatus
 }
