@@ -24,6 +24,11 @@ module.exports = (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            messageType: {
+                type: DataTypes.ENUM('text','bargain'),
+                allowNull: false,
+                defaultValue: 'text'
+            }
         },
         {
             sequelize,

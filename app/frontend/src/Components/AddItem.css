@@ -99,8 +99,6 @@
     transform: rotate(20deg); /* Small rotation animation for the icon on hover */
 }
 
-
-
 .back-button{
   display: flex;
   background: none;
@@ -122,7 +120,7 @@
   align-items: center;
   justify-content: flex-end;
   width: auto;
-  margin-top: 5%
+  margin-top: 5%;
 }
 
 .ai-suggest-button:hover {
