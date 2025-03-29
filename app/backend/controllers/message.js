@@ -120,6 +120,28 @@ const getMessages = asyncErrorWrapper(async (req, res, next) => {
     res.status(200).json({ messages });
 });
 
+/**
+ * Send a Bargain Offer
+ * @param req Request from the client (req.body should contain senderID, recieverID, itemID, newPrice)
+ * @param res Response containing the bargain message
+ */
+
+const sendBaragin = asyncErrorWrapper(async(req, res, next) => {
+    const { senderId, receiverID, itemId, newPrice} = req.body;
+
+    if (!senderId || !receiverID || !itemId || !newPrice){
+        return next(new APIError("Missing required fields", 400));
+    }
+
+    const bargainMessage = await Message.create({
+        senderID,
+        receiverID,
+        message: JSON.stringify({type: "bargain", itemID, newPrice, status: "pending"})
+    });
+
+    res.status(201).JSON({bargainMessage});
+});
+
 module.exports = {
-    getAllMessages,createMessage,getMessage,updateMessage,deleteMessage, getMessages
+    getAllMessages,createMessage,getMessage,updateMessage,deleteMessage, getMessages, sendBaragin
 }
