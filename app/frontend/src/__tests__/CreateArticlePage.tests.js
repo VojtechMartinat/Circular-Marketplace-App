@@ -23,7 +23,7 @@ describe('CreateArticle Component', () => {
             </MemoryRouter>
         );
 
-        const title = await screen.findByRole('button', { name: /AI-Suggest/i });
+        const title = await screen.findByRole('button', { name: /Suggest/i });
         expect(title).toBeInTheDocument();
 
         const title2 = await screen.findByText(/Title/i);
