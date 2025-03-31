@@ -14,6 +14,7 @@
 - [Initial Stakeholders](#initial-stakeholders)
 - [Team Members](#team-members)
 - [Project Structure](#project-structure)
+- [Database Structure](#database-structure)
 - [Links](#links)
 - [Technology Stack Diagram](#technology-stack-diagram)
   
@@ -74,50 +75,133 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 | Jagannath Sankar  | [yi23615@bristol.ac.uk](mailto:yi23615@bristol.ac.uk) | 
 
 ## Project Structure
-<pre>
-2024-CircularMarketplaces
+The top-layer project structure can be found below:
+```
 .
-├── .github/
-├── app/
-│   ├── backend/
-│   │   ├── __tests__/               # Contains backend test files
-│   │   ├── config/           
-│   │   ├── controllers/             # Handles application logic
-│   │   ├── databse/
-│   │   ├── errors/
-│   │   ├── middleware/
-│   │   ├── models/                  # Defines database schemas and interactions
-│   │   ├── routes/                  # Maps API endpoints to controllers
-│   │   ├── .babelrc
-│   │   ├── jest.config.js
-│   │   ├── package-lock.json
-│   │   ├── package.json
-│   │   └── server.js
-│   ├── frontend/
-│   │   ├── public/
-│   │   │   ├── favicon2.ico
-│   │   │   ├── index.html
-│   │   │   ├── logo192.png
-│   │   │   ├── logo512.png
-│   │   │   ├── manifest.json
-│   │   │   └── robots.txt                      
-│   │   └── src/                     
-│   │       ├── Components/          # Reusable UI elements
-│   │       ├── Config/
-│   │       ├── Contexts/            # Global state management files
-│   │       ├── services/            # API call functions
-│   │       ├── App.js               # Main React app component 
-│   │       ├── App.test.js          # Tests for App.js
-│   │       ├── index.css            
-│   │       ├── index.js
-│   │       ├── logo.svg
-│   │       ├── reportWebVitals.js
-│   │       └── setupTests.js
-│   ├── README.md
-│   ├── package-lock.json
-│   └── package.json
-└── docs/
-  </pre>
+├── .github/                           # GitHub related files
+├── docs/                              # Project documentation
+├── app/                               # All backend and frontend code
+└── **miscellaneous files**            # README, dependencies, gitignore, etc.
+```
+
+### Quick Links
+Use the following quick links to navigate between explanations of the top level of the repository:
+- [./.github](#github)
+- [./docs](#docs)
+- [./app](#app)
+
+### ./.github
+The structure within the ```./.github``` directory can be found below:
+```
+.
+├── ISSUE_TEMPLATE/                    # Templates for GitHub issues 
+│   ├── ...
+├── workflows/                         # Continuous Integration/Deployment workflows ran via GitHub Actions
+│   ├── ...
+└── pull_request_template.md           # Template for GitHub pull request
+```
+
+#### Quick Links
+Use the following quick links to navigate between explanations of the ```.github``` directory:
+- [./.github/ISSUE_TEMPLATE](#githubissue_template)
+- [./.github/workflows](#githubworkflows)
+
+#### ./.github/ISSUE_TEMPLATE
+This directory contains templates that developers/users can fill out under the ```Issues``` section of the GitHub repository. It includes issues specific for new features, or bugs.
+
+#### ./.github/workflows
+This directory contains two separate workflows that are ran via GitHub actions:
+- ```BackendTestsCI.yml``` - Continuous Integration
+    - This workflow is ran on all pushes to the ```dev``` branch and pull requests.
+    - It runs both the backend testing suites.
+- ```DeployBackend.yml``` - Continuous Deployment
+    - This workflow is ran on all pushes to all branches, and also on any pull requests (before merges).
+    - It deploys the app using the AWS lambda service
+- ```DeployFrontend.yml``` - Continuous Deployment
+    - This workflow is ran on all pushes to all branches, and also on any pull requests (before merges).
+    - It deploys the app using the AWS lambda service
+- ```FrontendTestsCI.yml``` - Continuous Integration
+    - This workflow is ran on all pushes to the ```dev``` branch and pull requests.
+    - It runs both the frontend testing suites.
+
+
+### ./docs
+The structure within the ```./docs``` directory can be found below:
+```
+.
+├── meeting-minutes/                   # Directory holding meeting minutes for important client meetings
+│   ├── ...
+├── Tech Stack/                          # Contains the iterations of the tech stack
+│   ├── ...
+├── UI Design/                          # Contains initial UI designs for all pages 
+│   ├── ...
+└── **miscellaneous files**            # Files including the ethics declaration, readme and testing guidelines etc.
+```
+
+### ./app
+The structure within the ```./docs``` directory can be found below:
+```
+.
+├── backend/                         # Contains the backend code files
+│   ├── ...
+├── frontend/                          # Contains the frontend code files
+│   ├── ...
+├── lambda/                          # Contains the lambda function file to facilitate the calls to the OpenAI API
+│   ├── lambda_functions.py
+└── **miscellaneous files**            # Files including the dependencies etc.
+```
+
+### ./app/backend
+The structure within the ```./app/backend``` directory can be found below:
+```
+.
+├── __tests__/                    # Directory holding all the testing suite files. Each file test the routes and the controllers for its model
+│   ├── ...
+├── config/                           # Directory holding the database setup files
+│   ├── ...
+├── controllers/                    # Directory holding the controllers for each database model. It defines the actions that can be performed on each model
+│   ├── ...
+├── database/                           # Directory holding the code for setting up and connecting to the remote database
+│   ├── ...
+├── errors/                    # Directory holding error API setup code
+│   ├── ...
+├── middleware/                           # Directory holding error handing and wrapper code
+│   ├── ...
+├── models/                    # Directory holding the code that sets up and defines the database models. Each model has its own file
+│   ├── ...
+├── routes/                           # Directory holding code that defines the API routes
+│   ├── ...
+└── **miscellaneous files**            # dependencies, server file etc.
+```
+
+
+### ./app/frontend
+The structure within the ```./app/frontend``` directory can be found below:
+```
+.
+├── public/                             # Directory holding the favicon file
+│   ├── ...
+├── src/                                # Directory holding the frontend react code
+│   ├── ...                            
+└── **miscellaneous files**            # dependencies, etc.
+```
+
+### ./app/frontend/public
+The structure within the ```./app/frontend/public``` directory can be found below:
+```
+.
+├── Components/                 # Directory holding a file for each the pages of the frontend and its associated functions, as well as their styling.  
+│   ├── ...
+├── Config/                     # Directory holding the file that points the frontend to the backend address
+│   ├── ...                            
+├── Contexts/                     # Directory holding the code for the user login status
+│   ├── ...                            
+├── __tests__/                     # Directory holding the tests for main frontend pages. Each test checks whether the page content renders
+│   ├── ...                            
+├── services/                     # Directory holding the code for fetching data from the database for each model
+│   ├── ...                            
+└── **miscellaneous files**            # the main App.js file, the test setup and logo vector etc.
+```
 ## Links
 Main Kanban
 
@@ -127,8 +211,12 @@ Gantt Chart
 
 https://github.com/orgs/spe-uob/projects/215
 
+## Database Structure
+Find the database structure UML diagram below:
 
-## Technology Stack Diagram
+![DB_design drawio-2](https://github.com/user-attachments/assets/58be311b-cf0f-458a-a397-8127112e65bf)
+
+## System Architecture
 ![Architecture](Architecture_Diagram.drawio.png)
 
 
