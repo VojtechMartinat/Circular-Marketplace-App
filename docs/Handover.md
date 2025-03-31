@@ -8,6 +8,7 @@
 - [Database Structure](#database-structure)
 - [AWS Setup](#aws-setup)
 - [Further Documentation](#further-documentation)
+- [Future Development Recommendations](#future-development-recommendations)
 
 ## Introduction
 This document serves as a technical guide for new developers to begin working on this project, given existing code infrastructure. It will explain the purpose of a large proportion of the repository, with further code-specific details being found in comments throughout the codebase.
@@ -40,7 +41,7 @@ AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 ```
 
-- In the  `app/backend/config` directory also plce the following `firebaseAdmin.json` file:
+- In the  `app/backend/config` directory also place the following `firebaseAdmin.json` file:
 
 ```firebaseAdmin.json
 {
@@ -416,3 +417,28 @@ The following table contains links to other useful documentation for tools/libra
 | Docker             | [https://docs.docker.com/](https://docs.docker.com/)                                         |
 | AWS                | [https://docs.aws.amazon.com/](https://docs.aws.amazon.com/)                                 |
 | OpenAI API         | [https://platform.openai.com/docs/overview](https://platform.openai.com/docs/overview)       |
+
+## Future Development Recommendations
+The following recommendations outline key features that can enhance the project's functionality and user experience in future development phases.
+
+### Introduce Payments Connected to Bank Account
+- Implement a payment gateway such as Stripe or PayPal to allow users to make transactions securely.
+- Ensure proper handling of sensitive financial data by following industry security standards.
+- Provide users with a transaction history page to track their payments.
+
+### Basket Functionality
+- Develop a shopping cart feature where users can add, remove, and update items before checkout.
+- Implement persistent storage so that users' baskets are saved even if they navigate away from the site.
+- Include a "Save for Later" option to allow users to store items for future purchase.
+
+### Adding Tags to Different Articles
+- Extend the existing tag model in the backend to associate tags with articles.
+- Implement a tagging system on the frontend, allowing users to filter and search articles by tags.
+- Provide an admin interface to manage available tags for better content organization.
+- Allow users to add tags when posting an article through the post article page.
+- Implement AI-generated tag suggestions to improve categorization and enhance the user experience.
+
+### Publishing to the App Store
+- Package the application for mobile platforms and prepare it for submission to the Apple App Store and Google Play Store.
+- Ensure compliance with App Store and Google Play policies, including security and privacy requirements.
+- Optimize the app for mobile user experience, including performance improvements and UI adjustments.
