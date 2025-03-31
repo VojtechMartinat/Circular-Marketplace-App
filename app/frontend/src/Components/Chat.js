@@ -79,10 +79,19 @@ export const ChatsPage = () => {
         setChatUser({username: "Loading..."});
         try {
             const chatMessages = await getMessages(user.uid, chatID);
-            setMessages(chatMessages.messages);
+            setMessages(chatMessages.messages || []);
             const response = await getUser(chatID);
             if (response && response.user) {
                 setChatUser(response.user);
+
+                setChats(prevChats => {
+                    if (!prevChats.includes(chatID)){
+                        return [...prevChats, chatID];
+                    }
+                    return prevChats;
+                });
+
+                setUserNames(prevUserNames => ({...prevUserNames,[chatID]: response.user.username}));
             }
         } catch (error) {
             console.error('Error loading chat:', error);
