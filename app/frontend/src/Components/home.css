@@ -463,3 +463,36 @@ body {
   font-size: 14px;
   color: blue;
 }
+
+
+
+
+
+/* Centering the spinner */
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(200, 200, 200, 0.3);
+  border-top: 5px solid #007aff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+
+  /* Centering */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Ensure parent container is positioned correctly */
+.grid-container {
+  display: grid;
+  place-items: center;
+  height: 100vh; /* Adjust based on your layout */
+  position: relative;
+}
+
+
+
+
+
