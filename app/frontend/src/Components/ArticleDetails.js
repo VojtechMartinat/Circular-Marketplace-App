@@ -12,6 +12,10 @@ import ShippingModal from './ShippingModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faComment, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import OtherArticlesModal from './OtherArticlesModal';
+import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import axios from 'axios';
+
 import { GrMapLocation } from "react-icons/gr";
 import { RxAvatar } from "react-icons/rx";
 import {createWishlist, deleteWishlist, getUserWishlists} from "../services/wishlistService";
@@ -41,6 +45,7 @@ const ArticleDetails = () => {
     const [shippingOptions, setShippingOptions] = useState([]);
     const [userArticles, setUserArticles] = useState([]);
     const [isOtherArticleModalOpen, setIsOtherArticleModalOpen] = useState(false);
+    const [coordinates, setCoordinates] = useState(null);
     const [userWishlists, setUserWishlists] = useState([]);
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -197,6 +202,30 @@ const ArticleDetails = () => {
             });
         }
     }, [user]);
+
+    useEffect(() => {
+        const getCoordinates = async () => {
+            const postcode = articleUser?.location;
+
+            if (postcode) {
+                try {
+                    const response = await axios.get(`https://api.postcodes.io/postcodes/${postcode}`);
+                    if (response.data.result) {
+                        const location = response.data.result;
+                        setCoordinates([parseFloat(location.latitude), parseFloat(location.longitude)]);
+
+                    } else {
+                        console.error('No coordinates found for postcode.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching coordinates:', error);
+                }
+            }
+        };
+
+        getCoordinates();
+    }, [articleUser?.location]);
+
 
     const StarRating = ({ rating, totalStars = 5 }) => {
         return (
@@ -447,22 +476,44 @@ const ArticleDetails = () => {
 
                     {/* Seller info */}
                     <div className="seller-info">
-                        <div className="seller-avatar" onClick={handleShowReviews}><RxAvatar size={55} /></div>
-                        <div className="seller-details">
-                            <p className="seller-name">{articleUser?.username}</p>
-                            <p className="seller-rating">
-                                {rating ? (
+
+                        <div className="seller-details-container">
+
+                            <div className="seller-details">
+                                <div className="seller-header">
+                                    <div className="seller-avatar" onClick={handleShowReviews}><RxAvatar size={55}/>
+                                    </div>
+                                    <p className="seller-name">{articleUser?.username}</p>
+                                </div>
+                                <p className="seller-rating">
+                                    {rating ? (
+                                        <>
+                                            <StarRating rating={rating}/> ({reviewAmount} reviews)
+                                        </>
+                                    ) : (
+                                        "No reviews yet"
+                                    )}
+                                </p>
+                            </div>
+
+
+                            {/* OpenStreetMap Location */}
+                            <div className="seller-map">
+
+                                {coordinates ? (
                                     <>
-                                        <StarRating rating={rating}/> ({reviewAmount} reviews)
+                                        <MapContainer center={coordinates} zoom={13}
+                                                      style={{height: "200px", width: "100%", borderRadius: "10px"}}>
+                                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+                                            <Circle center={coordinates} radius={500} color="blue" fillOpacity={0.3}/>
+                                        </MapContainer>
                                     </>
                                 ) : (
-                                    "No reviews yet"
+                                    <p>Loading location...</p>
                                 )}
-                            </p>
+                            </div>
                         </div>
-                        {/*<button onClick={handleShowReviews} className="show-reviews-btn">*/}
-                        {/*    Show Reviews*/}
-                        {/*</button>*/}
+
                         <div className="seller-location"><GrMapLocation/>{articleUser?.location}</div>
                     </div>
                 {showReviews && <ReviewModal onClose={() => setShowReviews(false)} />}
@@ -511,13 +562,15 @@ const ArticleDetails = () => {
             <div className="other-articles">
                 <div className="other-articles-header">
                     <h3>More from this seller</h3>
-                    <button className="see-all-button" onClick={handleSeeAllArticles}>View All <FaLongArrowAltRight className="arrow-icon" /></button>
+                    <button className="see-all-button" onClick={handleSeeAllArticles}>View All <FaLongArrowAltRight
+                        className="arrow-icon"/></button>
                 </div>
 
                 <div className="other-articles-container">
                     {userArticles.slice(0, 6).length > 0 ? (
                         userArticles.slice(0, 6).map((userArticle) => (
-                            <div className="other-article-item" key={userArticle.articleID} onClick={() => handleViewArticle(userArticle.articleID)}>
+                            <div className="other-article-item" key={userArticle.articleID}
+                                 onClick={() => handleViewArticle(userArticle.articleID)}>
                                 <img
                                     src={userArticle.imageUrl || 'default_image.png'}
                                     alt={userArticle.articleTitle}

@@ -31,7 +31,7 @@ describe('CreateArticle Component', () => {
         expect(emailInput).toBeInTheDocument();
 
 
-        const locInput = await screen.findByPlaceholderText(/Location/i);
+        const locInput = await screen.findByPlaceholderText(/Postcode/i);
         expect(locInput).toBeInTheDocument();
 
         const register = await screen.findByRole('button', { name: /Register/i });
