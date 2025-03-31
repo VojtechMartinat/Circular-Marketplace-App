@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
 import Profile from "../Components/Profile";
 import { getUser } from "../services/userService";  // Import getUser
+import 'whatwg-fetch';
 
 jest.mock('../Contexts/AuthContext', () => ({
     useAuth: jest.fn(),

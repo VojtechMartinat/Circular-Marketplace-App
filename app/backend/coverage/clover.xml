@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1743350883079" clover="3.2.0">
-  <project timestamp="1743350883079" name="All files">
-    <metrics statements="790" coveredstatements="593" conditionals="143" coveredconditionals="62" methods="97" coveredmethods="60" elements="1030" coveredelements="715" complexity="0" loc="790" ncloc="790" packages="8" files="39" classes="39"/>
+<coverage generated="1743426572282" clover="3.2.0">
+  <project timestamp="1743426572282" name="All files">
+    <metrics statements="793" coveredstatements="611" conditionals="147" coveredconditionals="69" methods="98" coveredmethods="65" elements="1038" coveredelements="745" complexity="0" loc="793" ncloc="793" packages="8" files="39" classes="39"/>
     <package name="backend">
-      <metrics statements="44" coveredstatements="39" conditionals="4" coveredconditionals="1" methods="4" coveredmethods="1"/>
+      <metrics statements="47" coveredstatements="42" conditionals="8" coveredconditionals="4" methods="5" coveredmethods="2"/>
       <file name="server.js" path="C:\Users\vojta\WebstormProjects\2024-CircularMarketplaces\app\backend\server.js">
-        <metrics statements="44" coveredstatements="39" conditionals="4" coveredconditionals="1" methods="4" coveredmethods="1"/>
+        <metrics statements="47" coveredstatements="42" conditionals="8" coveredconditionals="4" methods="5" coveredmethods="2"/>
         <line num="1" count="9" type="stmt"/>
         <line num="2" count="9" type="stmt"/>
         <line num="3" count="9" type="stmt"/>
@@ -50,6 +50,9 @@
         <line num="55" count="9" type="stmt"/>
         <line num="56" count="9" type="stmt"/>
         <line num="57" count="9" type="stmt"/>
+        <line num="60" count="9" type="stmt"/>
+        <line num="61" count="6" type="stmt"/>
+        <line num="62" count="6" type="cond" truecount="2" falsecount="0"/>
       </file>
     </package>
     <package name="backend.config">
@@ -78,21 +81,21 @@
         <line num="26" count="9" type="stmt"/>
         <line num="27" count="9" type="stmt"/>
         <line num="31" count="9" type="stmt"/>
-        <line num="33" count="68" type="stmt"/>
-        <line num="34" count="68" type="stmt"/>
-        <line num="35" count="68" type="stmt"/>
-        <line num="36" count="68" type="stmt"/>
-        <line num="37" count="68" type="stmt"/>
-        <line num="38" count="68" type="stmt"/>
-        <line num="39" count="68" type="stmt"/>
-        <line num="40" count="68" type="stmt"/>
+        <line num="33" count="72" type="stmt"/>
+        <line num="34" count="72" type="stmt"/>
+        <line num="35" count="72" type="stmt"/>
+        <line num="36" count="72" type="stmt"/>
+        <line num="37" count="72" type="stmt"/>
+        <line num="38" count="72" type="stmt"/>
+        <line num="39" count="72" type="stmt"/>
+        <line num="40" count="72" type="stmt"/>
         <line num="46" count="9" type="stmt"/>
       </file>
     </package>
     <package name="backend.controllers">
-      <metrics statements="498" coveredstatements="311" conditionals="132" coveredconditionals="56" methods="75" coveredmethods="43"/>
+      <metrics statements="498" coveredstatements="326" conditionals="132" coveredconditionals="60" methods="75" coveredmethods="47"/>
       <file name="articles.js" path="C:\Users\vojta\WebstormProjects\2024-CircularMarketplaces\app\backend\controllers\articles.js">
-        <metrics statements="49" coveredstatements="29" conditionals="10" coveredconditionals="3" methods="8" coveredmethods="5"/>
+        <metrics statements="49" coveredstatements="42" conditionals="10" coveredconditionals="6" methods="8" coveredmethods="8"/>
         <line num="1" count="9" type="stmt"/>
         <line num="2" count="9" type="stmt"/>
         <line num="3" count="9" type="stmt"/>
@@ -106,9 +109,9 @@
         <line num="21" count="0" type="stmt"/>
         <line num="22" count="0" type="stmt"/>
         <line num="30" count="9" type="stmt"/>
-        <line num="31" count="46" type="stmt"/>
-        <line num="32" count="46" type="stmt"/>
-        <line num="33" count="46" type="stmt"/>
+        <line num="31" count="49" type="stmt"/>
+        <line num="32" count="49" type="stmt"/>
+        <line num="33" count="49" type="stmt"/>
         <line num="35" count="0" type="stmt"/>
         <line num="36" count="0" type="stmt"/>
         <line num="47" count="9" type="stmt"/>
@@ -118,11 +121,11 @@
         <line num="55" count="1" type="stmt"/>
         <line num="57" count="2" type="stmt"/>
         <line num="66" count="9" type="stmt"/>
-        <line num="67" count="0" type="stmt"/>
-        <line num="68" count="0" type="stmt"/>
-        <line num="73" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="73" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="74" count="0" type="stmt"/>
-        <line num="76" count="0" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
         <line num="86" count="9" type="stmt"/>
         <line num="87" count="1" type="stmt"/>
         <line num="88" count="1" type="stmt"/>
@@ -130,17 +133,17 @@
         <line num="94" count="0" type="stmt"/>
         <line num="96" count="1" type="stmt"/>
         <line num="100" count="9" type="stmt"/>
-        <line num="101" count="0" type="stmt"/>
-        <line num="102" count="0" type="stmt"/>
-        <line num="107" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="101" count="1" type="stmt"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="107" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="108" count="0" type="stmt"/>
-        <line num="110" count="0" type="stmt"/>
+        <line num="110" count="1" type="stmt"/>
         <line num="113" count="9" type="stmt"/>
-        <line num="114" count="0" type="stmt"/>
-        <line num="115" count="0" type="stmt"/>
-        <line num="120" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="121" count="0" type="stmt"/>
-        <line num="123" count="0" type="stmt"/>
+        <line num="114" count="1" type="stmt"/>
+        <line num="115" count="1" type="stmt"/>
+        <line num="120" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="121" count="1" type="stmt"/>
+        <line num="123" count="1" type="stmt"/>
         <line num="127" count="9" type="stmt"/>
       </file>
       <file name="message.js" path="C:\Users\vojta\WebstormProjects\2024-CircularMarketplaces\app\backend\controllers\message.js">
@@ -315,7 +318,7 @@
         <line num="95" count="9" type="stmt"/>
       </file>
       <file name="photos.js" path="C:\Users\vojta\WebstormProjects\2024-CircularMarketplaces\app\backend\controllers\photos.js">
-        <metrics statements="55" coveredstatements="13" conditionals="20" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <metrics statements="55" coveredstatements="15" conditionals="20" coveredconditionals="1" methods="10" coveredmethods="1"/>
         <line num="1" count="9" type="stmt"/>
         <line num="2" count="9" type="stmt"/>
         <line num="3" count="9" type="stmt"/>
@@ -325,8 +328,8 @@
         <line num="14" count="0" type="stmt"/>
         <line num="15" count="0" type="stmt"/>
         <line num="24" count="9" type="stmt"/>
-        <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="27" count="0" type="stmt"/>
+        <line num="26" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="27" count="2" type="stmt"/>
         <line num="30" count="0" type="stmt"/>
         <line num="31" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="32" count="0" type="stmt"/>
@@ -492,8 +495,8 @@
         <line num="38" count="0" type="stmt"/>
         <line num="42" count="0" type="stmt"/>
         <line num="61" count="9" type="stmt"/>
-        <line num="62" count="92" type="stmt"/>
-        <line num="63" count="92" type="stmt"/>
+        <line num="62" count="96" type="stmt"/>
+        <line num="63" count="96" type="stmt"/>
         <line num="72" count="9" type="stmt"/>
         <line num="73" count="3" type="stmt"/>
         <line num="74" count="3" type="stmt"/>
@@ -637,9 +640,9 @@
       <metrics statements="4" coveredstatements="4" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
       <file name="ErrorAPI.js" path="C:\Users\vojta\WebstormProjects\2024-CircularMarketplaces\app\backend\errors\ErrorAPI.js">
         <metrics statements="4" coveredstatements="4" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
-        <line num="5" count="19" type="stmt"/>
-        <line num="6" count="19" type="stmt"/>
-        <line num="7" count="19" type="stmt"/>
+        <line num="5" count="20" type="stmt"/>
+        <line num="6" count="20" type="stmt"/>
+        <line num="7" count="20" type="stmt"/>
         <line num="11" count="9" type="stmt"/>
       </file>
     </package>
@@ -649,8 +652,8 @@
         <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
         <line num="1" count="9" type="stmt"/>
         <line num="2" count="603" type="stmt"/>
-        <line num="3" count="263" type="stmt"/>
-        <line num="4" count="263" type="stmt"/>
+        <line num="3" count="275" type="stmt"/>
+        <line num="4" count="275" type="stmt"/>
         <line num="6" count="2" type="stmt"/>
         <line num="11" count="9" type="stmt"/>
       </file>
@@ -658,8 +661,8 @@
         <metrics statements="6" coveredstatements="6" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
         <line num="2" count="9" type="stmt"/>
         <line num="4" count="9" type="stmt"/>
-        <line num="6" count="20" type="cond" truecount="2" falsecount="0"/>
-        <line num="7" count="19" type="stmt"/>
+        <line num="6" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="7" count="20" type="stmt"/>
         <line num="13" count="1" type="stmt"/>
         <line num="19" count="9" type="stmt"/>
       </file>

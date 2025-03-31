@@ -1,4 +1,1 @@
-global.fetch = require('node-fetch');
-module.exports = {
-    setupFiles: ["<rootDir>/jest.setup.js"],
-};
+global.fetch = require('node-fetch'); // Ensure global.fetch is set to node-fetch
