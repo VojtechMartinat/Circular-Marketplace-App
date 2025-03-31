@@ -219,27 +219,22 @@ describe('Order Controller Tests', () => {
 
     test('GET /api/v1/orders/:id/article - Should return the article if order exists', async () => {
         // Create an order
-        const newOrder = await request(app).post('/api/v1/orders').send({
+        const orderResponse = await request(app).post('/api/v1/orders').send({
             userID: 2,
             paymentMethodID: 1,
             dateOfPurchase: '2024-10-01',
             collectionMethod: 'delivery',
             orderStatus: 'confirmed',
             articles: [{ articleID: '1' }],
-        })
-        const res3 = await request(app).post('/api/v1/orders').send(newOrder);
-        console.log(res3.body)
-        // Create an article associated with the order
+        });
 
-        const res2 = await request(app).get('/api/v1/orders');
-        console.log(res2.body)
-        // Fetch the article by orderID
-        const res = await request(app).get(`/api/v1/orders/${newOrder.orderID}/articles`);
+        const newOrder = orderResponse.body; // Extract the actual order object
+
+        const res = await request(app).get(`/api/v1/orders/${newOrder.order.orderID}/articles`);
 
         expect(res.statusCode).toBe(200);
-        expect(res.body.article).toBeDefined();
-        expect(res.body.article.articleTitle).toBe('Test Article');
-        expect(res.body.article.price).toBe(20.0);
+        expect(res.body.articles[0].articleTitle).toBe('Table');
+        expect(res.body.articles[0].price).toBe(20.0);
     });
 
 
