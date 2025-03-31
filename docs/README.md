@@ -7,17 +7,22 @@
 - [Project Goals](#project-goals)
 - [User Stories](#user-stories)
 - [Stakeholders](#stakeholders)
-- [Documentation](#documentation)
-- [License](#license)
-- [Setup and Deployment](#setup-and-deployment)
-- [Acknowledgements](#acknowledgements)
-- [Initial Stakeholders](#initial-stakeholders)
 - [Team Members](#team-members)
 - [Project Structure](#project-structure)
 - [Database Structure](#database-structure)
+- [System Architecture](#system-architecture)
+- [Project Setup Guide](#project-setup-guide) 
 - [Links](#links)
-- [Technology Stack Diagram](#technology-stack-diagram)
-  
+
+[//]: # (- [Documentation]&#40;#documentation&#41;)
+
+[//]: # (- [License]&#40;#license&#41;)
+
+[//]: # (- [Setup and Deployment]&#40;#setup-and-deployment&#41;)
+
+[//]: # (- [Acknowledgements]&#40;#acknowledgements&#41;)
+
+[//]: # (- [Initial Stakeholders]&#40;#initial-stakeholders&#41;)
 
 ## Project Overview
 
@@ -202,14 +207,6 @@ The structure within the ```./app/frontend/public``` directory can be found belo
 │   ├── ...                            
 └── **miscellaneous files**            # the main App.js file, the test setup and logo vector etc.
 ```
-## Links
-Main Kanban
-
-https://github.com/orgs/spe-uob/projects/175
-
-Gantt Chart
-
-https://github.com/orgs/spe-uob/projects/215
 
 ## Database Structure
 Find the database structure UML diagram below:
@@ -360,3 +357,11 @@ git clone <repository-url>
 
 ---
 
+## Links
+Main Kanban
+
+https://github.com/orgs/spe-uob/projects/175
+
+Gantt Chart
+
+https://github.com/orgs/spe-uob/projects/215
