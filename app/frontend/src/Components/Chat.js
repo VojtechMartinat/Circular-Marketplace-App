@@ -102,8 +102,8 @@ export const ChatsPage = () => {
         if (receiverID && user){
             console.log("ReceiverID from URL:", receiverID);
             getUser(receiverID).then((response) => {
-                console.log('this is the response.user.uid', response.user.userID)
                 if (response) {
+                    setSelectedChat(response.user.userID)
                     openChat(response.user.userID)
                 } else {
                     console.error("User not found")
