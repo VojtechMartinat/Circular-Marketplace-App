@@ -109,7 +109,6 @@ export const ChatsPage = () => {
 
     const handleSend = async () => {
         if (!newMessage.trim()) return;
-        const timestamp = new Date().toISOString();
         try {
             await createMessage({
                 senderID: user.uid,
@@ -117,7 +116,7 @@ export const ChatsPage = () => {
                 message: newMessage,
                 timestamp
             });
-            setMessages([...messages, { senderID: user.uid, message: newMessage, updatedAt: new Date(), timestamp }]);
+            setMessages([...messages, { senderID: user.uid, message: newMessage, updatedAt: new Date()}]);
             setNewMessage('');
         } catch (error) {
             console.error('Error sending message:', error);
