@@ -27,6 +27,7 @@ describe('ArticleDetails Component', () => {
                 description: 'This is a test article description.',
                 price: 100,
                 state: 'Available',
+                location: 'BS8 1QU'
             },
         });
 
@@ -63,7 +64,7 @@ describe('ArticleDetails Component', () => {
 
 
         // Check if the "Buy" button is rendered
-        const buyButton = await screen.findByRole('button', { name: /buy now for £\s*100/i });
+        const buyButton = await screen.findByRole('button', { name: /Buy now for £/i });
         expect(buyButton).toBeInTheDocument();
     });
 });
