@@ -122,8 +122,11 @@ export const ChatsPage = () => {
                 message: newMessage,
                 timestamp
             });
-            setMessages([...messages, { senderID: user.uid, message: newMessage, updatedAt: new Date()}]);
-            setNewMessage('');
+            setMessages(prevMessages => [
+                ...prevMessages,
+                { senderID: user.uid, message: newMessage, updatedAt: new Date(), timestamp }
+            ]);
+                setNewMessage('');
         } catch (error) {
             console.error('Error sending message:', error);
         }
