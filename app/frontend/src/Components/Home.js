@@ -9,14 +9,12 @@ const Home = () => {
     const [articles, setArticles] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const [startTime, setStartTime] = useState(null);
-
     const [theme, setTheme] = useState('light');
-    const [appMode, setAppMode] = useState(false);
     const [loading, setLoading] = useState(true);
     const [photoBatchIndex, setPhotoBatchIndex] = useState(0);
     const batchSize = 6;
     const [articlesWithPhotos, setArticlesWithPhotos] = useState([]);
-    const [sortOrder, setSortOrder] = useState('low-to-high'); // Sorting state
+    const [sortOrder, setSortOrder] = useState('low-to-high');
 
     useEffect(() => {
         getUnsoldArticles()
@@ -73,30 +71,8 @@ const Home = () => {
         }
     };
 
-    const handleInputChange = (event) => {
-        setInputValue(event.target.value);
-    };
-
-    const handleInputFocus = () => {
-        setStartTime(Date.now());
-    };
-
-    const handleArticleClick = async (articleID) => {
-        if (!startTime) return;
-        const timeTaken = Date.now() - startTime;
-
-        await createTaskLog({
-            taskID: 4,
-            timeTaken,
-        });
-    };
-
     const handleThemeToggle = () => {
         setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-    };
-
-    const handleModeToggle = () => {
-        setAppMode(prevMode => !prevMode);
     };
 
     const handleSortChange = (order) => {
@@ -117,14 +93,12 @@ const Home = () => {
     );
 
     return (
-        <div className={`app ${theme} ${appMode ? 'app-mode' : ''}`}>
+        <div className={`app ${theme}`}>
             <Header
                 handleInputChange={(e) => setInputValue(e.target.value)}
                 handleThemeToggle={handleThemeToggle}
-                handleModeToggle={handleModeToggle}
                 handleSortChange={handleSortChange}
                 theme={theme}
-                appMode={appMode}
             />
             <div className="product-grid">
                 {filteredArticles.map(article => (
@@ -135,7 +109,7 @@ const Home = () => {
     );
 };
 
-function Header({ handleInputChange, handleThemeToggle, handleModeToggle, handleSortChange, theme, appMode }) {
+function Header({ handleInputChange, handleThemeToggle, handleSortChange, theme }) {
     return (
         <div className="header">
             <div className="search-container">
@@ -153,16 +127,12 @@ function Header({ handleInputChange, handleThemeToggle, handleModeToggle, handle
                     {theme === 'dark' ? <FaRegSun /> : <FaMoon />}
                     {theme === 'dark' ? " Light Mode" : " Dark Mode"}
                 </button>
-                <button className="mode-toggle-button" onClick={handleModeToggle}>
-                    {appMode ? "Switch to Desktop Mode" : "Switch to App Mode"}
-                </button>
             </div>
 
             <p className="slogan">Give it a second life.<br /> Help your unused stuff find a new home.</p>
         </div>
     );
 }
-
 
 function ProductCard({ article }) {
     const navigate = useNavigate();
@@ -188,6 +158,3 @@ function ProductCard({ article }) {
 }
 
 export default Home;
-
-
-
