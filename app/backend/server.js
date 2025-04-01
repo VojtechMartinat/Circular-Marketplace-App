@@ -55,11 +55,3 @@ if (require.main === module) {
 const handler = serverless(app);
 module.exports = app;
 module.exports.handler = handler;
-
-// Global error handler
-app.use((err, req, res, next) => {
-    console.error(err); // Log the error for debugging purposes
-    res.status(err.status || 500).json({
-        error: err.message || 'Something went wrong!',
-    });
-});
