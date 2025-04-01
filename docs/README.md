@@ -38,7 +38,7 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 * Comment section under each article being sold
 * Reviews of each user available on their profile
 * Chatbot to help the user search for articles
-* AI search function that intelligently suggests articles for a buyer (e.g. answering queries such as "What is the the best gift for my athletic 10 year old nephew")
+* AI search function that intelligently suggests articles for a buyer (e.g. answering queries such as "What is the best gift for my athletic 10-year-old nephew")
 * Language selection options
 * Full iOS, Android and website release
 * Ability to wishlist articles
@@ -117,16 +117,16 @@ This directory contains templates that developers/users can fill out under the `
 #### ./.github/workflows
 This directory contains two separate workflows that are ran via GitHub actions:
 - ```BackendTestsCI.yml``` - Continuous Integration
-    - This workflow is ran on all pushes to the ```dev``` branch and pull requests.
+    - This workflow is run on all pushes to the ```dev``` branch and pull requests.
     - It runs both the backend testing suites.
 - ```DeployBackend.yml``` - Continuous Deployment
-    - This workflow is ran on all pushes to all branches, and also on any pull requests (before merges).
+    - This workflow is run on all pushes to all branches, and also on any pull requests (before merges).
     - It deploys the app using the AWS lambda service
 - ```DeployFrontend.yml``` - Continuous Deployment
-    - This workflow is ran on all pushes to all branches, and also on any pull requests (before merges).
+    - This workflow is run on all pushes to all branches, and also on any pull requests (before merges).
     - It deploys the app using the AWS lambda service
 - ```FrontendTestsCI.yml``` - Continuous Integration
-    - This workflow is ran on all pushes to the ```dev``` branch and pull requests.
+    - This workflow is run on all pushes to the ```dev``` branch and pull requests.
     - It runs both the frontend testing suites.
 
 
