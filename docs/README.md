@@ -1,3 +1,4 @@
+
 # 2024-CircularMarketplaces
 
 ## Table of Contents
@@ -11,7 +12,8 @@
 - [Project Structure](#project-structure)
 - [Database Structure](#database-structure)
 - [System Architecture](#system-architecture)
-- [Project Setup Guide](#project-setup-guide) 
+- [Project Setup Guide](#project-setup-guide)
+
 - [Links](#links)
 
 [//]: # (- [Documentation]&#40;#documentation&#41;)
@@ -57,18 +59,18 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 * As a buyer, I want to easily and simply upload items I no longer need, so I can declutter my home and contribute to a sustainable lifestyle
 * As a buyer, I want to search for specific items quickly via simple yet powerful search tool, so I can find what I need without searching through irrelevant listings
 * As a seller, I want to interact with a chatbot for assistance, so I can get help with uploading items or navigating the app
-* As a seller, I want photos of my wares to be easy to find by other users, so I have a better chance of selling them 
+* As a seller, I want photos of my wares to be easy to find by other users, so I have a better chance of selling them
 
-  
+
 ## Stakeholders
 
 * End Users (Buyers) - Buyers are wish to find unique, second-hand items at low prices in a simple, streamlined environment. They need an efficient search experience with detailed listings and personalized recommendations, as well as secure payment options to ensure safe transactions.
-  
+
 * End Users (Sellers) - Sellers want a user-friendly platform that allows them to easily upload and list items they no longer need, helping them declutter their homes. They are looking for clear communication tools to connect with potential buyers as well as a streamlined process for uploading listings.
 
 * Legislators - Since a successful implementation of the system will require potentially identifying personal data to be stored, it must comply with data privacy regulations, especially GDPR. As a result all user data must be handled in a secure and transparent way.
 
-  
+
 ## Team Members
 
 | Members           | Email                                                 |
@@ -214,7 +216,7 @@ Find the database structure UML diagram below:
 ![DB_design drawio-2](https://github.com/user-attachments/assets/58be311b-cf0f-458a-a397-8127112e65bf)
 
 ## System Architecture
-![Architecture](Architecture_Diagram.drawio.png)
+![img.png](img.png)
 
 
 # Project Setup Guide
@@ -294,24 +296,24 @@ git clone <repository-url>
    ```
 
 4. **Launch the Backend**
-   - **For Development and Production:**  
-     Start the server with PM2:
-     ```bash
-     pm2 start server.js
-     ```
-   - **Stop the Backend:**  
-     Stop all PM2 processes:
-     ```bash
-     pm2 stop all
-     ```
+    - **For Development and Production:**  
+      Start the server with PM2:
+      ```bash
+      pm2 start server.js
+      ```
+    - **Stop the Backend:**  
+      Stop all PM2 processes:
+      ```bash
+      pm2 stop all
+      ```
 
-   - **For Testing:**  
-     Use `nodemon` to automatically restart the server on code changes:
-     ```bash
-     nodemon
-     ```
-   - **Stop Testing:**  
-     Press `Ctrl + C` to stop.
+    - **For Testing:**  
+      Use `nodemon` to automatically restart the server on code changes:
+      ```bash
+      nodemon
+      ```
+    - **Stop Testing:**  
+      Press `Ctrl + C` to stop.
 
 ---
 
@@ -330,30 +332,30 @@ git clone <repository-url>
 3. **Configure Backend URL**  
    Edit the backend URL in `src/Config/config.js` to point to your local backend (e.g., `http://localhost:8080/api/v1/`).
 
-4. **Set Environment Variables**  
+4. **Set Environment Variables**
    ```bash
    export REACT_APP_FIREBASE_API=<your-REACT-APP-FIREBASE-API>
    export REACT_APP_FIREBASE_APP_ID=<your-REACT-APP-FIREBASE-APP-ID>
    ```
 5. **Launch the Frontend**
-   - **For Development and Testing:**  
-     Start the frontend locally:
-     ```bash
-     npm start
-     ```
+    - **For Development and Testing:**  
+      Start the frontend locally:
+      ```bash
+      npm start
+      ```
 
-   - **For Production:**  
-     Build the frontend and run it using PM2:
-     ```bash
-     npm run build
-     pm2 start npm --name "react-dev" -- start
-     ```
+    - **For Production:**  
+      Build the frontend and run it using PM2:
+      ```bash
+      npm run build
+      pm2 start npm --name "react-dev" -- start
+      ```
 
-   - **Stop the Frontend:**  
-     Stop the PM2 process:
-     ```bash
-     pm2 stop all
-     ```
+    - **Stop the Frontend:**  
+      Stop the PM2 process:
+      ```bash
+      pm2 stop all
+      ```
 
 ---
 
@@ -365,3 +367,4 @@ https://github.com/orgs/spe-uob/projects/175
 Gantt Chart
 
 https://github.com/orgs/spe-uob/projects/215
+
