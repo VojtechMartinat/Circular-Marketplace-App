@@ -1,3 +1,4 @@
+
 # 2024-CircularMarketplaces
 
 ## Table of Contents
@@ -7,16 +8,22 @@
 - [Project Goals](#project-goals)
 - [User Stories](#user-stories)
 - [Stakeholders](#stakeholders)
-- [Documentation](#documentation)
-- [License](#license)
-- [Setup and Deployment](#setup-and-deployment)
-- [Acknowledgements](#acknowledgements)
-- [Initial Stakeholders](#initial-stakeholders)
 - [Team Members](#team-members)
 - [Project Structure](#project-structure)
+- [Database Structure](#database-structure)
+- [System Architecture](#system-architecture)
+- [Project Setup Guide](#project-setup-guide)
 - [Links](#links)
-- [Technology Stack Diagram](#technology-stack-diagram)
-  
+
+[//]: # (- [Documentation]&#40;#documentation&#41;)
+
+[//]: # (- [License]&#40;#license&#41;)
+
+[//]: # (- [Setup and Deployment]&#40;#setup-and-deployment&#41;)
+
+[//]: # (- [Acknowledgements]&#40;#acknowledgements&#41;)
+
+[//]: # (- [Initial Stakeholders]&#40;#initial-stakeholders&#41;)
 
 ## Project Overview
 
@@ -32,7 +39,7 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 * Comment section under each article being sold
 * Reviews of each user available on their profile
 * Chatbot to help the user search for articles
-* AI search function that intelligently suggests articles for a buyer (e.g. answering queries such as "What is the the best gift for my athletic 10 year old nephew")
+* AI search function that intelligently suggests articles for a buyer (e.g. answering queries such as "What is the best gift for my athletic 10-year-old nephew")
 * Language selection options
 * Full iOS, Android and website release
 * Ability to wishlist articles
@@ -51,18 +58,18 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 * As a buyer, I want to easily and simply upload items I no longer need, so I can declutter my home and contribute to a sustainable lifestyle
 * As a buyer, I want to search for specific items quickly via simple yet powerful search tool, so I can find what I need without searching through irrelevant listings
 * As a seller, I want to interact with a chatbot for assistance, so I can get help with uploading items or navigating the app
-* As a seller, I want photos of my wares to be easy to find by other users, so I have a better chance of selling them 
+* As a seller, I want photos of my wares to be easy to find by other users, so I have a better chance of selling them
 
-  
+
 ## Stakeholders
 
 * End Users (Buyers) - Buyers are wish to find unique, second-hand items at low prices in a simple, streamlined environment. They need an efficient search experience with detailed listings and personalized recommendations, as well as secure payment options to ensure safe transactions.
-  
+
 * End Users (Sellers) - Sellers want a user-friendly platform that allows them to easily upload and list items they no longer need, helping them declutter their homes. They are looking for clear communication tools to connect with potential buyers as well as a streamlined process for uploading listings.
 
 * Legislators - Since a successful implementation of the system will require potentially identifying personal data to be stored, it must comply with data privacy regulations, especially GDPR. As a result all user data must be handled in a secure and transparent way.
 
-  
+
 ## Team Members
 
 | Members           | Email                                                 |
@@ -74,62 +81,141 @@ This project aims to transform second-hand marketplaces by harnessing the power 
 | Jagannath Sankar  | [yi23615@bristol.ac.uk](mailto:yi23615@bristol.ac.uk) | 
 
 ## Project Structure
-<pre>
-2024-CircularMarketplaces
+The top-layer project structure can be found below:
+```
 .
-├── .github/
-├── app/
-│   ├── backend/
-│   │   ├── __tests__/               # Contains backend test files
-│   │   ├── config/           
-│   │   ├── controllers/             # Handles application logic
-│   │   ├── databse/
-│   │   ├── errors/
-│   │   ├── middleware/
-│   │   ├── models/                  # Defines database schemas and interactions
-│   │   ├── routes/                  # Maps API endpoints to controllers
-│   │   ├── .babelrc
-│   │   ├── jest.config.js
-│   │   ├── package-lock.json
-│   │   ├── package.json
-│   │   └── server.js
-│   ├── frontend/
-│   │   ├── public/
-│   │   │   ├── favicon2.ico
-│   │   │   ├── index.html
-│   │   │   ├── logo192.png
-│   │   │   ├── logo512.png
-│   │   │   ├── manifest.json
-│   │   │   └── robots.txt                      
-│   │   └── src/                     
-│   │       ├── Components/          # Reusable UI elements
-│   │       ├── Config/
-│   │       ├── Contexts/            # Global state management files
-│   │       ├── services/            # API call functions
-│   │       ├── App.js               # Main React app component 
-│   │       ├── App.test.js          # Tests for App.js
-│   │       ├── index.css            
-│   │       ├── index.js
-│   │       ├── logo.svg
-│   │       ├── reportWebVitals.js
-│   │       └── setupTests.js
-│   ├── README.md
-│   ├── package-lock.json
-│   └── package.json
-└── docs/
-  </pre>
-## Links
-Main Kanban
+├── .github/                           # GitHub related files
+├── docs/                              # Project documentation
+├── app/                               # All backend and frontend code
+└── **miscellaneous files**            # README, dependencies, gitignore, etc.
+```
 
-https://github.com/orgs/spe-uob/projects/175
+### Quick Links
+Use the following quick links to navigate between explanations of the top level of the repository:
+- [./.github](#github)
+- [./docs](#docs)
+- [./app](#app)
 
-Gantt Chart
+### ./.github
+The structure within the ```./.github``` directory can be found below:
+```
+.
+├── ISSUE_TEMPLATE/                    # Templates for GitHub issues 
+│   ├── ...
+├── workflows/                         # Continuous Integration/Deployment workflows ran via GitHub Actions
+│   ├── ...
+└── pull_request_template.md           # Template for GitHub pull request
+```
 
-https://github.com/orgs/spe-uob/projects/215
+#### Quick Links
+Use the following quick links to navigate between explanations of the ```.github``` directory:
+- [./.github/ISSUE_TEMPLATE](#githubissue_template)
+- [./.github/workflows](#githubworkflows)
+
+#### ./.github/ISSUE_TEMPLATE
+This directory contains templates that developers/users can fill out under the ```Issues``` section of the GitHub repository. It includes issues specific for new features, or bugs.
+
+#### ./.github/workflows
+This directory contains two separate workflows that are ran via GitHub actions:
+- ```BackendTestsCI.yml``` - Continuous Integration
+    - This workflow is run on all pushes to the ```dev``` branch and pull requests.
+    - It runs both the backend testing suites.
+- ```DeployBackend.yml``` - Continuous Deployment
+    - This workflow is run on all pushes to all branches, and also on any pull requests (before merges).
+    - It deploys the app using the AWS lambda service
+- ```DeployFrontend.yml``` - Continuous Deployment
+    - This workflow is run on all pushes to all branches, and also on any pull requests (before merges).
+    - It deploys the app using the AWS lambda service
+- ```FrontendTestsCI.yml``` - Continuous Integration
+    - This workflow is run on all pushes to the ```dev``` branch and pull requests.
+    - It runs both the frontend testing suites.
 
 
-## Technology Stack Diagram
-![Architecture](Architecture_Diagram.drawio.png)
+### ./docs
+The structure within the ```./docs``` directory can be found below:
+```
+.
+├── meeting-minutes/                   # Directory holding meeting minutes for important client meetings
+│   ├── ...
+├── Tech Stack/                          # Contains the iterations of the tech stack
+│   ├── ...
+├── UI Design/                          # Contains initial UI designs for all pages 
+│   ├── ...
+└── **miscellaneous files**            # Files including the ethics declaration, readme and testing guidelines etc.
+```
+
+### ./app
+The structure within the ```./docs``` directory can be found below:
+```
+.
+├── backend/                         # Contains the backend code files
+│   ├── ...
+├── frontend/                          # Contains the frontend code files
+│   ├── ...
+├── lambda/                          # Contains the lambda function file to facilitate the calls to the OpenAI API
+│   ├── lambda_functions.py
+└── **miscellaneous files**            # Files including the dependencies etc.
+```
+
+### ./app/backend
+The structure within the ```./app/backend``` directory can be found below:
+```
+.
+├── __tests__/                    # Directory holding all the testing suite files. Each file test the routes and the controllers for its model
+│   ├── ...
+├── config/                           # Directory holding the database setup files
+│   ├── ...
+├── controllers/                    # Directory holding the controllers for each database model. It defines the actions that can be performed on each model
+│   ├── ...
+├── database/                           # Directory holding the code for setting up and connecting to the remote database
+│   ├── ...
+├── errors/                    # Directory holding error API setup code
+│   ├── ...
+├── middleware/                           # Directory holding error handing and wrapper code
+│   ├── ...
+├── models/                    # Directory holding the code that sets up and defines the database models. Each model has its own file
+│   ├── ...
+├── routes/                           # Directory holding code that defines the API routes
+│   ├── ...
+└── **miscellaneous files**            # dependencies, server file etc.
+```
+
+
+### ./app/frontend
+The structure within the ```./app/frontend``` directory can be found below:
+```
+.
+├── public/                             # Directory holding the favicon file
+│   ├── ...
+├── src/                                # Directory holding the frontend react code
+│   ├── ...                            
+└── **miscellaneous files**            # dependencies, etc.
+```
+
+### ./app/frontend/public
+The structure within the ```./app/frontend/public``` directory can be found below:
+```
+.
+├── Components/                 # Directory holding a file for each the pages of the frontend and its associated functions, as well as their styling.  
+│   ├── ...
+├── Config/                     # Directory holding the file that points the frontend to the backend address
+│   ├── ...                            
+├── Contexts/                     # Directory holding the code for the user login status
+│   ├── ...                            
+├── __tests__/                     # Directory holding the tests for main frontend pages. Each test checks whether the page content renders
+│   ├── ...                            
+├── services/                     # Directory holding the code for fetching data from the database for each model
+│   ├── ...                            
+└── **miscellaneous files**            # the main App.js file, the test setup and logo vector etc.
+```
+
+## Database Structure
+Find the database structure UML diagram below:
+
+![DB_design drawio-2](https://github.com/user-attachments/assets/58be311b-cf0f-458a-a397-8127112e65bf)
+
+## System Architecture
+![img.png](img.png)
 
 
 # Project Setup Guide
@@ -209,24 +295,24 @@ git clone <repository-url>
    ```
 
 4. **Launch the Backend**
-   - **For Development and Production:**  
-     Start the server with PM2:
-     ```bash
-     pm2 start server.js
-     ```
-   - **Stop the Backend:**  
-     Stop all PM2 processes:
-     ```bash
-     pm2 stop all
-     ```
+    - **For Development and Production:**  
+      Start the server with PM2:
+      ```bash
+      pm2 start server.js
+      ```
+    - **Stop the Backend:**  
+      Stop all PM2 processes:
+      ```bash
+      pm2 stop all
+      ```
 
-   - **For Testing:**  
-     Use `nodemon` to automatically restart the server on code changes:
-     ```bash
-     nodemon
-     ```
-   - **Stop Testing:**  
-     Press `Ctrl + C` to stop.
+    - **For Testing:**  
+      Use `nodemon` to automatically restart the server on code changes:
+      ```bash
+      nodemon
+      ```
+    - **Stop Testing:**  
+      Press `Ctrl + C` to stop.
 
 ---
 
@@ -245,30 +331,38 @@ git clone <repository-url>
 3. **Configure Backend URL**  
    Edit the backend URL in `src/Config/config.js` to point to your local backend (e.g., `http://localhost:8080/api/v1/`).
 
-4. **Set Environment Variables**  
+4. **Set Environment Variables**
    ```bash
    export REACT_APP_FIREBASE_API=<your-REACT-APP-FIREBASE-API>
    export REACT_APP_FIREBASE_APP_ID=<your-REACT-APP-FIREBASE-APP-ID>
    ```
 5. **Launch the Frontend**
-   - **For Development and Testing:**  
-     Start the frontend locally:
-     ```bash
-     npm start
-     ```
+    - **For Development and Testing:**  
+      Start the frontend locally:
+      ```bash
+      npm start
+      ```
 
-   - **For Production:**  
-     Build the frontend and run it using PM2:
-     ```bash
-     npm run build
-     pm2 start npm --name "react-dev" -- start
-     ```
+    - **For Production:**  
+      Build the frontend and run it using PM2:
+      ```bash
+      npm run build
+      pm2 start npm --name "react-dev" -- start
+      ```
 
-   - **Stop the Frontend:**  
-     Stop the PM2 process:
-     ```bash
-     pm2 stop all
-     ```
+    - **Stop the Frontend:**  
+      Stop the PM2 process:
+      ```bash
+      pm2 stop all
+      ```
 
 ---
 
+## Links
+Main Kanban
+
+https://github.com/orgs/spe-uob/projects/175
+
+Gantt Chart
+
+https://github.com/orgs/spe-uob/projects/215
