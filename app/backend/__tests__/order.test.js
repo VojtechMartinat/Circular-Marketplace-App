@@ -73,7 +73,7 @@ describe('Order Controller Tests', () => {
     test('GET /api/v1/orders - Should return an empty array if no orders exist', async () => {
         const res = await request(app).get('/api/v1/orders');
         expect(res.statusCode).toBe(200);
-        expect(res.body.orders).toEqual([]);  // Should return an empty array
+        expect(res.body.orders).toEqual([]);
     });
 
 
@@ -95,10 +95,8 @@ describe('Order Controller Tests', () => {
             articles: [{ articleID: '2' }],
         })
         const res = await request(app).get('/api/v1/orders');
-        console.log("Body:" + res.body)
         expect(res.statusCode).toBe(200);
         expect(res.body.orders).toBeDefined(); // Ensure orders is defined
-        console.log(res.body);
         expect(res.body.orders.length).toBe(2);
     });
 
@@ -228,7 +226,7 @@ describe('Order Controller Tests', () => {
             articles: [{ articleID: '1' }],
         });
 
-        const newOrder = orderResponse.body; // Extract the actual order object
+        const newOrder = orderResponse.body;
 
         const res = await request(app).get(`/api/v1/orders/${newOrder.order.orderID}/articles`);
 

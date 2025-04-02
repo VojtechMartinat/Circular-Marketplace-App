@@ -38,7 +38,7 @@ describe('Article Controller Tests with Sequelize', () => {
     test('GET /api/v1/articles - Should return an empty array if no articles exist', async () => {
         const res = await request(app).get('/api/v1/articles');
         expect(res.statusCode).toBe(200);
-        expect(res.body.article).toEqual([]);  // Should return an empty array
+        expect(res.body.article).toEqual([]);
     });
 
     test('GET /api/v1/articles - Should return all articles as JSON', async () => {
@@ -100,7 +100,7 @@ describe('Article Controller Tests with Sequelize', () => {
     });
 
     test('GET /api/v1/articles/:id - Should return error if article is not found', async () => {
-        const res = await request(app).get('/api/v1/articles/999');  // Non-existent user ID
+        const res = await request(app).get('/api/v1/articles/999');
         expect(res.statusCode).toBe(500);
         expect(res.body.error).toBe('No article with id : 999');
     });
@@ -159,7 +159,6 @@ describe('Article Controller Tests with Sequelize', () => {
         await request(app).post('/api/v1/articles').send(newArticle2)
 
         const res = await request(app).get(`/api/v1/articles/unsold`);
-        console.log(res.body)
         expect(res.statusCode).toBe(200);
         expect(res.body.article.length).toBe(1);
     });
@@ -187,7 +186,6 @@ describe('Article Controller Tests with Sequelize', () => {
         const res = await request(app)
             .patch(`/api/v1/articles/${newArticle.articleID}`)
             .send(updatedArticleData);
-        console.log(newArticle.articleID);
         expect(res.statusCode).toBe(200);
         expect(res.body.article).toBeDefined();
     });
@@ -205,7 +203,7 @@ describe('Article Controller Tests with Sequelize', () => {
     test('GET /api/v1/articles/:id/photos - Should return photos for an article', async () => {
         // First, create an article
         const newArticle = {
-            articleID: '123e4567-e89b-12d3-a456-426614174000', // UUID format
+            articleID: '123e4567-e89b-12d3-a456-426614174000',
             userID: 1,
             articleTitle: 'Test Article',
             description: 'Test description',
@@ -216,7 +214,7 @@ describe('Article Controller Tests with Sequelize', () => {
 
         // Create photos for the article
         const newPhoto = {
-            photoID: '456e7890-e12b-34c5-d678-901234567890', // UUID format
+            photoID: '456e7890-e12b-34c5-d678-901234567890',
             articleID: newArticle.articleID,
             image: 'photo1.jpg'
         };
@@ -230,10 +228,9 @@ describe('Article Controller Tests with Sequelize', () => {
     });
 
     test('GET /api/v1/articles/:id/photo - Should return a photo for an article', async () => {
-        // First, create an article
         const newArticle = {
-            articleID: '123e4567-e89b-12d3-a456-426614174000', // UUID format
-            userID: 1,  // Assuming this user exists
+            articleID: '123e4567-e89b-12d3-a456-426614174000',
+            userID: 1,
             articleTitle: 'Test Article',
             description: 'Test description',
             price: 100.0,
@@ -241,15 +238,13 @@ describe('Article Controller Tests with Sequelize', () => {
         };
         await request(app).post('/api/v1/articles').send(newArticle);
 
-        // Create a photo for the article
         const newPhoto = {
-            photoID: '456e7890-e12b-34c5-d678-901234567890', // UUID format
+            photoID: '456e7890-e12b-34c5-d678-901234567890',
             articleID: newArticle.articleID,
             image: 'photo1.jpg'
         };
         await request(app).post('/api/v1/photos').send(newPhoto);
 
-        // Fetch the first photo for the article
         const res = await request(app).get(`/api/v1/articles/${newArticle.articleID}/photo`);
 
         expect(res.statusCode).toBe(200);
