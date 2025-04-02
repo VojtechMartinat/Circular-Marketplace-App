@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
     createUserWithEmailAndPassword,
@@ -17,6 +18,9 @@ const RegisterPage = () => {
     const [showModal, setShowModal] = useState(false);
     const [googleUser, setGoogleUser] = useState(null);
     const navigate = useNavigate();
+    const [postcodeSuggestions, setPostcodeSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -78,6 +82,33 @@ const RegisterPage = () => {
         navigate("/");
     };
 
+    const fetchPostcodes = async (query) => {
+        if (query.length < 2) return; // Start suggesting after 2+ characters
+
+        try {
+            const response = await axios.get(
+                `https://api.postcodes.io/postcodes/${query}/autocomplete`
+            );
+            setPostcodeSuggestions(response.data.result || []);
+            setShowSuggestions(true);
+        } catch (error) {
+            console.error("Error fetching postcodes:", error);
+            setPostcodeSuggestions([]);
+        }
+    };
+
+    const handlePostcodeChange = (e) => {
+        const input = e.target.value.toUpperCase();
+        setLocation(input);
+        fetchPostcodes(input);
+    };
+
+    const handleSelectPostcode = (postcode) => {
+        setLocation(postcode);
+        setShowSuggestions(false);
+    };
+
+
     return (
         <div className='body'>
             <div className='register-container'>
@@ -111,19 +142,38 @@ const RegisterPage = () => {
                             placeholder='Email'
                         />
                     </div>
-                    <div>
+                    <div style={{position: "relative"}}>
                         <input
-                            type='text'
+                            type="text"
                             value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            placeholder="Location"
+                            onChange={handlePostcodeChange}
+                            placeholder="Postcode"
                             required
                         />
+                        {showSuggestions && (
+                            <ul style={{
+                                position: "absolute",
+                                width: "100%",
+                                background: "#fff",
+                                border: "1px solid #ccc",
+                                listStyle: "none",
+                                padding: 0,
+                                margin: 0
+                            }}>
+                                {postcodeSuggestions.map((postcode, index) => (
+                                    <li key={index}
+                                        style={{padding: "8px", cursor: "pointer"}}
+                                        onClick={() => handleSelectPostcode(postcode)}>
+                                        {postcode}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </div>
                     <button type='submit'>Register</button>
                 </form>
 
-                <hr />
+                <hr/>
 
                 <button onClick={handleGoogleSignIn} className='google-sign-in-button'>
                     Sign in with Google

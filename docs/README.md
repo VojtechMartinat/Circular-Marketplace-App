@@ -13,6 +13,7 @@
 - [Database Structure](#database-structure)
 - [System Architecture](#system-architecture)
 - [Project Setup Guide](#project-setup-guide)
+
 - [Links](#links)
 
 [//]: # (- [Documentation]&#40;#documentation&#41;)
@@ -366,3 +367,4 @@ https://github.com/orgs/spe-uob/projects/175
 Gantt Chart
 
 https://github.com/orgs/spe-uob/projects/215
+

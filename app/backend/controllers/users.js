@@ -198,6 +198,24 @@ const userWrittenReviews = asyncErrorWrapper(async (req,res,next) =>{
     res.status(200).json({reviews})
 })
 
+/**
+ * * Get review written by a user from a database
+ * @param req Request from the client (req.params should contain a valid userID)
+ * @param res Response sent to the client containing reviews on user
+ * */
+const userReviews = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:userID} = req.params
+    const reviews = await Review.findAll({
+        where:{
+            userID: userID
+        }
+    });
+    if (!reviews){
+        next(new APIError(`No reviews on user with id : ${userID}`),404)
+    }
+    res.status(200).json({reviews})
+})
+
 const userTopUp = asyncErrorWrapper(async (req,res,next) =>{
     try {
         const {id:userID} = req.params
@@ -213,7 +231,7 @@ const userTopUp = asyncErrorWrapper(async (req,res,next) =>{
         await user.save();
         res.status(200).json({user})
     } catch (error){
-        console.log(error)
+        next(error)
     }
 })
 
@@ -251,5 +269,5 @@ const getInteractedUsers = asyncErrorWrapper(async (req, res, next) => {
 
 
 module.exports = {
-    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser, userRating, userWrittenReviews, userTopUp, getInteractedUsers
+    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser, userRating, userWrittenReviews, userReviews, userTopUp, getInteractedUsers
 }

@@ -11,7 +11,7 @@
       "^.+\\.[tj]sx?$": "jest-esm-transformer"
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!(axios)/)"
+      "node_modules/(?!(axios|react-leaflet|@react-leaflet|leaflet)/)"
     ]
   },
   "dependencies": {
@@ -24,9 +24,11 @@
     "dotenv": "^16.4.7",
     "firebase": "^11.2.0",
     "form-data": "^4.0.1",
+    "framer-motion": "^12.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.5.0",
+    "react-leaflet": "^4.2.1",
     "react-multi-carousel": "^2.8.5",
     "react-router-dom": "^6.27.0",
     "react-scripts": "^5.0.1",
@@ -38,7 +40,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --watchAll=false",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:coverage": "jest --coverage --runInBand"
   },
   "eslintConfig": {
     "extends": [
