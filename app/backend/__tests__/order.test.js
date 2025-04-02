@@ -3,6 +3,7 @@ const request = require('supertest');
 const app = require('../server');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, describe, test,expect, afterEach,} = require('@jest/globals');
+const { jest } = require('@jest/globals');
 
 
 
@@ -72,7 +73,7 @@ describe('Order Controller Tests', () => {
     test('GET /api/v1/orders - Should return an empty array if no orders exist', async () => {
         const res = await request(app).get('/api/v1/orders');
         expect(res.statusCode).toBe(200);
-        expect(res.body.orders).toEqual([]);  // Should return an empty array
+        expect(res.body.orders).toEqual([]);
     });
 
 
@@ -94,10 +95,8 @@ describe('Order Controller Tests', () => {
             articles: [{ articleID: '2' }],
         })
         const res = await request(app).get('/api/v1/orders');
-        console.log("Body:" + res.body)
         expect(res.statusCode).toBe(200);
         expect(res.body.orders).toBeDefined(); // Ensure orders is defined
-        console.log(res.body);
         expect(res.body.orders.length).toBe(2);
     });
 
@@ -216,5 +215,25 @@ describe('Order Controller Tests', () => {
             expect(res.body.articles[0].articleTitle).toBe('Table');
         });
 
+    test('GET /api/v1/orders/:id/article - Should return the article if order exists', async () => {
+        // Create an order
+        const orderResponse = await request(app).post('/api/v1/orders').send({
+            userID: 2,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
+        });
 
+        const newOrder = orderResponse.body;
+
+        const res = await request(app).get(`/api/v1/orders/${newOrder.order.orderID}/articles`);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.articles[0].articleTitle).toBe('Table');
+        expect(res.body.articles[0].price).toBe(20.0);
     });
+
+
+});

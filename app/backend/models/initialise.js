@@ -10,8 +10,6 @@ const PhotoModel = require('./Photo');
 const TagModel = require('./Tag');
 const WishlistModel = require('./Wishlist');
 const ReviewModel = require('./Review');
-const TaskModel = require('./Task');
-const TaskLogModel = require('./TaskLog')
 const MessageModel = require('./Message');
 
 
@@ -24,8 +22,7 @@ const Wishlist = WishlistModel(sequelize);
 const Tag = TagModel(sequelize);
 const Review = ReviewModel(sequelize);
 
-const Task = TaskModel(sequelize);
-const TaskLog = TaskLogModel(sequelize);
+
 const Message = MessageModel(sequelize);
 
 User.hasMany(Wishlist, {foreignKey: 'userID', onDelete: 'CASCADE'});
@@ -58,8 +55,7 @@ User.hasMany(Review, { foreignKey: 'reviewer' });
 Review.belongsTo(User, { foreignKey: 'reviewer' });
 
 Review.belongsTo(Article, { foreignKey: 'articleID' });
-TaskLog.belongsTo(Task, {foreignKey: 'taskID'})
-Task.hasMany(TaskLog,{foreignKey: 'taskID'})
+
 
 User.hasMany(Message, { foreignKey: 'senderID', onDelete: 'CASCADE' });
 User.hasMany(Message, { foreignKey: 'receiverID', onDelete: 'CASCADE' });
@@ -75,8 +71,6 @@ module.exports = {
     Tag,
     Wishlist,
     Review,
-    Task,
-    TaskLog,
     Message,
     sequelize
 

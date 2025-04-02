@@ -25,7 +25,6 @@ const getAllOrders = asyncErrorWrapper(async (req,res) =>{
  * */
 const createOrder= asyncErrorWrapper(async (req,res,next) =>{
     const {userID, paymentMethodID, dateOfPurchase, collectionMethod} = req.body;
-    console.log(req.body)
     let sum = 0
     let sellerID = null
     for (const x of req.body.articles){
@@ -132,7 +131,6 @@ const getOrder = asyncErrorWrapper(async (req,res,next) =>{
 
 
 const getOrderArticles = asyncErrorWrapper(async (req, res, next) => {
-    console.log("TEST");
     const { id: orderID } = req.params;
     const order = await Order.findOne({ where: { orderID } });
     if (!order) {
@@ -189,28 +187,6 @@ const deleteOrder = asyncErrorWrapper(async (req,res,next) =>{
 })
 
 
-const getArticleByOrderId = asyncErrorWrapper(async (req,res,next) =>{
-    const {id:orderID} = req.params
-    const order = await Order.findOne({
-        where:{
-            orderID: orderID
-        }
-    })
-
-    if (!order){
-        next(new APIError(`No order with id : ${orderID}`),404)
-        return
-    }
-
-    const article = await Article.findOne({
-        where: {
-            orderID: orderID
-        }
-    })
-    res.status(200).json({article})
-
-})
-
 module.exports = {
-    getAllOrders,createOrder,getOrder,updateOrder,deleteOrder, getOrderArticles,getArticleByOrderId
+    getAllOrders,createOrder,getOrder,updateOrder,deleteOrder, getOrderArticles
 }

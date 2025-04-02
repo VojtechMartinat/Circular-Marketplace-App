@@ -112,3 +112,17 @@ nav ul li a.active {
         font-size: 16px;
     }
 }
+
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.logo-title:hover {
+    opacity: 0.8;
+}
+

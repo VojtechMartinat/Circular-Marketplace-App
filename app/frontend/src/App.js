@@ -13,6 +13,7 @@ import Logout from "./Components/Logout";
 import {ChatsPage} from "./Components/Chat";
 
 
+
 const App = () => {
     return (
         <AuthProvider>
@@ -39,3 +40,4 @@ const App = () => {
 };
 
 export default App;
+

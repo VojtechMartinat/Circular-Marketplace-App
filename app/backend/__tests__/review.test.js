@@ -73,7 +73,7 @@ describe('Review Controller Tests', () => {
         const newReview = { userID: '1', articleID: '101', reviewer: '2', rating: 4, comment: 'test' };
         const postRes = await request(app).post('/api/v1/reviews').send(newReview);
 
-        const res = await request(app).get(`/api/v1/reviews/${postRes.body.review.id}`);
+        await request(app).get(`/api/v1/reviews/${postRes.body.review.id}`);
 
         await request(app).get('/api/v1/reviews');
 
