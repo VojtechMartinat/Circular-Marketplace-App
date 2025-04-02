@@ -3,6 +3,7 @@ import '@testing-library/jest-dom';
 import Login from '../Components/Login';
 import { MemoryRouter } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
+import 'whatwg-fetch';
 
 jest.mock('../Contexts/AuthContext', () => ({
     useAuth: jest.fn(),

@@ -83,7 +83,6 @@ const updateWishlist = asyncErrorWrapper(async (req,res,next) =>{
 const deleteWishlist = asyncErrorWrapper(async (req,res,next) =>{
     try {
         const {id:id} = req.params
-        console.log(id)
         const deleted = await Wishlist.destroy({ where: { id: id } });
         if (deleted) {
             return res.status(204).send(); // No content
@@ -99,7 +98,6 @@ const deleteWishlist = asyncErrorWrapper(async (req,res,next) =>{
 const getUserWishlists = asyncErrorWrapper(async (req,res,next) =>{
     try {
         const {id:userID} = req.params
-        console.log(userID)
 
         const wishlists = await Wishlist.findAll({
             where:{

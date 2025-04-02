@@ -4,6 +4,7 @@ import ArticleDetails from '../Components/ArticleDetails';
 import { MemoryRouter } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
 import { getArticle, getArticlePhotos } from '../services/articleService';
+import 'whatwg-fetch';
 
 jest.mock('../services/articleService', () => ({
     getArticle: jest.fn(),
