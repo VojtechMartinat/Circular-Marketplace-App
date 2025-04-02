@@ -71,7 +71,7 @@ describe('Wishlist Controller Tests', () => {
         const newWishlist = { userID: '1', articleID: '101', totalPrice: 100.0 };
         const postRes = await request(app).post('/api/v1/wishlists').send(newWishlist);
 
-        const res = await request(app).get(`/api/v1/wishlists/${postRes.body.wishlist.id}`);
+        await request(app).get(`/api/v1/wishlists/${postRes.body.wishlist.id}`);
 
         await request(app).get('/api/v1/wishlists');
 

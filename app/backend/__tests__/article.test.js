@@ -38,7 +38,7 @@ describe('Article Controller Tests with Sequelize', () => {
     test('GET /api/v1/articles - Should return an empty array if no articles exist', async () => {
         const res = await request(app).get('/api/v1/articles');
         expect(res.statusCode).toBe(200);
-        expect(res.body.article).toEqual([]);  // Should return an empty array
+        expect(res.body.article).toEqual([]);
     });
 
     test('GET /api/v1/articles - Should return all articles as JSON', async () => {
@@ -100,7 +100,7 @@ describe('Article Controller Tests with Sequelize', () => {
     });
 
     test('GET /api/v1/articles/:id - Should return error if article is not found', async () => {
-        const res = await request(app).get('/api/v1/articles/999');  // Non-existent user ID
+        const res = await request(app).get('/api/v1/articles/999');
         expect(res.statusCode).toBe(500);
         expect(res.body.error).toBe('No article with id : 999');
     });
@@ -159,10 +159,98 @@ describe('Article Controller Tests with Sequelize', () => {
         await request(app).post('/api/v1/articles').send(newArticle2)
 
         const res = await request(app).get(`/api/v1/articles/unsold`);
-        console.log(res.body)
         expect(res.statusCode).toBe(200);
         expect(res.body.article.length).toBe(1);
     });
 
-    //TODO article - tag link table tests
+    test('PUT /api/v1/articles/:id - Should update an article successfully', async () => {
+        // First, create an article to update
+        const newArticle = {
+            articleID: '123e4567-e89b-12d3-a456-426614174000',
+            userID: 1,
+            articleTitle: 'Old Title',
+            description: 'Old description',
+            price: 50.0,
+            state: 'new'
+        };
+
+        await request(app).post('/api/v1/articles').send(newArticle);
+
+        // Update the article
+        const updatedArticleData = {
+            articleTitle: 'Updated Title',
+            description: 'Updated description',
+            price: 75.0
+        };
+
+        const res = await request(app)
+            .patch(`/api/v1/articles/${newArticle.articleID}`)
+            .send(updatedArticleData);
+        expect(res.statusCode).toBe(200);
+        expect(res.body.article).toBeDefined();
+    });
+
+    test('PUT /api/v1/articles/:id - Should return 404 if article does not exist', async () => {
+        const nonExistentArticleID = '00000000-0000-0000-0000-000000000000';
+
+        const res = await request(app)
+            .put(`/api/v1/articles/${nonExistentArticleID}`)
+            .send({ articleTitle: 'New Title' });
+
+        expect(res.statusCode).toBe(404);
+    });
+
+    test('GET /api/v1/articles/:id/photos - Should return photos for an article', async () => {
+        // First, create an article
+        const newArticle = {
+            articleID: '123e4567-e89b-12d3-a456-426614174000',
+            userID: 1,
+            articleTitle: 'Test Article',
+            description: 'Test description',
+            price: 100.0,
+            state: 'new'
+        };
+        await request(app).post('/api/v1/articles').send(newArticle);
+
+        // Create photos for the article
+        const newPhoto = {
+            photoID: '456e7890-e12b-34c5-d678-901234567890',
+            articleID: newArticle.articleID,
+            image: 'photo1.jpg'
+        };
+        await request(app).post('/api/v1/photos').send(newPhoto);
+
+        // Fetch photos for the article
+        const res = await request(app).get(`/api/v1/articles/${newArticle.articleID}/photos`);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.photos).toBeDefined();
+    });
+
+    test('GET /api/v1/articles/:id/photo - Should return a photo for an article', async () => {
+        const newArticle = {
+            articleID: '123e4567-e89b-12d3-a456-426614174000',
+            userID: 1,
+            articleTitle: 'Test Article',
+            description: 'Test description',
+            price: 100.0,
+            state: 'new'
+        };
+        await request(app).post('/api/v1/articles').send(newArticle);
+
+        const newPhoto = {
+            photoID: '456e7890-e12b-34c5-d678-901234567890',
+            articleID: newArticle.articleID,
+            image: 'photo1.jpg'
+        };
+        await request(app).post('/api/v1/photos').send(newPhoto);
+
+        const res = await request(app).get(`/api/v1/articles/${newArticle.articleID}/photo`);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.photo).toBeDefined();
+    });
+
+
+
 });

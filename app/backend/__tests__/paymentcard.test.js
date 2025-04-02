@@ -34,17 +34,13 @@ describe('PaymentCard Controller Tests', () => {
     });
 
     test('GET /api/v1/paymentcards - Should return an empty array if no cards exist', async () => {
-        // Explicitly clear PaymentCards table
 
-        // Fetch all payment cards
         const res = await request(app).get('/api/v1/paymentcards');
 
-        // Assert the response
         expect(res.statusCode).toBe(200);
         expect(res.body.card).toEqual([]); // Validate it's an empty array
     });
     test('GET /api/v1/paymentcards - Should return all payment cards', async () => {
-        // New payment card data
         const newCard = {
             userID: '1',
             cardHolder: 'John Doe',
@@ -53,18 +49,14 @@ describe('PaymentCard Controller Tests', () => {
             ExpiryDate: '2025-12-01',
         };
 
-        // Await the POST request to ensure it's completed before continuing
         const postRes = await request(app)
             .post('/api/v1/paymentcards')
             .send(newCard);
-        // Log the POST response to verify it's correct
-        // Check the POST request response
+
         expect(postRes.statusCode).toBe(201);
 
-        // Fetch all payment cards to confirm the new card was added
         const getRes = await request(app).get('/api/v1/paymentcards');
 
-        // Assertions on the GET response
         expect(getRes.statusCode).toBe(200);
         expect(getRes.body.card).toHaveLength(1);
         expect(getRes.body.card[0].cardHolder).toBe('John Doe');

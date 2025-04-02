@@ -959,12 +959,89 @@ const Profile = () => {
             ) : dbUser ? (
                 <p>ERROR: USERS NOT MATCHING</p>
             ) : (
-                <p>Loading...</p>
+                <div className="main-content">
+                    <div className="sidebar">
+                        <div className="profile">
+                            <div className="avatar-container">
+                            </div>
+
+
+                            <div className="rating-verified">
+                                <span className="rating">
+                                    <FaStar className="star-icon"/>
+                                    <span className="rating-text">{userRating}</span>
+                                </span>
+                                <span className="verified">
+                                    <FaCheck className="verified-icon"/>
+                                    <span className="verified-text">Verified</span>
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div className="wallet">
+                            <h3>Wallet Balance</h3>
+                            <div className="balance">
+                                <FaWallet size={24} style={{color: 'black'}}/>
+                            </div>
+                            <button className="top-up-btn" onClick={() => setShowTopupOptions(true)}>+ Top Up</button>
+                        </div>
+
+
+                    </div>
+
+                    <div className="items-section">
+                        {/* Tabs */}
+                        <div className="tabs">
+                            {['Posted Items', 'Sold Items', 'Bought Items', 'Favourited'].map((tab) => (
+                                <button
+                                    key={tab}
+                                    className={`tab ${activeTab === tab ? 'active' : ''}`}
+                                    onClick={() => setActiveTab(tab)}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Posted Items */}
+                        {activeTab === 'Posted Items' && (
+                            <div className="items-grid">
+
+                            </div>
+                        )}
+
+                        {/* Sold Items */}
+                        {activeTab === 'Sold Items' && (
+                            <div className="items-grid">
+
+                            </div>
+                        )}
+
+                        {/* Bought Items */}
+                        {activeTab === 'Bought Items' && (
+                            <div className="items-grid">
+
+                            </div>
+                        )}
+
+                        {/* Favourited Items */}
+                        {activeTab === 'Favourited' && (
+                            <div className="items-grid">
+
+                            </div>
+                        )}
+                    </div>
+                    )
+
+                    {/* Chat Button */}
+
+                </div>
             )}
 
             {/* Chat Button */}
             <Link to="/chats" className="chat-btn">
-                <FaMessage size={24} style={{ color: 'white' }} />
+                <FaMessage size={24} style={{color: 'white'}}/>
             </Link>
         </div>
     );
