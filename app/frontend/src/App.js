@@ -10,7 +10,8 @@ import {AuthProvider} from "./Contexts/AuthContext";
 import Login from './Components/Login';
 import Register from "./Components/Register";
 import Logout from "./Components/Logout";
-import {ChatsPage} from "./Components/Chat";
+import {ChatsPage, ChatWindow} from "./Components/Chat";
+import Background from './Components/Background'; 
 
 
 
@@ -30,7 +31,8 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/chats" element={<ChatsPage />} />
-                <Route path="/chats/:receiverID" element={<ChatsPage />} />
+                <Route path="/chat/:receiverID" element={<ChatWindow />} />
+                <Route path="/Background" element={<Background />} />
 
             </Routes>
 
