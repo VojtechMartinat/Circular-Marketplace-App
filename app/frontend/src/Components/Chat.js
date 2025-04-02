@@ -43,7 +43,13 @@ export const ChatsPage = () => {
             if (user) {
                 try {
                     const uniqueChats = await getChats(user.uid);
-                    setChats(uniqueChats.interactedUserIDs);
+                    if (uniqueChats && uniqueChats.interactedUserIDs) {
+                        setChats(uniqueChats.interactedUserIDs);
+                    } else {
+                        setChats([]); 
+                    }
+                    
+                    console.log("this is chats", uniqueChats)
                 } catch (error) {
                     console.error('Error loading chats:', error);
                 }
