@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {useNavigate } from 'react-router-dom';
-import {getPhotosForArticleIds, getUnsoldArticles} from '../services/articleService';
+import {getArticlePhoto, getPhotosForArticleIds, getUnsoldArticles} from '../services/articleService';
 import { createTaskLog } from '../services/logService';
 import './home.css';
 import { FaMoon, FaRegSun, FaHeart} from "react-icons/fa6";
@@ -12,7 +12,7 @@ const Home = () => {
     const [theme, setTheme] = useState('light');
     const [loading, setLoading] = useState(true);
     const [photoBatchIndex, setPhotoBatchIndex] = useState(0);
-    const batchSize = 6;
+    const batchSize = 1;
     const [articlesWithPhotos, setArticlesWithPhotos] = useState([]);
     const [sortOrder, setSortOrder] = useState('low-to-high');
 
@@ -22,8 +22,6 @@ const Home = () => {
                 if (response && response.article) {
                     setArticles(response.article);
                     setArticlesWithPhotos(response.article.map(article => ({ ...article, imageUrl: null })));
-                    setLoading(false);
-                    setPhotoBatchIndex(0);
                 }
             })
             .catch(error => {
@@ -33,43 +31,82 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        if (articles.length > 0) {
-            loadNextPhotoBatch();
-        }
-    }, [photoBatchIndex, articles]);
+        const fetchPhotos = async () => {
+            if (articles) {
+                articlesWithPhotos.forEach(async (article) => {
+                    const retryFetchPhoto = async (retries = 3, delay = 1000) => {
+                        for (let attempt = 1; attempt <= retries; attempt++) {
+                            try {
+                                const photoResponse = await getArticlePhoto(article.articleID);
+                                if (photoResponse?.photo?.image?.data) {
+                                    const photoData = photoResponse.photo.image.data;
+                                    const uint8Array = new Uint8Array(photoData);
+                                    const blob = new Blob([uint8Array], { type: 'image/png' });
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                        setArticlesWithPhotos(prevArticles => prevArticles.map(a =>
+                                            a.articleID === article.articleID ? { ...a, imageUrl: reader.result } : a
+                                        ));
+                                    };
+                                    reader.readAsDataURL(blob);
+                                    break; // Exit loop if successful
+                                }
+                            } catch (error) {
+                                if (attempt < retries) {
+                                    console.warn(`Retrying fetch photo for article ${article.articleID}, attempt ${attempt}`);
+                                    await new Promise(resolve => setTimeout(resolve, delay));
+                                } else {
+                                    console.error(`Failed to fetch photo for article ${article.articleID} after ${retries} attempts`);
+                                }
+                            }
+                        }
+                    };
 
-    const loadNextPhotoBatch = async () => {
-        const start = photoBatchIndex * batchSize;
-        const end = start + batchSize;
-        const batch = articles.slice(start, end);
+                    await retryFetchPhoto();
+                });
+            }
+        };
 
-        if (batch.length === 0) return;
+        fetchPhotos();
+    }, [articles]);
 
-        try {
-            const articleIds = batch.map(article => article.articleID);
-            const photosResponse = await getPhotosForArticleIds(articleIds);
+    // useEffect(() => {
+    //     if (articles.length > 0) {
+    //         loadNextPhotoBatch();
+    //     }
+    // }, [photoBatchIndex, articles]);
 
-            const updatedArticles = await Promise.all(articlesWithPhotos.map(async (article) => {
-                if (photosResponse[article.articleID]) {
-                    const photoData = photosResponse[article.articleID].image.data;
-                    const uint8Array = new Uint8Array(photoData);
-                    const blob = new Blob([uint8Array], { type: 'image/png' });
-                    const reader = new FileReader();
-
-                    return new Promise(resolve => {
-                        reader.onloadend = () => resolve({ ...article, imageUrl: reader.result });
-                        reader.readAsDataURL(blob);
-                    });
-                }
-                return article;
-            }));
-
-            setArticlesWithPhotos(updatedArticles);
-            setTimeout(() => setPhotoBatchIndex(prev => prev + 1), 10);
-        } catch (error) {
-            console.error('Error fetching photos:', error);
-        }
-    };
+    // const loadNextPhotoBatch = async () => {
+    //     const start = photoBatchIndex * batchSize;
+    //     const end = start + batchSize;
+    //     const batch = articles.slice(start, end);
+    //
+    //     if (batch.length === 0) return;
+    //
+    //     try {
+    //         const articleIds = batch.map(article => article.articleID);
+    //         const photosResponse = await getPhotosForArticleIds(articleIds);
+    //
+    //         const updatedArticles = await Promise.all(articlesWithPhotos.map(async (article) => {
+    //             if (photosResponse[article.articleID]) {
+    //                 const photoData = photosResponse[article.articleID].image.data;
+    //                 const uint8Array = new Uint8Array(photoData);
+    //                 const blob = new Blob([uint8Array], { type: 'image/png' });
+    //                 const reader = new FileReader();
+    //
+        //                 return new Promise(resolve => {
+        //                     reader.onloadend = () => resolve({ ...article, imageUrl: reader.result });
+        //                     reader.readAsDataURL(blob);
+        //                 });
+    //             }
+    //             return article;
+    //         }));
+    //
+    //         setArticlesWithPhotos(updatedArticles);
+    //     } catch (error) {
+    //         console.error('Error fetching photos:', error);
+    //     }
+    // };
 
     const handleThemeToggle = () => {
         setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
