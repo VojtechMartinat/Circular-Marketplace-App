@@ -810,7 +810,7 @@ const Profile = () => {
                                                             </button>
                                                         )}
                                                     <Link
-                                                        to={`/chats/${orderDetails[article.orderID]?.order?.userID}`}
+                                                        to={`/chat/${orderDetails[article.orderID]?.order?.userID}`}
                                                         className="message-button"
                                                         onClick={(e) => e.stopPropagation()}
                                                     >

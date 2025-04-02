@@ -544,7 +544,7 @@ const ArticleDetails = () => {
                     </div>
 
                     <div className="chat-button">
-                        <button onClick={() => navigate(`/chats/${article.userID}`)}>
+                        <button onClick={() => navigate(`/chat/${article.userID}`)}>
                             <FontAwesomeIcon icon={faComment} style={{marginRight: '8px'}}/>
                             Chat with Seller
                         </button>

@@ -99,44 +99,21 @@
     transform: rotate(20deg); /* Small rotation animation for the icon on hover */
 }
 
+
+
 .back-button{
   display: flex;
   background: none;
   border: none;
   font-size: 16px;
   cursor: pointer;
+  padding: 5px 10px;
   color: #333;
 }
 
-.ai-suggest-button {
-  background-color: #007bff;
-  color: white;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-weight: 600;
-  transition: background 0.3s, transform 0.2s;
-  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: auto;
-  margin-top: 5%;
-}
 
-.ai-suggest-button:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
-}
 
-h1 {
-  display: flex;
-  font-size: 22px;
-  margin: 10px 0;
-  font-weight: bold;
-  margin: auto;
-  justify-content: flex-start;
-} 
-
+/* Photo section */
 .photo-section {
   display: flex;
   gap: 10px;
@@ -176,6 +153,7 @@ h1 {
   cursor: pointer;
 }
 
+/* Input groups */
 .input-group {
     display: flex;
     flex-direction: column;
