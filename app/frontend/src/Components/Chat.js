@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getChats, getMessages, createMessage } from '../services/messageService';
-import { getUser } from '../services/userService';
+import {getUser, getUserArticles, getUserRating, getUserReviews} from '../services/userService';
 import { auth } from "../services/firebaseService";
 import { useNavigate } from 'react-router-dom';
 import './chat.css';
 import { useParams } from 'react-router-dom';
+import { RxAvatar } from "react-icons/rx";
+
 
 export const ChatsPage = () => {
     const {receiverID} = useParams();
@@ -18,6 +20,12 @@ export const ChatsPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
     const messagesEndRef = useRef(null);
+    const [articleUser, setArticleUser] = useState(null);
+    const [rating, setRating] = useState(null);
+    const [reviewAmount, setReviewAmount] = useState(null);
+    const [reviews, setReviews] = useState(null);
+    const [showReviews, setShowReviews] = useState(false);
+    const [reviewUser, setReviewUser] = useState(null);
    
 
 
@@ -131,6 +139,82 @@ export const ChatsPage = () => {
         }
     };
 
+    const handleShowReviews = () => {
+        if (chatUser?.userID) {
+            getUserReviews(chatUser.userID)
+                .then((response) => {
+                    console.log("this is reviews", response)
+                    if (response) {
+                        setReviews(response.reviews || []);
+                        setShowReviews(true);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching reviews:", error);
+                });
+        }
+    };
+
+    const ReviewModal = ({onClose}) => {
+        return (
+            <div className="review-modal-overlay" onClick={onClose}>
+            <div className="review-modal-content">
+                <h2>Reviews for {articleUser?.username}</h2>
+                <div className="reviews">
+                    <ul className="review-list">
+                        {reviews.length > 0 ? (
+                            reviews.map((review, index) => (
+                                <li key={index}>
+                                    <span><strong>{reviewUser?.username}</strong>: {review.comment}</span>
+                                    <div className="star-rating-container">
+                                        <StarRating rating={review.rating}/>
+                                    </div>
+                                </li>
+                            ))
+                        ) : (
+                            <p>No reviews yet.</p>
+                        )}
+                    </ul>
+                </div>
+
+                <button onClick={onClose} className="close-modal">Close</button>
+            </div>
+            </div>
+        );
+    };
+
+    const StarRating = ({ rating, totalStars = 5 }) => {
+        return (
+            <div style={{ display: "flex", gap: "2px" }}>
+                {Array.from({ length: totalStars }, (_, index) => {
+                    const fillPercentage = Math.max(0, Math.min(1, rating - index)); // 1 for full, 0.5 for half, etc.
+                    return (
+                        <span key={index} style={{ position: "relative", fontSize: "20px" }}>
+                        <span style={{ color: "gray" }}>★</span> {/* Background star */}
+                            <span
+                                style={{
+                                    color: "gold",
+                                    position: "absolute",
+                                    left: 0,
+                                    width: `${fillPercentage * 100}%`, // Dynamic width
+                                    overflow: "hidden",
+                                    display: "inline-block",
+                                }}
+                            >
+                            ★
+                        </span> {/* Foreground star (partially filled) */}
+                    </span>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    
+    
+
+    
+
     return (
         <div className="chat-container">
             <div className="chat-sidebar">
@@ -149,7 +233,8 @@ export const ChatsPage = () => {
 
             <div className="chat-window">
                 {selectedChat ? (
-                    <>
+                    <> 
+                        <div className="seller-avatar" onClick={handleShowReviews}><RxAvatar size={55} /></div> 
                         <div className="chat-header">{chatUser?.username || 'User'}</div>
                         <div className="chat-messages">
                             {messages?.length > 0 ? (
@@ -164,6 +249,9 @@ export const ChatsPage = () => {
                             ) : (
                                 <p>No messages yet</p>
                             )}
+                            <div ref={messagesEndRef} />
+                            {showReviews && <ReviewModal onClose={() => setShowReviews(false)} />}
+
                         </div>
 
                         <div className="chat-input">
