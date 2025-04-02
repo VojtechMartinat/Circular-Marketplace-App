@@ -231,7 +231,7 @@ const userTopUp = asyncErrorWrapper(async (req,res,next) =>{
         await user.save();
         res.status(200).json({user})
     } catch (error){
-        console.log(error)
+        next(error)
     }
 })
 
