@@ -79,10 +79,19 @@ export const ChatsPage = () => {
         setChatUser({username: "Loading..."});
         try {
             const chatMessages = await getMessages(user.uid, chatID);
-            setMessages(chatMessages.messages);
+            setMessages(chatMessages.messages || []);
             const response = await getUser(chatID);
             if (response && response.user) {
                 setChatUser(response.user);
+
+                setChats(prevChats => {
+                    if (!prevChats.includes(chatID)){
+                        return [...prevChats, chatID];
+                    }
+                    return prevChats;
+                });
+
+                setUserNames(prevUserNames => ({...prevUserNames,[chatID]: response.user.username}));
             }
         } catch (error) {
             console.error('Error loading chat:', error);
@@ -93,8 +102,8 @@ export const ChatsPage = () => {
         if (receiverID && user){
             console.log("ReceiverID from URL:", receiverID);
             getUser(receiverID).then((response) => {
-                console.log('this is the response.user.uid', response.user.userID)
                 if (response) {
+                    setSelectedChat(response.user.userID)
                     openChat(response.user.userID)
                 } else {
                     console.error("User not found")
@@ -106,7 +115,6 @@ export const ChatsPage = () => {
 
     const handleSend = async () => {
         if (!newMessage.trim()) return;
-        const timestamp = new Date().toISOString();
         try {
             await createMessage({
                 senderID: user.uid,
@@ -114,8 +122,11 @@ export const ChatsPage = () => {
                 message: newMessage,
                 timestamp
             });
-            setMessages([...messages, { senderID: user.uid, message: newMessage, updatedAt: new Date(), timestamp }]);
-            setNewMessage('');
+            setMessages(prevMessages => [
+                ...prevMessages,
+                { senderID: user.uid, message: newMessage, updatedAt: new Date(), timestamp }
+            ]);
+                setNewMessage('');
         } catch (error) {
             console.error('Error sending message:', error);
         }
@@ -142,18 +153,21 @@ export const ChatsPage = () => {
                     <>
                         <div className="chat-header">{chatUser?.username || 'User'}</div>
                         <div className="chat-messages">
-                            {messages?.length > 0 ? (
+                            {messages && messages.length > 0 ? (
                                 messages.map((msg, index) => (
                                     <div key={index} className={`message ${msg.senderID === user.uid ? 'sent' : 'received'}`}>
-                                        <div className="message-bubble">{msg.message}</div>
+                                        <div className="message-bubble">
+                                            {msg.message}
+                                        </div>
                                         <div className="message-timestamp">
                                             {new Date(msg.updatedAt).toLocaleString([], { hour: '2-digit', minute: '2-digit' })}
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <p>No messages yet</p>
+                                <div>No messages yet.</div>
                             )}
+                            <div ref={messagesEndRef} />
                         </div>
 
                         <div className="chat-input">

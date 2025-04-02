@@ -99,8 +99,6 @@
     transform: rotate(20deg); /* Small rotation animation for the icon on hover */
 }
 
-
-
 .back-button{
   display: flex;
   background: none;
