@@ -92,7 +92,7 @@ Run the following commands in the given order
 
 ## System Architecture
 Find the final product system architecture diagram below (with the suggested use of AWS services found [here](#aws-setup)):
-PASTE HERE
+![img.png](img.png)
 
 ## Project Structure
 The top-layer project structure can be found below:
