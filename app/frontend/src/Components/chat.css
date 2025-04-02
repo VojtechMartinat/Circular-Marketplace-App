@@ -112,3 +112,22 @@
     text-align: center;
     margin-top: 2px;
 }
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-user-info {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 10px; /* Spacing between avatar and username */
+}
+
+.chat-avatar {
+    border-radius: 50%;
+    background-color: #e0e0e0; /* Optional background */
+}

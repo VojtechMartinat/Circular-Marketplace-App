@@ -234,8 +234,12 @@ export const ChatsPage = () => {
             <div className="chat-window">
                 {selectedChat ? (
                     <> 
-                        <div className="seller-avatar" onClick={handleShowReviews}><RxAvatar size={55} /></div> 
-                        <div className="chat-header">{chatUser?.username || 'User'}</div>
+                        <div className="chat-header">
+                            <div className="chat-user-info" onClick={handleShowReviews}>
+                                <RxAvatar size={40} className="chat-avatar" />
+                                <span className="chat-username">{chatUser?.username || 'User'}</span>
+                            </div>
+                        </div>
                         <div className="chat-messages">
                             {messages?.length > 0 ? (
                                 messages.map((msg, index) => (
