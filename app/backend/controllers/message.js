@@ -113,8 +113,9 @@ const getMessages = asyncErrorWrapper(async (req, res, next) => {
         order: [['createdAt', 'ASC']]
     });
 
-    return next(new APIError(`No users found that user with ID: ${userID} has interacted with`, 404));
-
+    if (!messages || messages.length === 0) {
+        return res.status(200).json({ messages: [] }); 
+    }
 });
 
 module.exports = {

@@ -142,18 +142,20 @@ export const ChatsPage = () => {
                     <>
                         <div className="chat-header">{chatUser?.username || 'User'}</div>
                         <div className="chat-messages">
-                            {messages.map((msg, index) => (
-                                <div key={index} className={`message ${msg.senderID === user.uid ? 'sent' : 'received'}`}>
-                                    <div className="message-bubble">
-                                        {msg.message}
+                            {messages?.length > 0 ? (
+                                messages.map((msg, index) => (
+                                    <div key={index} className={`message ${msg.senderID === user.uid ? 'sent' : 'received'}`}>
+                                        <div className="message-bubble">{msg.message}</div>
+                                        <div className="message-timestamp">
+                                            {new Date(msg.updatedAt).toLocaleString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </div>
                                     </div>
-                                    <div className='message-timestamp'>
-                                            {new Date(msg.updatedAt).toLocaleString([],{ hour: '2-digit', minute: '2-digit'})}
-                                    </div>
-                                </div>
-                            ))}
-                            <div ref={messagesEndRef} />
+                                ))
+                            ) : (
+                                <p>No messages yet</p>
+                            )}
                         </div>
+
                         <div className="chat-input">
                             <input
                                 type="text"
