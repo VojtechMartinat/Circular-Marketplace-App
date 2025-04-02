@@ -1,0 +1,72 @@
+.project-overview-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.project-header h1 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.overview-section, .user-stories-section {
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 28px;
+    color: #007aff;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #444;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+ul li {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.team-footer {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.team-footer h3 {
+    font-size: 24px;
+    color: #007aff;
+    margin-bottom: 10px;
+}
+
+.team-footer ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.team-footer ul li {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.project-goals-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: #e8f5e9; /* Light green for eco-friendly theme */
+    border-radius: 8px;
+}
+
+.project-goals-section ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}

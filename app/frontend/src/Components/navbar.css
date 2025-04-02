@@ -1,44 +1,128 @@
-/* Basic reset for the nav bar */
+/* Navbar.css*/
+
 nav {
-    background-color: #333;
-    padding: 10px 20px;
-    font-family: Arial, sans-serif;
-}
-
-/* Style for the unordered list */
-nav ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+    background-color: #ffffff;
+    padding: 12px 40px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
-    justify-content: space-around;
     align-items: center;
+    justify-content: space-between;
 }
 
-/* Style for each list item */
-nav ul li {
-    margin: 0 15px;
-}
-
-/* Style for the links */
-nav ul li a {
+/* Logo + Title container (ReList) */
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     text-decoration: none;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 10px 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s, transform 0.3s ease;
+    color: #1c1c1e;
+}
+
+/* Logo image */
+.logo-img {
+    height: 40px;
+    width: 40px;
+    object-fit: contain;
+}
+
+/* Title text (ReList) */
+.title {
+    font-size: 25px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1;
+    letter-spacing: -0.3px;
+    color: #1c1c1e;
+}
+
+/* Nav list container (for links) */
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+/* Nav items (links & buttons) */
+nav ul li {
+    position: relative;
+}
+
+nav ul li a,
+nav ul li button {
+    background: none;
+    border: none;
+    text-decoration: none;
+    color: #1c1c1e;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    cursor: pointer;
 }
 
 /* Hover effect */
-nav ul li a:hover {
-    background-color: #555;
-    transform: scale(1.05);
+nav ul li a:hover,
+nav ul li button:hover {
+    background-color: rgba(60, 60, 67, 0.08);
 }
 
-/* Active state for the links (optional if using react-router's Link component) */
-nav ul li a.active {
-    background-color: #007bff;
-    color: white;
+/* Focus effect */
+nav ul li a:focus,
+nav ul li button:focus {
+    outline: none;
+    background-color: rgba(60, 60, 67, 0.15);
 }
+
+/* Active link effect (using Apple's blue) */
+nav ul li a.active {
+    color: #007aff;
+    font-weight: 600;
+}
+
+/* Responsive behavior for smaller screens */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 20px;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-top: 12px;
+    }
+
+    nav ul li a,
+    nav ul li button {
+        font-size: 14.5px;
+    }
+
+    .title {
+        font-size: 16px;
+    }
+}
+
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.logo-title:hover {
+    opacity: 0.8;
+}
+

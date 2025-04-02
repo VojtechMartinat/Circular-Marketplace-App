@@ -10,7 +10,8 @@ if (isTest) {
     sequelize = new Sequelize({
         dialect: 'sqlite',
         storage: ':memory:',
-        logging: false,       });
+        logging: false
+    });
 } else {
     sequelize = new Sequelize(
         'postgres',

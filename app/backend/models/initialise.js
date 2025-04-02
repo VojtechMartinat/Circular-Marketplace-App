@@ -9,8 +9,9 @@ const PaymentCardModel = require('./PaymentCard');
 const PhotoModel = require('./Photo');
 const TagModel = require('./Tag');
 const WishlistModel = require('./Wishlist');
-const TaskModel = require('./Task');
-const TaskLogModel = require('./TaskLog')
+const ReviewModel = require('./Review');
+const MessageModel = require('./Message');
+
 
 const User = UserModel(sequelize);
 const PaymentCard = PaymentCardModel(sequelize);
@@ -19,8 +20,10 @@ const Article = ArticleModel(sequelize);
 const Photo = PhotoModel(sequelize);
 const Wishlist = WishlistModel(sequelize);
 const Tag = TagModel(sequelize);
-const Task = TaskModel(sequelize);
-const TaskLog = TaskLogModel(sequelize);
+const Review = ReviewModel(sequelize);
+
+
+const Message = MessageModel(sequelize);
 
 User.hasMany(Wishlist, {foreignKey: 'userID', onDelete: 'CASCADE'});
 Wishlist.belongsTo(User, {foreignKey: 'userID', onDelete: 'CASCADE'});
@@ -45,8 +48,20 @@ Photo.belongsTo(Article, { foreignKey: 'articleID' , onDelete: 'CASCADE'});
 User.hasMany(PaymentCard, { foreignKey: 'userID' , onDelete: 'CASCADE'});
 PaymentCard.belongsTo(User, { foreignKey: 'userID' , onDelete: 'CASCADE'});
 
-TaskLog.belongsTo(Task, {foreignKey: 'taskID'})
-Task.hasMany(TaskLog,{foreignKey: 'taskID'})
+User.hasMany(Review, { foreignKey: 'userID' });
+Review.belongsTo(User, { foreignKey: 'userID' });
+
+User.hasMany(Review, { foreignKey: 'reviewer' });
+Review.belongsTo(User, { foreignKey: 'reviewer' });
+
+Review.belongsTo(Article, { foreignKey: 'articleID' });
+
+
+User.hasMany(Message, { foreignKey: 'senderID', onDelete: 'CASCADE' });
+User.hasMany(Message, { foreignKey: 'receiverID', onDelete: 'CASCADE' });
+Message.belongsTo(User, { as: 'Sender', foreignKey: 'senderID' });
+Message.belongsTo(User, { as: 'Receiver', foreignKey: 'receiverID' });
+
 module.exports = {
     User,
     Article,
@@ -55,8 +70,8 @@ module.exports = {
     Photo,
     Tag,
     Wishlist,
-    Task,
-    TaskLog,
+    Review,
+    Message,
     sequelize
 
 };

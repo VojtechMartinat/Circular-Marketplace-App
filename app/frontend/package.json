@@ -4,33 +4,44 @@
   "private": true,
   "proxy": "http://localhost:8080",
   "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
+    },
     "transform": {
       "^.+\\.[tj]sx?$": "jest-esm-transformer"
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!(axios)/)"
+      "node_modules/(?!(axios|react-leaflet|@react-leaflet|leaflet)/)"
     ]
   },
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/user-event": "^14.6.1",
     "axios": "^1.7.7",
+    "colorthief": "^2.6.0",
     "dotenv": "^16.4.7",
     "firebase": "^11.2.0",
     "form-data": "^4.0.1",
+    "framer-motion": "^12.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-icons": "^5.4.0",
+    "react-icons": "^5.5.0",
+    "react-leaflet": "^4.2.1",
     "react-multi-carousel": "^2.8.5",
     "react-router-dom": "^6.27.0",
     "react-scripts": "^5.0.1",
+    "react-simple-image-viewer": "^1.2.2",
+    "sharp": "^0.33.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --watchAll=false",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:coverage": "jest --coverage --runInBand"
   },
   "eslintConfig": {
     "extends": [

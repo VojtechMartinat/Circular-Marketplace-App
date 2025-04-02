@@ -4,6 +4,7 @@ import ArticleDetails from '../Components/ArticleDetails';
 import { MemoryRouter } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
 import { getArticle, getArticlePhotos } from '../services/articleService';
+import 'whatwg-fetch';
 
 jest.mock('../services/articleService', () => ({
     getArticle: jest.fn(),
@@ -27,6 +28,7 @@ describe('ArticleDetails Component', () => {
                 description: 'This is a test article description.',
                 price: 100,
                 state: 'Available',
+                location: 'BS8 1QU'
             },
         });
 
@@ -58,11 +60,12 @@ describe('ArticleDetails Component', () => {
         expect(description).toBeInTheDocument();
 
         // Check if the price is rendered
-        const price = await screen.findByText(/cost : 100/i);
+        const price = await screen.findByRole('heading', { name: /£?\s*100/i });
         expect(price).toBeInTheDocument();
 
+
         // Check if the "Buy" button is rendered
-        const buyButton = await screen.findByRole('button', { name: /buy for 100/i });
+        const buyButton = await screen.findByRole('button', { name: /Buy now for £/i });
         expect(buyButton).toBeInTheDocument();
     });
 });

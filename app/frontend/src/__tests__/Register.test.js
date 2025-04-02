@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Register from '../Components/Register';
+import 'whatwg-fetch';
 
 import { MemoryRouter } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
@@ -23,18 +24,16 @@ describe('CreateArticle Component', () => {
             </MemoryRouter>
         );
 
-        const username = await screen.findByText(/Username:/i);
-        expect(username).toBeInTheDocument();
 
-        const password = await screen.findByText(/Password:/i);
-        expect(password).toBeInTheDocument();
+        const passInput = await screen.findByPlaceholderText(/Password/i);
+        expect(passInput).toBeInTheDocument();
+
+        const emailInput = await screen.findByPlaceholderText(/Email/i);
+        expect(emailInput).toBeInTheDocument();
 
 
-        const email = await screen.findByText(/Email:/i);
-        expect(email).toBeInTheDocument();
-
-        const location = await screen.findByText(/Location:/i);
-        expect(location).toBeInTheDocument();
+        const locInput = await screen.findByPlaceholderText(/Postcode/i);
+        expect(locInput).toBeInTheDocument();
 
         const register = await screen.findByRole('button', { name: /Register/i });
         expect(register).toBeInTheDocument();

@@ -3,6 +3,7 @@ import '@testing-library/jest-dom';
 import CreateArticlePage from '../Components/CreateArticlePage';
 import { MemoryRouter } from 'react-router-dom';
 import { useAuth } from '../Contexts/AuthContext';
+import 'whatwg-fetch';
 
 jest.mock('../Contexts/AuthContext', () => ({
     useAuth: jest.fn(),
@@ -23,19 +24,16 @@ describe('CreateArticle Component', () => {
             </MemoryRouter>
         );
 
-        const title = await screen.findByRole('heading', { name: /Create New Article/i });
+        const title = await screen.findByRole('button', { name: /Suggest/i });
         expect(title).toBeInTheDocument();
 
-        const title2 = await screen.findByText(/Article Title:/i);
+        const title2 = await screen.findByText(/Title/i);
         expect(title2).toBeInTheDocument();
 
-        const description = await screen.findByText(/Description:/i);
-        expect(description).toBeInTheDocument();
-
-        const price = await screen.findByText(/Price:/i);
+        const price = await screen.findByText(/Price/i);
         expect(price).toBeInTheDocument();
 
-        const Create = await screen.findByRole('button', { name: /Create Article/i });
+        const Create = await screen.findByRole('button', { name: /Publish/i });
         expect(Create).toBeInTheDocument();
     });
 });

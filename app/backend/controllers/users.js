@@ -1,6 +1,7 @@
 const asyncErrorWrapper = require('../middleware/asyncErrorWrapper')
 const APIError = require('../errors/ErrorAPI')
-const {User, Article, Order} = require('../models/initialise')
+const {User, Article, Order, Message, Review} = require('../models/initialise')
+const {Op} = require("sequelize");
 
 
 
@@ -158,6 +159,63 @@ const userArticles = asyncErrorWrapper(async (req,res,next) =>{
     res.status(200).json({articles})
 })
 
+/**
+ * * Get average rating of a user from a database
+ * @param req Request from the client (req.params should contain a valid userID)
+ * @param res Response sent to the client containing average rating
+ * */
+const userRating = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:userID} = req.params
+    const reviews = await Review.findAll({
+        where:{
+            userID: userID
+        }
+    });
+    if (!reviews){
+        next(new APIError(`No reviews with user id : ${userID}`),404)
+    }
+    const ratings = reviews.map(reviews => reviews.rating)
+    const totalRating = ratings.reduce((acc, rating) => acc + rating, 0);
+    const averageRating = totalRating / reviews.length;
+    res.status(200).json({averageRating,amount:reviews.length})
+})
+
+/**
+ * * Get review written by a user from a database
+ * @param req Request from the client (req.params should contain a valid userID)
+ * @param res Response sent to the client containing user written reviews
+ * */
+const userWrittenReviews = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:userID} = req.params
+    const reviews = await Review.findAll({
+        where:{
+            reviewer: userID
+        }
+    });
+    if (!reviews){
+        next(new APIError(`No written reviews with user id : ${userID}`),404)
+    }
+    res.status(200).json({reviews})
+})
+
+/**
+ * * Get review written by a user from a database
+ * @param req Request from the client (req.params should contain a valid userID)
+ * @param res Response sent to the client containing reviews on user
+ * */
+const userReviews = asyncErrorWrapper(async (req,res,next) =>{
+    const {id:userID} = req.params
+    const reviews = await Review.findAll({
+        where:{
+            userID: userID
+        }
+    });
+    if (!reviews){
+        next(new APIError(`No reviews on user with id : ${userID}`),404)
+    }
+    res.status(200).json({reviews})
+})
+
 const userTopUp = asyncErrorWrapper(async (req,res,next) =>{
     try {
         const {id:userID} = req.params
@@ -173,10 +231,43 @@ const userTopUp = asyncErrorWrapper(async (req,res,next) =>{
         await user.save();
         res.status(200).json({user})
     } catch (error){
-        console.log(error)
+        next(error)
     }
 })
 
+const getInteractedUsers = asyncErrorWrapper(async (req, res, next) => {
+    const { id:userID } = req.params;
+
+    const messages = await Message.findAll({
+        where: {
+            [Op.or]: [
+                { senderID: userID },
+                { receiverID: userID },
+            ],
+        }
+    });
+
+    const interactedUserIDs = new Set();
+
+    messages.forEach((message) => {
+        // Add sender and receiver to the set
+        if (message.senderID !== userID) interactedUserIDs.add(message.senderID);
+        if (message.receiverID !== userID) interactedUserIDs.add(message.receiverID);
+    });
+
+    const userIdsArray = Array.from(interactedUserIDs);
+
+    if (userIdsArray.length === 0) {
+        next(new APIError(`No users found that user with ID: ${userID} has interacted with`), 404);
+        return;
+    }
+
+    // Return the list of interacted user IDs
+    res.status(200).json({ interactedUserIDs: userIdsArray });
+});
+
+
+
 module.exports = {
-    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser , userTopUp
+    getAllUsers,createUser,getUser,updateUser,deleteUser,userOrders, userArticles, loginUser, userRating, userWrittenReviews, userReviews, userTopUp, getInteractedUsers
 }

@@ -32,7 +32,6 @@ const createArticle= asyncErrorWrapper(async (req,res) =>{
         const article = await Article.create(req.body)
         res.status(201).json({article: article})
     } catch (error) {
-        console.log(error.message)
         res.status(400).json({error: error.message})
     }
 
@@ -122,6 +121,7 @@ const articlePhoto = asyncErrorWrapper(async (req,res,next) =>{
     }
     res.status(200).json({photo});
 })
+
 
 module.exports = {
     getAllArticles,createArticle,getArticle,updateArticle,deleteArticle, articlePhotos, getUnsoldArticles, articlePhoto

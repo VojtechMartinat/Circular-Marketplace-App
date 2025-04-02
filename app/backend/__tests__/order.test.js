@@ -3,6 +3,7 @@ const request = require('supertest');
 const app = require('../server');
 process.env.NODE_ENV = 'test'; // Ensure test environment is used
 const { beforeAll, afterAll, beforeEach, describe, test,expect, afterEach,} = require('@jest/globals');
+const { jest } = require('@jest/globals');
 
 
 
@@ -72,7 +73,7 @@ describe('Order Controller Tests', () => {
     test('GET /api/v1/orders - Should return an empty array if no orders exist', async () => {
         const res = await request(app).get('/api/v1/orders');
         expect(res.statusCode).toBe(200);
-        expect(res.body.orders).toEqual([]);  // Should return an empty array
+        expect(res.body.orders).toEqual([]);
     });
 
 
@@ -94,7 +95,6 @@ describe('Order Controller Tests', () => {
             articles: [{ articleID: '2' }],
         })
         const res = await request(app).get('/api/v1/orders');
-
         expect(res.statusCode).toBe(200);
         expect(res.body.orders).toBeDefined(); // Ensure orders is defined
         expect(res.body.orders.length).toBe(2);
@@ -160,10 +160,10 @@ describe('Order Controller Tests', () => {
             articles: [{ articleID: '1' }],
         })
 
-        const res = await request(app).patch(`/api/v1/orders/${res1.body.order.orderID}`).send({ dateOfPurchase: '2024-12-12' });
+        const res = await request(app).patch(`/api/v1/orders/${res1.body.order.orderID}`).send({ orderStatus: 'shipped' });
         expect(res.statusCode).toBe(200);
         const res2 = await request(app).get(`/api/v1/orders`);
-        expect(res2.body.orders[0].dateOfPurchase).toBe("2024-12-12T00:00:00.000Z");
+        expect(res2.body.orders[0].orderStatus).toBe('shipped');
     });
 
     test('Nonexisting article for order', async () => {
@@ -199,4 +199,41 @@ describe('Order Controller Tests', () => {
         expect(res2.statusCode).toBe(500);
 
     });
+
+        test('Should return articles for a valid order ID', async () => {
+            const order = await request(app).post('/api/v1/orders').send({
+                userID: 2,
+                paymentMethodID: 1,
+                dateOfPurchase: '2024-10-01',
+                collectionMethod: 'delivery',
+                orderStatus: 'confirmed',
+                articles: [{ articleID: '1' }],
+            })
+            const res = await request(app).get(`/api/v1/orders/${order.body.order.orderID}/articles`);
+            expect(res.statusCode).toBe(200);
+            expect(res.body.articles[0].articleID).toBe(1);
+            expect(res.body.articles[0].articleTitle).toBe('Table');
+        });
+
+    test('GET /api/v1/orders/:id/article - Should return the article if order exists', async () => {
+        // Create an order
+        const orderResponse = await request(app).post('/api/v1/orders').send({
+            userID: 2,
+            paymentMethodID: 1,
+            dateOfPurchase: '2024-10-01',
+            collectionMethod: 'delivery',
+            orderStatus: 'confirmed',
+            articles: [{ articleID: '1' }],
+        });
+
+        const newOrder = orderResponse.body;
+
+        const res = await request(app).get(`/api/v1/orders/${newOrder.order.orderID}/articles`);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.articles[0].articleTitle).toBe('Table');
+        expect(res.body.articles[0].price).toBe(20.0);
+    });
+
+
 });
