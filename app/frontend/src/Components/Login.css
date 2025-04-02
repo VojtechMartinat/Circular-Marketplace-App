@@ -1,80 +1,95 @@
-.body {
-  font-family: Arial, sans-serif;
-  /* background-color: #1481a3; */
-  background-image: linear-gradient(#48A9FE, #0BEEF9);
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+.body {
+  background: linear-gradient(to bottom, #e0eafc, #cfdef3);
+  height: 100vh;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
 .login-container {
-  margin-top:auto; 
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: auto;
-  background-color: #ffffff;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 400px;
+  max-width: 360px;
+  text-align: center;
 }
 
 .login-header {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
   margin-bottom: 1rem;
-  text-align: center;
-  color: #333333;
 }
 
-input[type="text"], input[type="password"] {
+.input {
   width: 100%;
-  padding: 0.8rem;
-  margin-bottom: 1rem;
-  border: 1px solid #cccccc;
-  border-radius: 4px;
-  box-sizing: border-box;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(5px);
   font-size: 1rem;
-  color: black;
+  color: #333;
 }
 
-input[type="text"]:focus, input[type="password"]:focus {
-  border-color: #333333;
+.input:focus {
   outline: none;
-  box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+  border: 2px solid #007aff;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 button {
-  background-color: #333333;
-  color: #ffffff;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
   width: 100%;
-  margin-bottom: 1rem;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: #007aff;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 }
 
 button:hover {
-  background-color: #555555;
+  background: #005ecb;
+}
+
+.google-login-button {
+  background: white;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.google-login-button:hover {
+  background: #f7f7f7;
 }
 
 .login-footer {
-  text-align: center;
+  margin-top: 12px;
   font-size: 0.9rem;
-  color: #555555;
+  color: #555;
 }
 
 .login-footer a {
-  color: #333333;
+  color: #007aff;
   text-decoration: none;
 }
 
 .login-footer a:hover {
   text-decoration: underline;
 }
+
