@@ -120,11 +120,10 @@ export const ChatsPage = () => {
                 senderID: user.uid,
                 receiverID: selectedChat,
                 message: newMessage,
-                timestamp
             });
             setMessages(prevMessages => [
                 ...prevMessages,
-                { senderID: user.uid, message: newMessage, updatedAt: new Date(), timestamp }
+                { senderID: user.uid, message: newMessage, updatedAt: new Date() }
             ]);
                 setNewMessage('');
         } catch (error) {
